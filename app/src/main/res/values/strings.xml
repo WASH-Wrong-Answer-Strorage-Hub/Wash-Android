@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Wash</string>
+    <string name="navigation_home">navigation_home</string>
+    <string name="navigation_study">navigation_study</string>
+    <string name="navigation_note">navigation_note</string>
+    <string name="navigation_graph">navigation_graph</string>
+    <string name="navigation_mypage">navigation_mypage</string>
+</resources>

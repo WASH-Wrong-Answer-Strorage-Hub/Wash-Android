@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.wash.washandroid.presentation.fragment.home.HomeFragment"
+        android:label="@string/navigation_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_study"
+        android:name="com.wash.washandroid.presentation.fragment.study.StudyFragment"
+        android:label="@string/navigation_study"
+        tools:layout="@layout/fragment_note" />
+
+    <fragment
+        android:id="@+id/navigation_note"
+        android:name="com.wash.washandroid.presentation.fragment.note.NoteFragment"
+        android:label="@string/navigation_note"
+        tools:layout="@layout/fragment_study" />
+
+    <fragment
+        android:id="@+id/navigation_graph"
+        android:name="com.wash.washandroid.presentation.fragment.graph.GraphFragment"
+        android:label="@string/navigation_graph"
+        tools:layout="@layout/fragment_study" />
+
+    <fragment
+        android:id="@+id/navigation_mypage"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.MypageFragment"
+        android:label="@string/navigation_mypage"
+        tools:layout="@layout/fragment_mypage" />
+</navigation>
