@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/edit_nickname_background_iv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_mypage_background"
+        android:scaleType="fitXY"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/edit_nickname_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="37dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="312dp"
+        />
+
+    <TextView
+        android:id="@+id/edit_nickname_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임 변경"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/mangoddobak_b"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/edit_nickname_back_btn"
+        app:layout_constraintBottom_toBottomOf="@id/edit_nickname_back_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <View
+        android:id="@+id/edit_nickname_background_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_mypage_backgroud"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="75dp"
+        />
+
+    <TextView
+        android:id="@+id/account_information_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        android:textSize="13dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/mangoddobak_r"
+        app:layout_constraintStart_toStartOf="@id/edit_nickname_background_view"
+        app:layout_constraintTop_toTopOf="@id/edit_nickname_background_view"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="89dp"
+        />
+
+    <EditText
+        android:id="@+id/edit_nickname_tv"
+        android:layout_width="345dp"
+        android:layout_height="wrap_content"
+        android:text="사과 빠진 통나무 0612"
+        android:textSize="13dp"
+        android:fontFamily="@font/mangoddobak_r"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="@id/account_information_tv"
+        app:layout_constraintStart_toStartOf="@id/account_information_tv"
+        android:layout_marginTop="29dp"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
