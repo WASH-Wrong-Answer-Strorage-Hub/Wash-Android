@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.wash.washandroid"
-        minSdk = 30
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -53,4 +53,15 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
+    // CameraX core
+    implementation ("androidx.camera:camera-core:1.1.0-beta01")
+    implementation ("androidx.camera:camera-camera2:1.1.0-beta01")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0-beta01")
+    implementation ("androidx.camera:camera-view:1.0.0-alpha31")
+    implementation ("androidx.camera:camera-extensions:1.0.0-alpha31")
+
+    // glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 }
