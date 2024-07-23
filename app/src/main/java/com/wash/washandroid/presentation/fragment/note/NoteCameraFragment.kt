@@ -106,7 +106,7 @@ class NoteCameraFragment : Fragment() {
         val imageCapture = imageCapture ?: return
         val photoFile = File(
             outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+            SimpleDateFormat(FILENAME_FORMAT, Locale.KOREA)
                 .format(System.currentTimeMillis()) + ".jpg"
         )
 
