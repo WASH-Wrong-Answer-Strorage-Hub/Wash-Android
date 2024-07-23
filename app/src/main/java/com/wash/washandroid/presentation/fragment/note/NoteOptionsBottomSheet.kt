@@ -2,21 +2,30 @@ package com.wash.washandroid.presentation.fragment.note
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.NoteBottomSheetOptionsBinding
+import com.wash.washandroid.presentation.base.MainActivity
 
 class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: NoteBottomSheetOptionsBinding? = null
     private val binding get() = _binding!!
+    private val REQUEST_PERMISSIONS = 100
+
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            setGallery(it)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,12 +45,14 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
         // 카메라로 촬영하기
         binding.buttonCamera.setOnClickListener {
-            checkPermissions()
+            checkPermissions { startCameraFragment() }
+            dismiss()
         }
 
         // 앨범에서 선택하기
         binding.buttonGallery.setOnClickListener {
-            checkPermissions()
+            checkPermissions { openGallery() }
+            dismiss()
         }
 
         // 취소 버튼
@@ -54,7 +65,7 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
      * 권한 체크
      * 승인이 안 된 경우 권한 요청.
      */
-    private fun checkPermissions() {
+    private fun checkPermissions(onPermissionGranted: () -> Unit) {
         val permissions = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -68,19 +79,35 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
         if (permissionsNeeded.isEmpty()) {
             // 권한이 이미 승인됨
             // 실제 기능 수행
-            onPermissionsGranted()
+            onPermissionsGranted(onPermissionGranted)
         } else {
             // 권한 요청
             requestPermissions(permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
         }
     }
 
+    // start Camera Fragment
+    private fun startCameraFragment() {
+//        Toast.makeText(requireContext(), "Starting Camera Fragment", Toast.LENGTH_SHORT).show()
+        (activity as? MainActivity)?.startCameraFragment() // dialog이므로 main activity를 통해 트랜잭션함.
+    }
+
+    private fun openGallery() {
+//        Toast.makeText(requireContext(), "Opening Gallery", Toast.LENGTH_SHORT).show()
+        galleryLauncher.launch("image/*")
+    }
+
+    private fun setGallery(uri: Uri) {
+//        binding.imageView.visibility = View.VISIBLE
+//        binding.imageView.setImageURI(uri)
+    }
+
     /**
      * 권한이 모두 승인된 경우 호출됨.
      */
-    private fun onPermissionsGranted() {
-        Toast.makeText(requireContext(), "권한 승인됨", Toast.LENGTH_SHORT).show()
-        // 카메라 촬영 기능 또는 앨범 선택 기능 추가
+    private fun onPermissionsGranted(onPermissionGranted: () -> Unit) {
+//        Toast.makeText(requireContext(), "권한 승인됨", Toast.LENGTH_SHORT).show()
+        onPermissionGranted()
     }
 
     /**
@@ -99,7 +126,7 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
         if (requestCode == REQUEST_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 // 모든 권한이 승인됨
-                onPermissionsGranted()
+                onPermissionsGranted { /* 필요 시 아무것도 하지 않도록 빈 람다를 전달 */ }
             } else {
                 Toast.makeText(requireContext(), "권한을 승인하지 않으면 기능을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
