@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_problem_category_subject">
 
     <fragment
         android:id="@+id/navigation_home"
@@ -34,4 +34,60 @@
         android:name="com.wash.washandroid.presentation.fragment.mypage.MypageFragment"
         android:label="@string/navigation_mypage"
         tools:layout="@layout/fragment_mypage" />
+
+    <fragment
+        android:id="@+id/navigation_problem_category_subject"
+        android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategorySubjectFragment"
+        tools:layout="@layout/fragment_problem_category_subject" >
+        <action
+            android:id="@+id/action_navigation_problem_category_subject_to_subfield_fragment"
+            app:destination="@id/navigation_problem_category_subfield"
+            app:popUpTo="@id/navigation_problem_category_subfield" />
+        <action
+            android:id="@+id/action_navigation_problem_category_subject_to_folder_fragment"
+            app:destination="@id/navigation_problem_category_folder"
+            app:popUpTo="@id/navigation_problem_category_folder" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_problem_category_subfield"
+        android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategorySubfieldFragment"
+        tools:layout="@layout/fragment_problem_category_subfield" >
+        <action
+            android:id="@+id/action_navigation_problem_category_subfield_to_chapter_fragment"
+            app:destination="@id/navigation_problem_category_chapter"
+            app:popUpTo="@id/navigation_problem_category_chapter" />
+        <action
+            android:id="@+id/action_navigation_problem_category_subfield_to_folder_fragment"
+            app:destination="@id/navigation_problem_category_folder"
+            app:popUpTo="@id/navigation_problem_category_folder" />
+        <action
+            android:id="@+id/action_navigation_problem_category_subfield_to_subject_fragment"
+            app:destination="@id/navigation_problem_category_subject"
+            app:popUpTo="@id/navigation_problem_category_subject" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_problem_category_chapter"
+        android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategoryChapterFragment"
+        tools:layout="@layout/fragment_problem_category_chapter" >
+        <action
+            android:id="@+id/action_navigation_problem_category_chapter_to_folder_fragment"
+            app:destination="@id/navigation_problem_category_folder"
+            app:popUpTo="@id/navigation_problem_category_folder" />
+        <action
+            android:id="@+id/action_navigation_problem_category_chapter_to_subfield_fragment"
+            app:destination="@id/navigation_problem_category_subfield"
+            app:popUpTo="@id/navigation_problem_category_subfield" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_problem_category_folder"
+        android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategoryFolderFragment"
+        tools:layout="@layout/fragment_problem_category_folder" >
+        <action
+            android:id="@+id/action_navigation_problem_category_folder_to_chapter_fragment"
+            app:destination="@id/navigation_problem_category_chapter"
+            app:popUpTo="@id/navigation_problem_category_chapter" />
+    </fragment>
 </navigation>
