@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="categoryViewModel"
+            type="com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel" />
+        <variable
+            name="categorySubjectViewModel"
+            type="com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubjectViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_category_1st_v"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_category_1st_h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="42dp" />
+
+        <ImageView
+            android:id="@+id/problem_add_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_btn"
+            app:layout_constraintStart_toStartOf="@id/guideline_category_1st_v"
+            app:layout_constraintTop_toTopOf="@+id/guideline_category_1st_h" />
+
+        <TextView
+            android:id="@+id/problem_add_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/problem_add"
+            android:textColor="@color/black"
+            style="@style/mg_b20"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/problem_add_back_btn"
+            app:layout_constraintTop_toTopOf="@id/guideline_category_1st_h" />
+
+        <TextView
+            android:id="@+id/problem_add_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/problem_add"
+            android:textColor="@color/black"
+            style="@style/mg_b20"
+            android:layout_marginTop="165dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/problem_add_title" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/problem_add_btn"
+            android:layout_width="265dp"
+            android:layout_height="157dp"
+            android:background="@drawable/problem_add_btn"
+            android:layout_marginTop="27dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/problem_add_subtitle" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/problem_add_next_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/category_next_btn"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/problem_add_btn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
