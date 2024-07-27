@@ -23,32 +23,44 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-
         val navController = navHostFragment.navController
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navi)
-        bottomNavigationView.setupWithNavController(navController)
+        // BottomNavigationView 설정
+        binding.bottomNavi.setupWithNavController(navController)
 
         // BottomNavigationView 아이템 선택 리스너 설정
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+        binding.bottomNavi.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                // add icon 클릭 시 NoteOptionsBottomSheet 로 이동
+                R.id.navigation_home -> {
+                    navController.navigate(R.id.navigation_home)
+                    true
+                }
+                R.id.navigation_study -> {
+                    navController.navigate(R.id.navigation_study)
+                    true
+                }
                 R.id.navigation_note -> {
                     val bottomSheet = NoteOptionsBottomSheet()
                     bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                     true
                 }
-
-                else -> {
-                    // Note 아이템이 아닌 경우 navController로 처리
-                    navController.navigate(item.itemId)
+                R.id.navigation_graph -> {
+                    navController.navigate(R.id.navigation_graph)
                     true
                 }
+                R.id.navigation_mypage -> {
+                    navController.navigate(R.id.navigation_mypage)
+                    true
+                }
+                else -> false
             }
         }
     }
 
-
+    fun hideBottomNavigation(state:Boolean){
+        if(state) binding.bottomNavi.visibility = View.GONE else binding.bottomNavi.visibility=View.VISIBLE
+    }
+    
     // Set main container padding
     fun setContainerPadding(paddingTop: Int) {
         findViewById<View>(R.id.container).setPadding(0, paddingTop, 0, 0)
