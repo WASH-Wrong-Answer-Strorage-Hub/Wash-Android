@@ -2,11 +2,14 @@ package com.wash.washandroid.presentation.base
 
 import android.os.Bundle
 import android.view.View
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ActivityMainBinding
+import com.wash.washandroid.presentation.fragment.note.NoteCameraFragment
+import com.wash.washandroid.presentation.fragment.note.NoteOptionsBottomSheet
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,7 +40,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_note -> {
-                    navController.navigate(R.id.navigation_note)
+                    val bottomSheet = NoteOptionsBottomSheet()
+                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                     true
                 }
                 R.id.navigation_graph -> {
@@ -55,5 +59,23 @@ class MainActivity : AppCompatActivity() {
 
     fun hideBottomNavigation(state:Boolean){
         if(state) binding.bottomNavi.visibility = View.GONE else binding.bottomNavi.visibility=View.VISIBLE
+    }
+    
+    // Set main container padding
+    fun setContainerPadding(paddingTop: Int) {
+        findViewById<View>(R.id.container).setPadding(0, paddingTop, 0, 0)
+    }
+
+    // Set Bottom navigation Visibility
+    fun setBottomNavigationVisibility(visibility: Int) {
+        findViewById<View>(R.id.bottom_navi).visibility = visibility
+    }
+
+    // Start camera fragment
+    fun startCameraFragment() {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, NoteCameraFragment())
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }
