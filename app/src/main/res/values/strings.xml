@@ -5,4 +5,43 @@
     <string name="navigation_note">navigation_note</string>
     <string name="navigation_graph">navigation_graph</string>
     <string name="navigation_mypage">navigation_mypage</string>
+
+    <string name="problem_add">문제 추가하기</string>
+    <string name="answer_input">정답 입력</string>
+    <string name="answer_input_edit">편집</string>
+    <string name="answer_input_done">완료</string>
+    <string name="answer">정답</string>
+    <string name="answer_input_memo">메모</string>
+    <string name="answer_input_solve">풀이 (선택)</string>
+    <string name="answer_input_paragraph">지문 (선택)</string>
+    <string name="answer_input_photo_add">문제 사진 추가하기</string>
+
+    <string name="category_problem_choice">문제 유형 선택</string>
+    <string name="category_problem_title">문제 유형을 선택해주세요!</string>
+    <string name="category_problem_subtitle">통계 분석에 필요해요!</string>
+    <string name="category_language">국어</string>
+    <string name="category_math">수학</string>
+    <string name="category_english">영어</string>
+    <string name="category_society">사회</string>
+    <string name="category_science">과학</string>
+    <string name="category_add">추가하기</string>
+    <string name="category_subfield_1">미적분</string>
+    <string name="category_subfield_2">확률과 통계</string>
+    <string name="category_subfield_3">기하</string>
+    <string name="category_subfield_4">수학1</string>
+    <string name="category_chapter_1">수열의 극한</string>
+    <string name="category_chapter_2">급수</string>
+    <string name="category_chapter_3">여러 가지 함수의 미분</string>
+    <string name="category_chapter_4">여러 가지 미분법</string>
+    <string name="category_chapter_5">도함수의 활용</string>
+    <string name="category_chapter_6">여러 가지 적분법</string>
+    <string name="category_chapter_7">정적분의 활용</string>
+    <string name="category_folder">폴더 선택</string>
+    <string name="category_folder_title">폴더를 선택해주세요!</string>
+    <string name="category_folder_1">국어</string>
+    <string name="category_folder_2">수학</string>
+    <string name="category_folder_3">영어</string>
+    <string name="category_folder_4">Untitled</string>
+    <string name="category_folder_5">2024 토플</string>
+
 </resources>

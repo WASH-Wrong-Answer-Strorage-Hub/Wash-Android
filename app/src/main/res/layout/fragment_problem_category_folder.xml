@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_category_1st_v"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_category_1st_h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="42dp" />
+
+        <ImageView
+            android:id="@+id/category_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_btn"
+            app:layout_constraintStart_toStartOf="@id/guideline_category_1st_v"
+            app:layout_constraintTop_toTopOf="@+id/guideline_category_1st_h" />
+
+        <TextView
+            android:id="@+id/category_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_folder"
+            android:textColor="@color/black"
+            style="@style/mg_r20"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/category_back_btn"
+            app:layout_constraintTop_toTopOf="@id/guideline_category_1st_h" />
+
+        <TextView
+            android:id="@+id/category_folder_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_folder_title"
+            android:textColor="@color/black"
+            style="@style/mg_18"
+            android:layout_marginTop="79dp"
+            app:layout_constraintStart_toStartOf="@id/guideline_category_1st_v"
+            app:layout_constraintTop_toBottomOf="@+id/category_folder" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_folder_1"
+            android:layout_width="360dp"
+            android:layout_height="38dp"
+            android:text="@string/category_folder_1"
+            android:textColor="@color/black"
+            style="@style/mg_16"
+            android:background="@drawable/category_choice_btn"
+            android:layout_marginTop="186dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_folder" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_folder_2"
+            android:layout_width="360dp"
+            android:layout_height="38dp"
+            android:text="@string/category_folder_2"
+            android:textColor="@color/black"
+            style="@style/mg_16"
+            android:background="@drawable/category_choice_btn"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_folder_1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_folder_3"
+            android:layout_width="360dp"
+            android:layout_height="38dp"
+            android:text="@string/category_folder_3"
+            android:textColor="@color/black"
+            style="@style/mg_16"
+            android:background="@drawable/category_choice_btn"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_folder_2" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_folder_4"
+            android:layout_width="360dp"
+            android:layout_height="38dp"
+            android:text="@string/category_folder_4"
+            android:textColor="@color/black"
+            style="@style/mg_16"
+            android:background="@drawable/category_choice_btn"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_folder_3" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_folder_5"
+            android:layout_width="360dp"
+            android:layout_height="38dp"
+            android:text="@string/category_folder_5"
+            android:textColor="@color/black"
+            style="@style/mg_16"
+            android:background="@drawable/category_choice_btn"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_folder_4" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_add"
+            android:layout_width="360dp"
+            android:layout_height="38dp"
+            android:text="@string/category_add"
+            android:textColor="@color/black"
+            style="@style/mg_16"
+            android:background="@drawable/category_choice_add_btn"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_folder_5" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/category_folder_check_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/category_check"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_add" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
