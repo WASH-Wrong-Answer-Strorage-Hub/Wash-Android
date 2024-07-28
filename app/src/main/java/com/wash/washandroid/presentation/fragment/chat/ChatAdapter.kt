@@ -3,24 +3,34 @@ package com.wash.washandroid.presentation.fragment.chat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
+import com.wash.washandroid.databinding.ItemChatBinding
+import com.wash.washandroid.model.ChatItemModels
 
-class ChatAdapter(private val messages: List<String>) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+class ChatAdapter(private val messages: List<ChatItemModels>) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textViewMessage: TextView = view.findViewById(R.id.textViewMessage)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+        val binding = ItemChatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ChatViewHolder(binding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false)
-        return ViewHolder(view)
+    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+        holder.bind(messages[position])
+
+        val context = holder.itemView.context
+        val animation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
+        holder.itemView.startAnimation(animation)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textViewMessage.text = messages[position]
-    }
+    override fun getItemCount(): Int = messages.size
 
-    override fun getItemCount() = messages.size
+    inner class ChatViewHolder(private val binding: ItemChatBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(chatMessage: ChatItemModels) {
+            binding.sender.text = chatMessage.sender
+            binding.textViewMessage.text = chatMessage.content
+        }
+    }
 }
