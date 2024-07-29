@@ -2,13 +2,11 @@
 package com.wash.washandroid.presentation.base
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ActivityMainBinding
@@ -26,16 +24,51 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-
         val navController = navHostFragment.navController
-        findViewById<BottomNavigationView>(R.id.bottom_navi)
-            .setupWithNavController(navController)
 
+        // BottomNavigationView 설정
+        binding.bottomNavi.setupWithNavController(navController)
+
+        // Splash 화면
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 add(R.id.fragment_container, SplashFragment())
             }
         }
+
+        // BottomNavigationView 설정
+        binding.bottomNavi.setupWithNavController(navController)
+
+        // BottomNavigationView 아이템 선택 리스너 설정
+        binding.bottomNavi.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    navController.navigate(R.id.navigation_home)
+                    true
+                }
+                R.id.navigation_study -> {
+                    navController.navigate(R.id.navigation_study)
+                    true
+                }
+                R.id.navigation_note -> {
+                    navController.navigate(R.id.navigation_note)
+                    true
+                }
+                R.id.navigation_graph -> {
+                    navController.navigate(R.id.navigation_graph)
+                    true
+                }
+                R.id.navigation_mypage -> {
+                    navController.navigate(R.id.navigation_mypage)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    fun hideBottomNavigation(state:Boolean){
+        if(state) binding.bottomNavi.visibility = View.GONE else binding.bottomNavi.visibility=View.VISIBLE
     }
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="mg_b25">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_b</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+    <style name="mg_b20">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_b</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="mg_b13">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_b</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="mg_r20">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="mg_18">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="mg_16">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="mg_13">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="mg_12">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="mg_11">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+    <style name="mg_8">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">8sp</item>
+    </style>
+    <style name="mg_6">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">6sp</item>
+    </style>
+</resources>
