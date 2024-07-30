@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/mypage_background_iv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="220dp"
         android:src="@drawable/ic_mypage_background"
         android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,18 +30,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="32dp"
         android:layout_marginStart="24dp"
-        />
-
-    <ImageView
-        android:id="@+id/mypage_bell_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_mypage_bell"
-        app:layout_constraintStart_toEndOf="@id/mypage_tv"
-        app:layout_constraintTop_toTopOf="@id/mypage_tv"
-        app:layout_constraintBottom_toBottomOf="@id/mypage_tv"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="199dp"
         />
 
     <ImageView
@@ -183,104 +171,126 @@
         android:layout_marginTop="30dp"
         />
 
-    <TextView
-        android:id="@+id/mypage_subscribe_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="구독"
-        android:textSize="15dp"
-        android:textColor="@color/information2"
-        android:fontFamily="@font/mangoddobak_r"
+    <LinearLayout
+        android:id="@+id/mypage_subscribe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_view_1"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_marginStart="24dp">
 
-    <ImageButton
-        android:id="@+id/mypage_subscribe_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_mypage_next_btn"
-        app:layout_constraintTop_toTopOf="@id/mypage_subscribe_tv"
-        app:layout_constraintBottom_toBottomOf="@id/mypage_subscribe_tv"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="24dp"
-        />
+        <TextView
+            android:id="@+id/mypage_subscribe_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="구독"
+            android:textSize="15dp"
+            android:textColor="@color/information2"
+            android:fontFamily="@font/mangoddobak_r"
+            android:layout_marginTop="20dp"
+            />
+
+        <ImageButton
+            android:id="@+id/mypage_subscribe_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_mypage_next_btn"
+            app:layout_constraintBottom_toBottomOf="@id/mypage_subscribe_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/mypage_subscribe_tv"
+            android:layout_marginStart="270dp"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/mypage_line_1"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/lighter_gray"
-        app:layout_constraintTop_toBottomOf="@id/mypage_subscribe_tv"
+        app:layout_constraintTop_toBottomOf="@id/mypage_subscribe_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
         android:layout_marginStart="24dp"
         />
 
-    <TextView
-        android:id="@+id/mypage_edit_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="계정 정보 수정"
-        android:textSize="15dp"
-        android:textColor="@color/information2"
-        android:fontFamily="@font/mangoddobak_r"
+    <LinearLayout
+        android:id="@+id/mypage_edit_name_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_line_1"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_marginStart="24dp">
 
-    <ImageButton
-        android:id="@+id/mypage_edit_name_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_mypage_next_btn"
-        app:layout_constraintTop_toTopOf="@id/mypage_edit_name_tv"
-        app:layout_constraintBottom_toBottomOf="@id/mypage_edit_name_tv"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="24dp"
-        />
+        <TextView
+            android:id="@+id/mypage_edit_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="계정 정보 수정"
+            android:textSize="15dp"
+            android:textColor="@color/information2"
+            android:fontFamily="@font/mangoddobak_r"
+            android:layout_marginTop="20dp"
+            />
+
+        <ImageButton
+            android:id="@+id/mypage_edit_name_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_mypage_next_btn"
+            app:layout_constraintTop_toTopOf="@id/mypage_edit_name_tv"
+            app:layout_constraintBottom_toBottomOf="@id/mypage_edit_name_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="270dp"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/mypage_line_2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/lighter_gray"
-        app:layout_constraintTop_toBottomOf="@id/mypage_edit_name_tv"
+        app:layout_constraintTop_toBottomOf="@id/mypage_edit_name_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
         android:layout_marginStart="24dp"
         />
 
-    <TextView
-        android:id="@+id/mypage_change_password_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="비밀번호 변경"
-        android:textSize="15dp"
-        android:textColor="@color/information2"
-        android:fontFamily="@font/mangoddobak_r"
+    <LinearLayout
+        android:id="@+id/mypage_change_password_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_line_2"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_marginStart="24dp">
 
-    <ImageButton
-        android:id="@+id/mypage_change_password_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_mypage_next_btn"
-        app:layout_constraintTop_toTopOf="@id/mypage_change_password_tv"
-        app:layout_constraintBottom_toBottomOf="@id/mypage_change_password_tv"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="24dp"
-        />
+        <TextView
+            android:id="@+id/mypage_change_password_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="비밀번호 변경"
+            android:textSize="15dp"
+            android:textColor="@color/information2"
+            android:fontFamily="@font/mangoddobak_r"
+            android:layout_marginTop="20dp"
+            />
+
+        <ImageButton
+            android:id="@+id/mypage_change_password_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_mypage_next_btn"
+            app:layout_constraintTop_toTopOf="@id/mypage_change_password_tv"
+            app:layout_constraintBottom_toBottomOf="@id/mypage_change_password_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="270dp"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/mypage_view_2"
@@ -288,50 +298,63 @@
         android:layout_height="5dp"
         android:background="@color/lighter_gray"
         android:scaleType="fitXY"
-        app:layout_constraintTop_toBottomOf="@id/mypage_change_password_btn"
+        app:layout_constraintTop_toBottomOf="@id/mypage_change_password_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
         />
 
-    <TextView
-        android:id="@+id/mypage_logout_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="로그아웃"
-        android:textSize="15dp"
-        android:textColor="@color/information2"
-        android:fontFamily="@font/mangoddobak_r"
+    <LinearLayout
+        android:id="@+id/mypage_logout_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_view_2"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_marginStart="24dp">
+
+        <TextView
+            android:id="@+id/mypage_logout_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그아웃"
+            android:textSize="15dp"
+            android:textColor="@color/information2"
+            android:fontFamily="@font/mangoddobak_r"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/mypage_line_3"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/lighter_gray"
-        app:layout_constraintTop_toBottomOf="@id/mypage_logout_tv"
+        app:layout_constraintTop_toBottomOf="@id/mypage_logout_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp"
         android:layout_marginStart="24dp"
         />
 
-    <TextView
-        android:id="@+id/mypage_withdrawal_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="회원탈퇴"
-        android:textSize="15dp"
-        android:textColor="@color/information2"
-        android:fontFamily="@font/mangoddobak_r"
+    <LinearLayout
+        android:id="@+id/mypage_withdrawal_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_line_3"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_marginStart="24dp">
+
+        <TextView
+            android:id="@+id/mypage_withdrawal_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회원탈퇴"
+            android:textSize="15dp"
+            android:textColor="@color/information2"
+            android:fontFamily="@font/mangoddobak_r"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
