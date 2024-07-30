@@ -56,4 +56,6 @@ dependencies {
 
     // lottie 애니메이션
     implementation ("com.airbnb.android:lottie:6.3.0")
+    // naver login
+    implementation("com.navercorp.nid:oauth-jdk8:5.9.1")
 }
