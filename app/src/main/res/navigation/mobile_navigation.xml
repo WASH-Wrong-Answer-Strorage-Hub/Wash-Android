@@ -17,11 +17,25 @@
         android:label="@string/navigation_study"
         tools:layout="@layout/fragment_note" />
 
-    <fragment
+    <!-- Note Options BottomSheetDialogFragment -->
+    <dialog
         android:id="@+id/navigation_note"
-        android:name="com.wash.washandroid.presentation.fragment.note.NoteFragment"
+        android:name="com.wash.washandroid.presentation.fragment.note.NoteOptionsBottomSheet"
         android:label="@string/navigation_note"
-        tools:layout="@layout/fragment_study" />
+        tools:layout="@layout/fragment_study" >
+
+        <action
+            android:id="@+id/action_navigation_note_to_navigation_note_cam"
+            app:destination="@id/navigation_note_cam" />
+        <action
+            android:id="@+id/action_navigation_note_to_navigation_note_select_area"
+            app:destination="@id/navigation_note_select_area" >
+            <argument
+                android:name="imageUri"
+                app:argType="string"
+                android:defaultValue="0" />
+        </action>
+    </dialog>
 
     <fragment
         android:id="@+id/navigation_graph"
@@ -89,5 +103,38 @@
             android:id="@+id/action_navigation_problem_category_folder_to_chapter_fragment"
             app:destination="@id/navigation_problem_category_chapter"
             app:popUpTo="@id/navigation_problem_category_chapter" />
+    </fragment>
+
+    <!-- Note Camera Fragment -->
+    <fragment
+        android:id="@+id/navigation_note_cam"
+        android:name="com.wash.washandroid.presentation.fragment.note.NoteCameraFragment"
+        tools:layout="@layout/fragment_note_camera">
+        <argument
+            android:name="imgUri"
+            app:argType="string"
+            android:defaultValue="0"
+            app:nullable="false"/>
+        <action
+            android:id="@+id/action_navigation_note_cam_to_navigation_note_select_area"
+            app:destination="@id/navigation_note_select_area" >
+            <argument
+                android:name="imgUri"
+                app:argType="string"
+                android:defaultValue="0"
+                app:nullable="false"/>
+        </action>
+    </fragment>
+
+    <!-- Note Select Area Fragment -->
+    <fragment
+        android:id="@+id/navigation_note_select_area"
+        android:name="com.wash.washandroid.presentation.fragment.note.NoteSelectAreaFragment"
+        tools:layout="@layout/fragment_note_select_area" >
+        <argument
+            android:name="imgUri"
+            app:argType="string"
+            android:defaultValue="0"
+            app:nullable="false"/>
     </fragment>
 </navigation>

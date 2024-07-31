@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.wash.washandroid.R
@@ -48,7 +50,7 @@ class NoteCameraFragment : Fragment() {
         (activity as MainActivity).setContainerPadding(0)
 
         // Bottom navigation bar 숨기기
-        (activity as MainActivity).setBottomNavigationVisibility(View.GONE)
+        (activity as MainActivity).hideBottomNavigation(true)
 
         outputDirectory = getOutputDirectory()
 
@@ -122,14 +124,9 @@ class NoteCameraFragment : Fragment() {
                     val savedUri = Uri.fromFile(photoFile)
                     Toast.makeText(requireContext(), "Photo capture succeeded: $savedUri", Toast.LENGTH_SHORT).show()
 
-                    // 미디어 스토어에 파일 등록
-                    MediaScannerConnection.scanFile(
-                        context,
-                        arrayOf(photoFile.toString()),
-                        null
-                    ) { path, uri ->
-                        // 파일이 미디어 스토어에 등록된 후 수행할 작업
-                    }
+                    // NoteSelectAreaFragment로 이미지 URI 전달
+                    val imgUri = bundleOf("imgUri" to savedUri.toString())
+                    findNavController().navigate(R.id.action_navigation_note_cam_to_navigation_note_select_area, imgUri)
                 }
 
             })
@@ -167,9 +164,8 @@ class NoteCameraFragment : Fragment() {
         // 원래 패딩을 복원
         (activity as MainActivity).setContainerPadding(originalPaddingTop)
 
-        // Bottom navigation bar 다시 보이게 설정
-        (activity as MainActivity).setBottomNavigationVisibility(View.VISIBLE)
-
+        // Bottom navigation bar
+        (activity as MainActivity).hideBottomNavigation(false)
         _binding = null
     }
 

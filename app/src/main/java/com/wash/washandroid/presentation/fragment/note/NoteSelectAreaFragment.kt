@@ -1,73 +1,73 @@
 package com.wash.washandroid.presentation.fragment.note
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentNoteSelectAreaBinding
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import com.wash.washandroid.presentation.base.MainActivity
 
 class NoteSelectAreaFragment : Fragment() {
 
     private var _binding: FragmentNoteSelectAreaBinding? = null
     private val binding get() = _binding!!
+    private var originalPaddingTop: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNoteSelectAreaBinding.inflate(inflater, container, false)
+        Toast.makeText(requireContext(), "select area fragment", Toast.LENGTH_SHORT).show()
+        // Bottom navigation bar 숨기기
+        (activity as MainActivity).hideBottomNavigation(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Glide를 사용하여 이미지 로드
-        Glide.with(this)
-            .asBitmap()
-            .load(R.drawable.image) // 여기에 실제 이미지 경로 또는 URL을 입력하세요
-            .into(object : SimpleTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    binding.ivCaptured.setImageBitmap(resource)
-                    binding.btnCrop.setOnClickListener {
-                        val overlay = binding.cropOverlayView
-                        val croppedBitmap = getCroppedBitmap(resource, overlay.rect)
-                        saveBitmapToFile(croppedBitmap, "cropped_image.jpg")
-                    }
-                }
-            })
-    }
+        // 현재 패딩을 저장하고 0으로 설정
+        originalPaddingTop = (activity as MainActivity).findViewById<View>(R.id.container).paddingTop
+        (activity as MainActivity).setContainerPadding(0)
 
-    private fun getCroppedBitmap(source: Bitmap, rect: Rect): Bitmap {
-        return Bitmap.createBitmap(source, rect.left, rect.top, rect.width(), rect.height())
-    }
+        // Bottom navigation bar 숨기기
+        (activity as MainActivity).hideBottomNavigation(true)
 
-    private fun saveBitmapToFile(bitmap: Bitmap, fileName: String) {
-        val file = File(requireContext().getExternalFilesDir(null), fileName)
-        try {
-            val outputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
-        } catch (e: IOException) {
-            Log.e("NoteSelectAreaFragment", "Error saving bitmap", e)
+        // bundle로 이미지 uri 수신
+        val imageUri = arguments?.getString("imgUri")
+        if (imageUri == "0") {
+            Toast.makeText(requireContext(), "이미지 불러오기 실패", Toast.LENGTH_SHORT).show()
+        } else {
+            loadCapturedImage(Uri.parse(imageUri))
         }
+
+        binding.btnCrop.setOnClickListener {
+            // Crop and save the image here
+        }
+    }
+
+    private fun loadCapturedImage(uri: Uri) {
+        Glide.with(this)
+            .load(uri)
+            .into(binding.ivCaptured)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // 원래 패딩을 복원
+        (activity as MainActivity).setContainerPadding(originalPaddingTop)
+
+        // bottom navigation 보이게
+        (activity as MainActivity).hideBottomNavigation(false)
+
         _binding = null
     }
 }

@@ -4,28 +4,34 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.NoteBottomSheetOptionsBinding
 import com.wash.washandroid.presentation.base.MainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: NoteBottomSheetOptionsBinding? = null
     private val binding get() = _binding!!
     private val REQUEST_PERMISSIONS = 100
+    private lateinit var launcher: ActivityResultLauncher<String>
 
-    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            setGallery(it)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +43,22 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = NoteBottomSheetOptionsBinding.inflate(inflater, container, false)
+
+        checkPermissions {  }
+
+        Toast.makeText(requireContext(), "oncreate view", Toast.LENGTH_SHORT).show()
+        // gallery launcher 초기화
+        launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            Toast.makeText(requireContext(), "gallery result received : ${uri}", Toast.LENGTH_SHORT).show()
+            Log.d("fraglog", "Gallery result received")
+            uri?.let {
+                Log.d("fraglog", it.toString())
+                val imgUri = bundleOf("imgUri" to it.toString())
+                // select area fragment로 이동
+                findNavController().navigate(R.id.action_navigation_note_to_navigation_note_select_area, imgUri)
+                dismiss()
+            } ?: Log.d("fraglog", "Uri is null")
+        }
         return binding.root
     }
 
@@ -51,7 +73,8 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
         // 앨범에서 선택하기
         binding.buttonGallery.setOnClickListener {
-            checkPermissions { openGallery() }
+            launcher.launch("image/*")
+            Log.d("fraglog", "buttongallery")
             dismiss()
         }
 
@@ -88,19 +111,33 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
     // start Camera Fragment
     private fun startCameraFragment() {
-//        Toast.makeText(requireContext(), "Starting Camera Fragment", Toast.LENGTH_SHORT).show()
-        (activity as? MainActivity)?.startCameraFragment() // dialog이므로 main activity를 통해 트랜잭션함.
+        val action = R.id.action_navigation_note_to_navigation_note_cam
+        findNavController().navigate(action)
+        dismiss() // BottomSheet를 닫습니다.
     }
 
-    private fun openGallery() {
-//        Toast.makeText(requireContext(), "Opening Gallery", Toast.LENGTH_SHORT).show()
-        galleryLauncher.launch("image/*")
-    }
+    /**
+     * 갤러리 실행, imgPath에 파일 경로 저장
+     */
+    fun setGallery(uri: Uri?) {
+        Log.d("fraglog", "set gallery")
+        uri?.let {
+            lifecycleScope.launch {
+                try {
+                    val imgUri = bundleOf("imgUri" to it.toString())
+                    Log.d("fraglog", "setGallery: imgPath = ${it.toString()}")
 
-    private fun setGallery(uri: Uri) {
-//        binding.imageView.visibility = View.VISIBLE
-//        binding.imageView.setImageURI(uri)
-    }
+                    // 다음 프래그먼트로 전환
+                    withContext(Dispatchers.Main) {
+                        // select area fragment로 이동
+                        findNavController().navigate(R.id.action_navigation_note_to_navigation_note_select_area, imgUri)
+                    }
+                } catch (e: Exception) {
+                    Log.e("fraglog", "Image selection failed", e)
+                    }
+                }
+            }
+        }
 
     /**
      * 권한이 모두 승인된 경우 호출됨.
