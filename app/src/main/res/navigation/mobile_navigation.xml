@@ -3,7 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.wash.washandroid.presentation.fragment.splash.SplashFragment"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_socialLoginFragment"
+            app:destination="@id/navigation_social_login"
+            app:popUpTo="@id/navigation_social_login"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_social_login"
+        android:name="com.wash.washandroid.presentation.fragment.login.SocialLoginFragment"
+        tools:layout="@layout/fragment_social_login">
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_home"
@@ -90,4 +106,5 @@
             app:destination="@id/navigation_problem_category_chapter"
             app:popUpTo="@id/navigation_problem_category_chapter" />
     </fragment>
+
 </navigation>

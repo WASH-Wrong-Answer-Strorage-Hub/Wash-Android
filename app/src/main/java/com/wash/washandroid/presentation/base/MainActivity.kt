@@ -29,13 +29,6 @@ class MainActivity : AppCompatActivity() {
         // BottomNavigationView 설정
         binding.bottomNavi.setupWithNavController(navController)
 
-        // Splash 화면
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                add(R.id.fragment_container, SplashFragment())
-            }
-        }
 
         // BottomNavigationView 설정
         binding.bottomNavi.setupWithNavController(navController)
@@ -66,6 +59,13 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+        // SplashFragment를 가장 먼저 보여줌
+        if (savedInstanceState == null) {
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+            navHostFragment.navController.setGraph(R.navigation.mobile_navigation)
+        }
+
     }
 
     fun hideBottomNavigation(state:Boolean){

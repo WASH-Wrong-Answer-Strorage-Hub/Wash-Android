@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.navercorp.nid.NaverIdLoginSDK
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentMypageBinding
 
@@ -39,6 +40,10 @@ class MypageFragment : Fragment() {
             fragmentTransaction.replace(R.id.fragment_container, WithdrawalAccountFragment())
             fragmentTransaction.addToBackStack(null)
             fragmentTransaction.commit()
+        }
+
+        binding.mypageLogoutLayout.setOnClickListener {
+            NaverIdLoginSDK.logout()
         }
     }
 
