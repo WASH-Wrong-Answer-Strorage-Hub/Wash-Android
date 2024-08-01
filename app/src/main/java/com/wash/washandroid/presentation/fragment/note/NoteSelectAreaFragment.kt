@@ -25,7 +25,6 @@ class NoteSelectAreaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNoteSelectAreaBinding.inflate(inflater, container, false)
-        Toast.makeText(requireContext(), "select area fragment", Toast.LENGTH_SHORT).show()
         // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
         return binding.root
@@ -44,9 +43,19 @@ class NoteSelectAreaFragment : Fragment() {
         // bundle로 이미지 uri 수신
         val imageUri = arguments?.getString("imgUri")
         if (imageUri == "0") {
-            Toast.makeText(requireContext(), "이미지 불러오기 실패", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "imgUri : 이미지 불러오기 실패", Toast.LENGTH_SHORT).show()
         } else {
+            Toast.makeText(requireContext(), "imgUri : 이미지 불러오기 성공", Toast.LENGTH_SHORT).show()
             loadCapturedImage(Uri.parse(imageUri))
+        }
+
+        // imguri2
+        val imageUri2 = arguments?.getString("imgUri2")
+        if(imageUri2 == "0") {
+            Toast.makeText(requireContext(), "imgUri2 : 이미지 불러오기 실패", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireContext(), "imgUr2 : 이미지 불러오기 성공", Toast.LENGTH_SHORT).show()
+            loadCapturedImage(Uri.parse((imageUri2)))
         }
 
         binding.btnCrop.setOnClickListener {

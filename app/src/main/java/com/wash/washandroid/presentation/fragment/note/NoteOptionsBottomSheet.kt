@@ -30,7 +30,7 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
     private var _binding: NoteBottomSheetOptionsBinding? = null
     private val binding get() = _binding!!
     private val REQUEST_PERMISSIONS = 100
-    private lateinit var launcher: ActivityResultLauncher<String>
+    private lateinit var galleryLauncher: ActivityResultLauncher<String>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,17 +46,17 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
         checkPermissions {  }
 
-        Toast.makeText(requireContext(), "oncreate view", Toast.LENGTH_SHORT).show()
         // gallery launcher 초기화
-        launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             Toast.makeText(requireContext(), "gallery result received : ${uri}", Toast.LENGTH_SHORT).show()
             Log.d("fraglog", "Gallery result received")
             uri?.let {
                 Log.d("fraglog", it.toString())
-                val imgUri = bundleOf("imgUri" to it.toString())
+                val imgUri = bundleOf("imgUri2" to it.toString())
                 // select area fragment로 이동
                 findNavController().navigate(R.id.action_navigation_note_to_navigation_note_select_area, imgUri)
                 dismiss()
+
             } ?: Log.d("fraglog", "Uri is null")
         }
         return binding.root
@@ -73,9 +73,8 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
         // 앨범에서 선택하기
         binding.buttonGallery.setOnClickListener {
-            launcher.launch("image/*")
+            galleryLauncher.launch("image/*")
             Log.d("fraglog", "buttongallery")
-            dismiss()
         }
 
         // 취소 버튼
@@ -116,28 +115,6 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
         dismiss() // BottomSheet를 닫습니다.
     }
 
-    /**
-     * 갤러리 실행, imgPath에 파일 경로 저장
-     */
-    fun setGallery(uri: Uri?) {
-        Log.d("fraglog", "set gallery")
-        uri?.let {
-            lifecycleScope.launch {
-                try {
-                    val imgUri = bundleOf("imgUri" to it.toString())
-                    Log.d("fraglog", "setGallery: imgPath = ${it.toString()}")
-
-                    // 다음 프래그먼트로 전환
-                    withContext(Dispatchers.Main) {
-                        // select area fragment로 이동
-                        findNavController().navigate(R.id.action_navigation_note_to_navigation_note_select_area, imgUri)
-                    }
-                } catch (e: Exception) {
-                    Log.e("fraglog", "Image selection failed", e)
-                    }
-                }
-            }
-        }
 
     /**
      * 권한이 모두 승인된 경우 호출됨.

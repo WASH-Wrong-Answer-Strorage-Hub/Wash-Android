@@ -27,11 +27,12 @@
         <action
             android:id="@+id/action_navigation_note_to_navigation_note_cam"
             app:destination="@id/navigation_note_cam" />
+
         <action
             android:id="@+id/action_navigation_note_to_navigation_note_select_area"
             app:destination="@id/navigation_note_select_area" >
             <argument
-                android:name="imageUri"
+                android:name="imageUri2"
                 app:argType="string"
                 android:defaultValue="0" />
         </action>
@@ -133,6 +134,12 @@
         tools:layout="@layout/fragment_note_select_area" >
         <argument
             android:name="imgUri"
+            app:argType="string"
+            android:defaultValue="0"
+            app:nullable="false"/>
+
+        <argument
+            android:name="imgUri2"
             app:argType="string"
             android:defaultValue="0"
             app:nullable="false"/>

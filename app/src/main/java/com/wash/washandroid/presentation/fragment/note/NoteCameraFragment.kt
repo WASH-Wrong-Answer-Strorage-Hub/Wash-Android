@@ -125,6 +125,7 @@ class NoteCameraFragment : Fragment() {
                     Toast.makeText(requireContext(), "Photo capture succeeded: $savedUri", Toast.LENGTH_SHORT).show()
 
                     // NoteSelectAreaFragment로 이미지 URI 전달
+                    Log.d("fraglog", "captured pic uri : $savedUri")
                     val imgUri = bundleOf("imgUri" to savedUri.toString())
                     findNavController().navigate(R.id.action_navigation_note_cam_to_navigation_note_select_area, imgUri)
                 }
