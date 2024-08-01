@@ -43,23 +43,27 @@ class NoteSelectAreaFragment : Fragment() {
         // bundle로 이미지 uri 수신
         val imageUri = arguments?.getString("imgUri")
         if (imageUri == "0") {
-            Toast.makeText(requireContext(), "imgUri : 이미지 불러오기 실패", Toast.LENGTH_SHORT).show()
+            Log.d("fraglog", "imgUri : 이미지 불러오기 실패")
         } else {
-            Toast.makeText(requireContext(), "imgUri : 이미지 불러오기 성공", Toast.LENGTH_SHORT).show()
+            Log.d("fraglog", "imgUri : 이미지 불러오기 성공")
             loadCapturedImage(Uri.parse(imageUri))
         }
 
         // imguri2
         val imageUri2 = arguments?.getString("imgUri2")
         if(imageUri2 == "0") {
-            Toast.makeText(requireContext(), "imgUri2 : 이미지 불러오기 실패", Toast.LENGTH_SHORT).show()
+            Log.d("fraglog", "imgUri2 : 이미지 불러오기 실패")
         } else {
-            Toast.makeText(requireContext(), "imgUr2 : 이미지 불러오기 성공", Toast.LENGTH_SHORT).show()
+            Log.d("fraglog", "imgUri2 : 이미지 불러오기 성공")
             loadCapturedImage(Uri.parse((imageUri2)))
         }
 
         binding.btnCrop.setOnClickListener {
-            // Crop and save the image here
+
+        }
+
+        binding.btnBack.setOnClickListener {
+            requireActivity().onBackPressed()
         }
     }
 
