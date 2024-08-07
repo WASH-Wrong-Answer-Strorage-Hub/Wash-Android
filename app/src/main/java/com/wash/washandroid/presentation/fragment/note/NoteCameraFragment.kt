@@ -165,8 +165,6 @@ class NoteCameraFragment : Fragment() {
         // 원래 패딩을 복원
         (activity as MainActivity).setContainerPadding(originalPaddingTop)
 
-        // Bottom navigation bar
-        (activity as MainActivity).hideBottomNavigation(false)
         _binding = null
     }
 

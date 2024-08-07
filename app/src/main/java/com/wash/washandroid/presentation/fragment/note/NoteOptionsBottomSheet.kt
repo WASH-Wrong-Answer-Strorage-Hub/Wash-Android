@@ -44,6 +44,9 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
     ): View {
         _binding = NoteBottomSheetOptionsBinding.inflate(inflater, container, false)
 
+        // Bottom navigation bar 보이게
+        (activity as MainActivity).hideBottomNavigation(false)
+
         checkPermissions {  }
 
         // gallery launcher 초기화

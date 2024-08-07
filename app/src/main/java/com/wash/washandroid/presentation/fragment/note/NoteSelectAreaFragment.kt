@@ -78,9 +78,6 @@ class NoteSelectAreaFragment : Fragment() {
         // 원래 패딩을 복원
         (activity as MainActivity).setContainerPadding(originalPaddingTop)
 
-        // bottom navigation 보이게
-        (activity as MainActivity).hideBottomNavigation(false)
-
         _binding = null
     }
 }
