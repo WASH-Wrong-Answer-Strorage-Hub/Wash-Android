@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         // BottomNavigationView 설정
         binding.bottomNavi.setupWithNavController(navController)
+        binding.bottomNavi.itemIconTintList = null
 
         // BottomNavigationView 아이템 선택 리스너 설정
         binding.bottomNavi.setOnItemSelectedListener { item ->
