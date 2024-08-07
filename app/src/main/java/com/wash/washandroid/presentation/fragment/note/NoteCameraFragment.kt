@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -97,35 +98,61 @@ class NoteCameraFragment : Fragment() {
         val adapter = QuestionModePagerAdapter(requireActivity())
         viewPager.adapter = adapter
 
-        // 커스텀 폰트 로드
-        val typeface = ResourcesCompat.getFont(requireContext(), R.font.mangoddobak_r)
-
-        // 탭 텍스트 폰트 설정
-        for (i in 0 until tabLayout.tabCount) {
-            val tab = tabLayout.getTabAt(i)
-            val tabTextView = TextView(requireContext())
-            tabTextView.text = tab?.text
-            tabTextView.typeface = typeface
-            tabTextView.textSize = 15f  // 텍스트 크기 설정
-            tabTextView.setTextColor(ResourcesCompat.getColor(resources, R.color.gray, null)) // 탭의 기본 텍스트 색상 설정
-
-            tab?.customView = tabTextView
-        }
-
         // TabLayoutMediator를 사용하여 TabLayout과 ViewPager2 연결
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = adapter.getPageTitle(position)
+            val tabTextView = TextView(requireContext())
+
+            // 커스텀 폰트 로드
+            val typeface = ResourcesCompat.getFont(requireContext(), R.font.mangoddobak_r)
+
+            tabTextView.text = adapter.getPageTitle(position)
+            tabTextView.typeface = typeface
+            tabTextView.textSize = 13f  // 텍스트 크기 설정
+            tabTextView.gravity = Gravity.CENTER
+            tabTextView.setTextColor(
+                if (position == viewPager.currentItem) ContextCompat.getColor(requireContext(), R.color.white)
+                else ContextCompat.getColor(requireContext(), R.color.middle_gray)
+            ) // 탭의 기본 텍스트 색상 설정
+
+            tab.customView = tabTextView
         }.attach()
 
         // viewpager 모드 변경 리스너 설정
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                // 탭 변경 시 로그 출력
-                val mode = if (position == 0) "한 문제" else "여러 문제"
-                Log.d("fraglog", "현재 모드 : $mode")
+                onTabOrPageSelected(position)
             }
         })
+
+        // 탭 선택 리스너 설정
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val position = tab.position
+                viewPager.currentItem = position
+                onTabOrPageSelected(position)
+
+                Log.d("fraglog", "탭 $position 클릭됨")
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                val position = tab.position
+                viewPager.currentItem = position
+                onTabOrPageSelected(position)
+
+                Log.d("fraglog", "탭 $position 클릭됨")
+            }
+        })
+    }
+
+    // 모드 전환 시 로그 출력 및 추가 작업
+    private fun onTabOrPageSelected(position: Int) {
+        // 탭 변경 시 로그 출력
+        val mode = if (position == 0) "한 문제" else "여러 문제"
+        Log.d("fraglog", "현재 모드 : $mode")
+        updateTabColors(position)
     }
 
     private fun setupTabColors() {
@@ -144,10 +171,10 @@ class NoteCameraFragment : Fragment() {
         for (i in 0 until tabLayout.tabCount) {
             val tab = tabLayout.getTabAt(i)
             tab?.customView?.let { tabView ->
-                val textView = tabView.findViewById<TextView>(R.id.note_tab_text)
+                val textView = tabView as TextView
                 textView.setTextColor(
                     if (i == selectedPosition) ContextCompat.getColor(requireContext(), R.color.white)
-                    else ContextCompat.getColor(requireContext(), R.color.gray)
+                    else ContextCompat.getColor(requireContext(), R.color.middle_gray)
                 )
             }
         }

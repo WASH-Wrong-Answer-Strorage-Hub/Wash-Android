@@ -33,7 +33,7 @@
     <View
         android:id="@+id/view"
         android:layout_width="wrap_content"
-        android:layout_height="158dp"
+        android:layout_height="138dp"
         android:background="#66000000"
         android:layout_gravity="center|bottom"/>
 
@@ -42,8 +42,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="90dp"
         app:tabBackground="@android:color/transparent"
+        app:tabIndicatorColor="@android:color/transparent"
+        app:tabIndicatorHeight="0dp"
         app:tabTextColor="@color/gray"
         app:tabSelectedTextColor="@color/white">
 
