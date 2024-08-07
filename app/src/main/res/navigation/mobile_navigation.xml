@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_chat">
+    app:startDestination="@+id/navigation_problem_info">
 
     <fragment
         android:id="@+id/navigation_home"
@@ -34,6 +34,18 @@
         android:name="com.wash.washandroid.presentation.fragment.mypage.MypageFragment"
         android:label="@string/navigation_mypage"
         tools:layout="@layout/fragment_mypage" />
+
+    <fragment
+        android:id="@+id/navigation_problem_info"
+        android:name="com.wash.washandroid.presentation.fragment.problem.ProblemInfoFragment"
+        tools:layout="@layout/fragment_problem_info" >
+        <action
+            android:id="@+id/action_navigation_problem_info_to_chat_fragment"
+            app:destination="@id/navigation_chat"
+            app:popUpTo="@id/navigation_chat"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_category_subject"
