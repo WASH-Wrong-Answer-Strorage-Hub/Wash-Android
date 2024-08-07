@@ -7,8 +7,7 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/view_finder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </androidx.camera.view.PreviewView>
+        android:layout_height="match_parent"></androidx.camera.view.PreviewView>
 
     <TextView
         android:id="@+id/tv_title"
@@ -21,21 +20,19 @@
         android:textColor="@color/white"
         android:textSize="15sp" />
 
-    <ImageView
-        android:id="@+id/btn_close"
-        android:layout_width="27.28dp"
-        android:layout_height="27.28dp"
-        android:layout_gravity="end"
-        android:layout_margin="23dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        app:tint="@color/white" />
-
     <View
         android:id="@+id/view"
         android:layout_width="wrap_content"
         android:layout_height="138dp"
-        android:background="#66000000"
-        android:layout_gravity="center|bottom"/>
+        android:layout_gravity="center|bottom"
+        android:background="#66000000" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_gravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
@@ -46,28 +43,30 @@
         app:tabBackground="@android:color/transparent"
         app:tabIndicatorColor="@android:color/transparent"
         app:tabIndicatorHeight="0dp"
-        app:tabTextColor="@color/gray"
-        app:tabSelectedTextColor="@color/white">
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/gray">
 
         <com.google.android.material.tabs.TabItem
+            style="@style/mg_15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/mg_15"
             android:text="한 문제" />
 
         <com.google.android.material.tabs.TabItem
+            style="@style/mg_15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/mg_15"
             android:text="여러 문제" />
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="600dp"
-        android:layout_gravity="center"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="27.28dp"
+        android:layout_height="27.28dp"
+        android:layout_gravity="end"
+        android:layout_margin="23dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="@color/white" />
 
     <ImageView
         android:id="@+id/cameraCaptureButton"

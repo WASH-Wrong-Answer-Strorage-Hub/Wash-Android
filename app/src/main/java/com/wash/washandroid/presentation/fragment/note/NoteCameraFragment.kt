@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
@@ -51,7 +52,6 @@ class NoteCameraFragment : Fragment() {
         viewPager = binding.viewPager
 
         setupViewPager()
-        setupTabColors()
 
         return binding.root
     }
@@ -74,7 +74,6 @@ class NoteCameraFragment : Fragment() {
 
         binding.btnClose.setOnClickListener {
             requireActivity().onBackPressed()
-            Log.d("fraglog", "btn close clicked")
         }
 
         binding.btnSwitchCamera.setOnClickListener {
@@ -114,6 +113,11 @@ class NoteCameraFragment : Fragment() {
                 else ContextCompat.getColor(requireContext(), R.color.middle_gray)
             ) // 탭의 기본 텍스트 색상 설정
 
+            tabTextView.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+
             tab.customView = tabTextView
         }.attach()
 
@@ -131,6 +135,7 @@ class NoteCameraFragment : Fragment() {
                 val position = tab.position
                 viewPager.currentItem = position
                 onTabOrPageSelected(position)
+                updateTabColors(tab.position)
 
                 Log.d("fraglog", "탭 $position 클릭됨")
             }
@@ -153,18 +158,6 @@ class NoteCameraFragment : Fragment() {
         val mode = if (position == 0) "한 문제" else "여러 문제"
         Log.d("fraglog", "현재 모드 : $mode")
         updateTabColors(position)
-    }
-
-    private fun setupTabColors() {
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                updateTabColors(tab.position)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
     }
 
     private fun updateTabColors(selectedPosition: Int) {
