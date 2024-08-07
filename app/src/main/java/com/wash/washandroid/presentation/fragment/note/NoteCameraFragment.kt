@@ -2,13 +2,13 @@ package com.wash.washandroid.presentation.fragment.note
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -16,9 +16,13 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentNoteCameraBinding
 import com.wash.washandroid.presentation.base.MainActivity
@@ -33,12 +37,21 @@ class NoteCameraFragment : Fragment() {
     private lateinit var outputDirectory: File
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var originalPaddingTop: Int = 0
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentNoteCameraBinding.inflate(inflater, container, false)
+
+        tabLayout = binding.tabLayout
+        viewPager = binding.viewPager
+
+        setupViewPager()
+        setupTabColors()
+
         return binding.root
     }
 
@@ -60,6 +73,7 @@ class NoteCameraFragment : Fragment() {
 
         binding.btnClose.setOnClickListener {
             requireActivity().onBackPressed()
+            Log.d("fraglog", "btn close clicked")
         }
 
         binding.btnSwitchCamera.setOnClickListener {
@@ -75,6 +89,67 @@ class NoteCameraFragment : Fragment() {
             startCamera()
         } else {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+        }
+    }
+
+    private fun setupViewPager() {
+        // 어댑터 생성
+        val adapter = QuestionModePagerAdapter(requireActivity())
+        viewPager.adapter = adapter
+
+        // 커스텀 폰트 로드
+        val typeface = ResourcesCompat.getFont(requireContext(), R.font.mangoddobak_r)
+
+        // 탭 텍스트 폰트 설정
+        for (i in 0 until tabLayout.tabCount) {
+            val tab = tabLayout.getTabAt(i)
+            val tabTextView = TextView(requireContext())
+            tabTextView.text = tab?.text
+            tabTextView.typeface = typeface
+            tabTextView.textSize = 15f  // 텍스트 크기 설정
+            tabTextView.setTextColor(ResourcesCompat.getColor(resources, R.color.gray, null)) // 탭의 기본 텍스트 색상 설정
+
+            tab?.customView = tabTextView
+        }
+
+        // TabLayoutMediator를 사용하여 TabLayout과 ViewPager2 연결
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = adapter.getPageTitle(position)
+        }.attach()
+
+        // viewpager 모드 변경 리스너 설정
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                // 탭 변경 시 로그 출력
+                val mode = if (position == 0) "한 문제" else "여러 문제"
+                Log.d("fraglog", "현재 모드 : $mode")
+            }
+        })
+    }
+
+    private fun setupTabColors() {
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                updateTabColors(tab.position)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+    }
+
+    private fun updateTabColors(selectedPosition: Int) {
+        for (i in 0 until tabLayout.tabCount) {
+            val tab = tabLayout.getTabAt(i)
+            tab?.customView?.let { tabView ->
+                val textView = tabView.findViewById<TextView>(R.id.note_tab_text)
+                textView.setTextColor(
+                    if (i == selectedPosition) ContextCompat.getColor(requireContext(), R.color.white)
+                    else ContextCompat.getColor(requireContext(), R.color.gray)
+                )
+            }
         }
     }
 

@@ -47,7 +47,7 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
         // Bottom navigation bar 보이게
         (activity as MainActivity).hideBottomNavigation(false)
 
-        checkPermissions {  }
+        checkPermissions { }
 
         // gallery launcher 초기화
         galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
