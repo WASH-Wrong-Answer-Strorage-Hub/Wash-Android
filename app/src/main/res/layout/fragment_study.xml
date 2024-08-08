@@ -27,7 +27,7 @@
         app:layout_constraintGuide_end="24dp" />
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_study_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/mangoddobak_b"
@@ -44,7 +44,8 @@
         android:layout_marginTop="100dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_study_1st_v"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_study_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,7 +10,7 @@
         android:layout_height="match_parent"></androidx.camera.view.PreviewView>
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_study_solve_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"

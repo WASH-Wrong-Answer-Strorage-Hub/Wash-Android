@@ -15,7 +15,17 @@
         android:id="@+id/navigation_study"
         android:name="com.wash.washandroid.presentation.fragment.study.StudyFragment"
         android:label="@string/navigation_study"
-        tools:layout="@layout/fragment_note" />
+        tools:layout="@layout/fragment_note" >
+        <action
+            android:id="@+id/action_navigation_study_to_navigation_study_solve"
+            app:destination="@id/navigation_study_solve" />
+        <argument
+            android:name="folderId"
+            app:argType="integer" />
+        <argument
+            android:name="folderName"
+            app:argType="string" />
+    </fragment>
 
     <!-- Note Options BottomSheetDialogFragment -->
     <dialog
@@ -143,5 +153,21 @@
             app:argType="string"
             android:defaultValue="0"
             app:nullable="false"/>
+    </fragment>
+
+    <!--  study solve fragment  -->
+    <fragment
+        android:id="@+id/navigation_study_solve"
+        android:name="com.wash.washandroid.presentation.fragment.study.StudySolveFragment"
+        tools:layout="@layout/fragment_study_solve">
+        <argument
+            android:name="folderId"
+            app:argType="integer" />
+        <argument
+            android:name="folderName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_navigation_study_solve_to_navigation_study"
+            app:destination="@id/navigation_study" />
     </fragment>
 </navigation>

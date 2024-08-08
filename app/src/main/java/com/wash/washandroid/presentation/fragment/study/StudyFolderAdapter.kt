@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 
 class FolderAdapter(
-    private val folders: List<String>,
-    private val onClick: (String) -> Unit
+    private val folders: List<StudyFolder>,
+    private val onClick: (StudyFolder) -> Unit
 ) : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder {
@@ -24,11 +24,11 @@ class FolderAdapter(
     override fun getItemCount() = folders.size
 
     inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val folderNameTextView: TextView = itemView.findViewById(R.id.tv_folder_name)
+        private val folderNameTextView: TextView = itemView.findViewById(R.id.tv_study_folder_name)
 
-        fun bind(folderName: String) {
-            folderNameTextView.text = folderName
-            itemView.setOnClickListener { onClick(folderName) }
+        fun bind(folder: StudyFolder) {
+            folderNameTextView.text = folder.name
+            itemView.setOnClickListener { onClick(folder) }
         }
     }
 }
