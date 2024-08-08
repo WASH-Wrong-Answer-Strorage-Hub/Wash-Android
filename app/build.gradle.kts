@@ -79,4 +79,6 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("androidx.activity:activity-ktx:1.9.1")
+
+    implementation("com.tbuonomo:dotsindicator:5.0")
 }
