@@ -169,5 +169,18 @@
         <action
             android:id="@+id/action_navigation_study_solve_to_navigation_study"
             app:destination="@id/navigation_study" />
+        <action
+            android:id="@+id/action_navigation_study_solve_to_navigation_study_answer"
+            app:destination="@id/navigation_study_answer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_study_answer"
+        android:name="com.wash.washandroid.presentation.fragment.study.StudyAnswerFragment"
+        tools:layout="@layout/fragment_study_answer">
+
+        <action
+            android:id="@+id/action_navigation_study_answer_to_navigation_study_solve"
+            app:destination="@id/navigation_study_solve" />
     </fragment>
 </navigation>

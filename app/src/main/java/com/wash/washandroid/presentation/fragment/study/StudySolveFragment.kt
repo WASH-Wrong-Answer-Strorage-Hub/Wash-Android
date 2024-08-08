@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -43,6 +44,14 @@ class StudySolveFragment : Fragment(){
 
         binding.studySolveBackBtn.setOnClickListener {
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study)
+        }
+
+        binding.studySolveBtnAnswer.setOnClickListener {
+            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer)
+        }
+
+        binding.ivDrawer.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.END)
         }
     }
 

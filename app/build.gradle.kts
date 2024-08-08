@@ -66,4 +66,7 @@ dependencies {
     // glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+
+    // swipecards
+    implementation("com.lorentzos.swipecards:library:1.0.9@aar")
 }
