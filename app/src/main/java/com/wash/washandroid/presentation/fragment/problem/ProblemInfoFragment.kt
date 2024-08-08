@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import com.wash.washandroid.databinding.FragmentProblemInfoBinding
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -14,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +30,8 @@ class ProblemInfoFragment : Fragment() {
     private var _binding: FragmentProblemInfoBinding? = null
     private val binding: FragmentProblemInfoBinding
         get() = requireNotNull(_binding){"FragmentProblemInfoBinding -> null"}
+
+    private val problemInfoViewModel: ProblemInfoViewModel by activityViewModels()
 
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var printAdapter: PhotoAdapter
@@ -69,23 +73,44 @@ class ProblemInfoFragment : Fragment() {
         }
         startVibrationAnimation(binding.floatingActionButton)
 
+
         val categories = listOf("수학", "미적분", "급수")
         val categoryAdapter = ProblemInfoCategoryAdapter(categories)
 
         binding.categoryRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.categoryRv.adapter = categoryAdapter
 
+
+        binding.photoDeleteLayout.setOnClickListener {
+            binding.problemInfoPhoto.setImageURI(null)
+            binding.photoDeleteLayout.visibility = View.INVISIBLE // 이미지 삭제하면서 삭제버튼 비활성화
+        }
+
+        binding.problemInfoPhotoAdd.setOnClickListener {
+            if (isEditing) {
+                openProblemGallery()
+            } else {
+                binding.problemInfoPhotoAdd.isClickable = false
+            }
+        }
+
+        problemInfoViewModel.problemPhotoUri.observe(viewLifecycleOwner) { uri ->
+            uri?.let {
+                binding.problemInfoPhoto.setImageURI(it)
+                binding.problemInfoPhoto.clipToOutline = true
+                binding.photoDeleteLayout.clipToOutline = true
+            }
+        }
+
         photoProblemPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.data?.let { uri ->
-                    binding.problemInfoPhoto.setImageURI(uri)
+                    problemInfoViewModel.setProblemPhotoUri(uri)
+                    binding.photoDeleteLayout.visibility = View.VISIBLE // 이미지 설정하면서 삭제버튼 활성화
                 }
             }
         }
 
-        binding.problemInfoEdit.setOnClickListener {
-            openProblemGallery()
-        }
 
         photoSolutionPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -150,10 +175,12 @@ class ProblemInfoFragment : Fragment() {
         // 편집 버튼 클릭 시
         binding.problemEditBtn.setOnClickListener {
             toggleEditMode()
+            binding.photoDeleteLayout.visibility = View.VISIBLE
         }
         // 완료 버튼 클릭 시
         binding.problemEditCompleteBtn.setOnClickListener {
             toggleEditMode()
+            binding.photoDeleteLayout.visibility = View.INVISIBLE
         }
     }
 
@@ -169,13 +196,22 @@ class ProblemInfoFragment : Fragment() {
         binding.problemEditBtn.visibility = if (isEditing) View.GONE else View.VISIBLE
         binding.problemEditCompleteBtn.visibility = if (isEditing) View.VISIBLE else View.GONE
 
-        // 편집 모드일 때 EditText 및 문제 사진 편집 버튼 활성화
+        // 편집 모드일 때 정답, 메모 EditText 및 문제 사진 추가 버튼 활성화
         binding.problemInfoAnswer.isEnabled = isEditing
-        binding.problemInfoEdit.visibility = if (isEditing) View.VISIBLE else View.GONE
+        binding.problemInfoMemo.isEnabled = isEditing
+        binding.problemInfoPhotoAdd.isClickable = isEditing
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView, photoList: MutableList<String>, onAddPhotoClick: () -> Unit) {
-        val adapter = PhotoAdapter(requireContext(), photoList, onAddPhotoClick)
+    private fun setupRecyclerView(
+        recyclerView: RecyclerView,
+        photoList: MutableList<String>,
+        onAddPhotoClick: () -> Unit
+    ) {
+        val adapter = PhotoAdapter(requireContext(), photoList, onAddPhotoClick) { position ->
+            openPhotoPager(photoList, position)
+            Log.d("position", "$position")
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = adapter
 
@@ -184,6 +220,15 @@ class ProblemInfoFragment : Fragment() {
             R.id.problem_info_print_rv -> printAdapter = adapter
             R.id.problem_info_add_rv -> addAdapter = adapter
         }
+    }
+
+    private fun openPhotoPager(photoList: List<String>, initialPosition: Int) {
+        // 뷰모델에 데이터 설정
+        problemInfoViewModel.setPhotoUris(photoList)
+        problemInfoViewModel.setSelectedPhotoPosition(initialPosition)
+
+        // 네비게이션으로 뷰페이저로 이동
+        navController.navigate(R.id.action_navigation_problem_info_to_photo_slider_fragment)
     }
 
     private fun openProblemGallery() {

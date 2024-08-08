@@ -13,7 +13,8 @@ import com.wash.washandroid.databinding.ItemPhotoBinding
 class PhotoAdapter(
     private val context: Context,
     private val photoList: MutableList<String>,
-    private val onAddPhotoClick: () -> Unit
+    private val onAddPhotoClick: () -> Unit,
+    private val onPhotoClick: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -71,7 +72,16 @@ class PhotoAdapter(
 
     inner class PhotoViewHolder(private val binding: ItemPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(photoUri: String) {
-            Glide.with(context).load(photoUri).into(binding.photoIv)
+            Glide.with(context)
+                .load(photoUri)
+                .into(binding.photoIv)
+
+            binding.photoIv.clipToOutline = true
+
+            binding.photoIv.setOnClickListener {
+                onPhotoClick(adapterPosition)
+            }
+
             binding.photoDeleteLayout.visibility = if (isAddButtonVisible) View.VISIBLE else View.GONE
             binding.photoDeleteLayout.setOnClickListener {
                 removeItem(this.layoutPosition)
