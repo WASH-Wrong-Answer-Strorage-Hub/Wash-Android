@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="456dp"
+        android:layout_marginTop="550dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp">
 
@@ -90,28 +90,5 @@
             android:textSize="18dp" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/social_login_signup_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="회원가입"
-        android:textSize="11dp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/mangoddobak_r"
-        app:layout_constraintTop_toBottomOf="@id/social_login_naver_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        />
-
-    <View
-        android:layout_width="41dp"
-        android:layout_height="1dp"
-        android:background="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/social_login_signup_tv"
-        app:layout_constraintStart_toStartOf="@id/social_login_signup_tv"
-        app:layout_constraintEnd_toEndOf="@id/social_login_signup_tv"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

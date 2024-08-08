@@ -95,14 +95,13 @@
         android:id="@+id/edit_account_nickname_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="사과 빠진 통나무 0612"
-        android:textSize="13dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/mangoddobak_l"
+        android:text="사과 빠진 통나무 0612"
         android:textColor="@color/darker_gray"
-        app:layout_constraintTop_toTopOf="@id/edit_account_nickname_title_tv"
+        android:textSize="13dp"
         app:layout_constraintStart_toStartOf="@id/edit_account_nickname_title_tv"
-        android:layout_marginTop="29dp"
-        />
+        app:layout_constraintTop_toTopOf="@id/edit_account_nickname_title_tv" />
     
     <View
         android:id="@+id/edit_account_view_1"
