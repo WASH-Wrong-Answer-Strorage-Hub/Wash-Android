@@ -8,6 +8,8 @@ import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.kakao.sdk.common.KakaoSdk
+import com.wash.washandroid.BuildConfig
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ActivityMainBinding
 import com.wash.washandroid.presentation.fragment.splash.SplashFragment
@@ -21,6 +23,8 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
