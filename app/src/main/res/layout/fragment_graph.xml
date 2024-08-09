@@ -12,30 +12,29 @@
         android:layout_height="wrap_content"
         android:text="학습 통계"
         android:textSize="20sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/mangoddobak_b"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginStart="24dp"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/frequentProblemsTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="27sp"
         android:text="많이 틀린 문제"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="center_horizontal" />
+        android:textSize="18sp"
+        android:layout_marginTop="89dp"
+        android:layout_marginStart="24dp"
+        android:fontFamily="@font/mangoddobak_b"
+        android:textColor="#1e1e1e"
+        android:layout_marginEnd="16dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/problemsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -46,12 +45,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="자주 틀린 과목 및 유형"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginTop="103dp"
+        android:layout_marginStart="24dp"/>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/subjectsRecyclerView"

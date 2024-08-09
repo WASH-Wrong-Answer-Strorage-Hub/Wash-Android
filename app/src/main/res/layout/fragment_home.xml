@@ -24,6 +24,7 @@
             android:gravity="center_vertical" />
 
         <TextView
+            android:id="@+id/edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="편집"
@@ -42,14 +43,14 @@
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
         android:padding="8dp"
-        android:background="#F0F0F0">
+        android:background="@drawable/home_search_bar">
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="12dp"
-            android:hint="검색하기" />
+            android:hint="검색하기"
+            android:background="@null"/>
 
         <ImageView
             android:layout_width="24dp"
@@ -58,86 +59,11 @@
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 
-    <!-- Notes list -->
-    <LinearLayout
+    <!-- RecyclerView for notes -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="16dp">
-
-        <!-- Row 1 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/cate_korean"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:text="국어"
-                android:background="#E8EAF6"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:text="수학"
-                android:background="#E8EAF6"
-                android:gravity="center"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:text="영어"
-                android:background="#E8EAF6"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <!-- Row 2 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:text="Untitled"
-                android:background="#E8EAF6"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:text="Untitled"
-                android:background="#E8EAF6"
-                android:gravity="center"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:text="2024 토플"
-                android:background="#E8EAF6"
-                android:gravity="center" />
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

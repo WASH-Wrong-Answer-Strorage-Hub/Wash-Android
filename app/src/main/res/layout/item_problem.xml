@@ -7,8 +7,16 @@
 
     <ImageView
         android:id="@+id/problemImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="57dp"
+        android:layout_height="57dp"
         android:src="@drawable/temporary_img" />
 
+    <ImageView
+        android:id="@+id/deleteIconImageView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_delete" />
 </LinearLayout>
