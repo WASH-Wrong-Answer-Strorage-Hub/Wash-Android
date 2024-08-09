@@ -72,24 +72,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline_study_1st_h" />
 
-        <ImageView
+        <View
             android:id="@+id/study_solve_card_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/study_card_background"
             app:layout_constraintBottom_toTopOf="@+id/study_solve_btn_des"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_study_solve_problem_id"
-            app:srcCompat="@drawable/study_card_background" />
+            app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2"
+            app:layout_constraintStart_toStartOf="@+id/guideline_study_1st_v"
+            app:layout_constraintTop_toBottomOf="@+id/tv_study_solve_problem_id" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="36dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
             app:cardCornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="@+id/study_solve_card_bg"
             app:layout_constraintEnd_toEndOf="@+id/study_solve_card_bg"
@@ -99,8 +101,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/study_sm_incomplete"
-                android:src="@android:drawable/ic_menu_agenda" />
+                android:background="#f2f2f2" />
 
         </androidx.cardview.widget.CardView>
 
@@ -152,7 +153,7 @@
             android:textSize="15sp"
             android:fontFamily="@font/mangoddobak_b" />
 
-        <!-- 풀이 진척도를 표시하는 RecyclerView 또는 LinearLayout -->
+        <!-- 풀이 진척도를 표시하는 RecyclerView -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -179,11 +180,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/study_sm_incomplete"
                     android:text="미완료"
-                    android:textColor="@color/gray"
-                    android:textSize="16sp" />
+                    android:textColor="@color/black"
+                    style="@style/mg_8" />
             </LinearLayout>
 
-            <!-- 필요한 만큼 추가 -->
         </LinearLayout>
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

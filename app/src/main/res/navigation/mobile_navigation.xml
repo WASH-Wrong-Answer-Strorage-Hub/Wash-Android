@@ -178,9 +178,30 @@
         android:id="@+id/navigation_study_answer"
         android:name="com.wash.washandroid.presentation.fragment.study.StudyAnswerFragment"
         tools:layout="@layout/fragment_study_answer">
-
         <action
             android:id="@+id/action_navigation_study_answer_to_navigation_study_solve"
             app:destination="@id/navigation_study_solve" />
+        <action
+            android:id="@+id/action_navigation_study_answer_to_navigation_study_complete"
+            app:destination="@id/navigation_study_complete" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/navigation_study_dialog"
+        android:name="com.wash.washandroid.presentation.fragment.study.StudyExitDialog"
+        tools:layout="@layout/fragment_study_exit_dialog">
+        <action
+            android:id="@+id/action_navigation_study_dialog_to_navigation_study_solve"
+            app:destination="@id/navigation_study_solve" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/navigation_study_complete"
+        android:name="com.wash.washandroid.presentation.fragment.study.StudyCompleteFragment"
+        tools:layout="@layout/fragment_study_complete">
+
+        <action
+            android:id="@+id/action_navigation_study_complete_to_navigation_home"
+            app:destination="@id/navigation_home" />
     </fragment>
 </navigation>

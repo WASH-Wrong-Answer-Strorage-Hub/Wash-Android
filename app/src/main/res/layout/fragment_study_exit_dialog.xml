@@ -1,72 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="220dp"
     android:layout_height="145dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/study_dialog_background">
 
-    <ImageView
-        android:id="@+id/dialog_icon"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_marginTop="18dp"
-        android:src="@drawable/ic_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/dialog_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="이대로 종료하시겠습니까?"
-        style="@style/mg_12"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/dialog_icon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        <ImageView
+            android:id="@+id/dialog_icon"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginTop="18dp"
+            android:src="@drawable/ic_info"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/dialog_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="진행 사항은 저장되지 않습니다."
-        style="@style/mg_8"
-        android:textColor="@color/darker_gray"
-        app:layout_constraintTop_toBottomOf="@id/dialog_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        <TextView
+            android:id="@+id/dialog_title"
+            style="@style/mg_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="이대로 종료하시겠습니까?"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_icon" />
 
-    <Button
-        android:id="@+id/dialog_cancel"
-        style="@style/mg_12"
-        android:layout_width="78dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/study_dialog_btn_background"
-        android:text="취소"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toStartOf="@id/dialog_confirm"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_message" />
+        <TextView
+            android:id="@+id/dialog_message"
+            style="@style/mg_8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="진행 사항은 저장되지 않습니다."
+            android:textColor="@color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_title" />
 
-    <Button
-        android:id="@+id/dialog_confirm"
-        style="@style/mg_12"
-        android:layout_width="78dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/study_dialog_btn_background"
-        android:backgroundTint="@color/main"
-        android:text="확인"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/dialog_cancel"
-        app:layout_constraintTop_toBottomOf="@id/dialog_message" />
+        <Button
+            android:id="@+id/btn_dialog_cancel"
+            style="@style/mg_12"
+            android:layout_width="78dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/study_dialog_btn_background"
+            android:text="취소"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toStartOf="@id/btn_dialog_confirm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_message" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btn_dialog_confirm"
+            style="@style/mg_12"
+            android:layout_width="78dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/study_dialog_btn_background"
+            android:backgroundTint="@color/main"
+            android:text="확인"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_dialog_cancel"
+            app:layout_constraintTop_toBottomOf="@id/dialog_message" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

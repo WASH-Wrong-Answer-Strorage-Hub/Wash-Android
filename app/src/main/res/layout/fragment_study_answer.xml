@@ -60,43 +60,52 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2"
             app:layout_constraintTop_toTopOf="@+id/guideline_study_1st_h" />
 
+        <ImageView
+            android:id="@+id/iv_study_solve"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/study_incomplete"
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/study_card_frame"
+            app:layout_constraintEnd_toStartOf="@id/guideline_study_1st_v2"
+            app:layout_constraintStart_toEndOf="@id/guideline_study_1st_v"
+            app:layout_constraintTop_toBottomOf="@+id/tv_study_solve_title" />
+
         <com.lorentzos.flingswipe.SwipeFlingAdapterView
             android:id="@+id/study_card_frame"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:padding="24dp"
-            android:layout_marginTop="40dp"
-            app:layout_constraintTop_toTopOf="@id/guideline_study_1st_h"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/iv_study_solve"
             app:layout_constraintStart_toStartOf="@id/guideline_study_1st_v"
             app:layout_constraintEnd_toEndOf="@id/guideline_study_1st_v2"
-            app:layout_constraintBottom_toTopOf="@id/study_solve_btn_des"
+            app:layout_constraintBottom_toTopOf="@id/btn_study_x"
             />
 
 
         <Button
-            android:id="@+id/study_solve_btn_des"
+            android:id="@+id/btn_study_x"
             style="@style/mg_15"
-            android:layout_width="132dp"
-            android:layout_height="36dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_marginStart="36dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/study_folder_background"
-            android:text="지문 보기"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/ic_card_negative"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline_study_1st_v" />
+            app:layout_constraintStart_toStartOf="@+id/guideline_study_1st_v"
+            app:layout_constraintTop_toBottomOf="@id/study_card_frame" />
 
         <Button
-            android:id="@+id/study_solve_btn_answer"
+            android:id="@+id/btn_study_o"
             style="@style/mg_15"
-            android:layout_width="132dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="36dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/study_folder_background"
-            android:text="정답 확인"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2" />
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="36dp"
+            android:background="@drawable/ic_card_positive"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_study_x"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2"
+            app:layout_constraintTop_toTopOf="@+id/btn_study_x" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -145,11 +154,9 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/study_sm_incomplete"
                     android:text="미완료"
-                    android:textColor="@color/gray"
-                    android:textSize="16sp" />
+                    android:textColor="@color/black"
+                    style="@style/mg_8" />
             </LinearLayout>
-
-            <!-- 필요한 만큼 추가 -->
         </LinearLayout>
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -50,7 +50,7 @@ class StudyFragment : Fragment() {
         ) // Todo : 서버로부터 받은 데이터로 교체
 
         folderAdapter = FolderAdapter(folders) { folder ->
-            Toast.makeText(requireContext(), "${folder.name} 클릭됨", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "${folder.name} 클릭됨", Toast.LENGTH_SHORT).show()
             val bundle = Bundle().apply {
                 putInt("folderId", folder.id)
                 putString("folderName", folder.name)
