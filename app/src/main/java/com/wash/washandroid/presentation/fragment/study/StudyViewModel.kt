@@ -39,19 +39,19 @@ class StudyViewModel : ViewModel() {
             StudyProblem(
                 2,
                 "https://t1.daumcdn.net/cafeattach/1G8uF/becf7093270745ac586a4c31741a8fc446e62885",
-                "https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg",
+                "https://i.pinimg.com/originals/4f/d9/a3/4fd9a3816c3630d2dc7821c0556235ba.jpg",
                 "68"
             ),
             StudyProblem(
                 3,
                 "https://t1.daumcdn.net/cafeattach/1G8uF/272c7efdfc44025870741ada68c861aadee8f701",
-                "https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg",
+                "https://i.pinimg.com/originals/ba/9a/09/ba9a09a7a3fa88c99021bb358ba2f84d.jpg",
                 "3"
             ),
             StudyProblem(
                 4,
                 "https://t1.daumcdn.net/cafeattach/1G8uF/88b731522f98b390793bdeab1c2157296bf3e115",
-                "https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg",
+                "https://i.pinimg.com/originals/ff/83/ec/ff83ece9abe0cdd120c2cce0687bc1e2.jpg",
                 "40"
             )
             // 추가 문제 데이터...

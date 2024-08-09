@@ -9,7 +9,7 @@
     android:padding="16dp">
 
     <View
-        android:id="@+id/view2"
+        android:id="@+id/study_answer_card_bg"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/study_card_background"
@@ -33,10 +33,10 @@
         android:gravity="center"
         android:text="(a)"
         android:textColor="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/view2"
-        app:layout_constraintEnd_toEndOf="@+id/view2"
-        app:layout_constraintStart_toStartOf="@+id/view2"
-        app:layout_constraintTop_toTopOf="@+id/view2" />
+        app:layout_constraintBottom_toBottomOf="@+id/study_answer_card_bg"
+        app:layout_constraintEnd_toEndOf="@+id/study_answer_card_bg"
+        app:layout_constraintStart_toStartOf="@+id/study_answer_card_bg"
+        app:layout_constraintTop_toTopOf="@+id/study_answer_card_bg" />
 
     <TextView
         android:id="@+id/tv_study_card_title"

@@ -21,6 +21,8 @@ class StudySolveFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
+    private var folderId:Int = 0
+    private lateinit var folderName:String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,16 +32,16 @@ class StudySolveFragment : Fragment() {
         _binding = FragmentStudySolveBinding.inflate(inflater, container, false)
 
         // id, 폴더명 수신
-        val folderId = arguments?.getInt("folderId")
-        val folderName = arguments?.getString("folderName")
-
-        binding.tvStudySolveTitle.text = folderName
+        folderId = arguments?.getInt("folderId") ?: 0
+        folderName = arguments?.getString("folderName") ?: "folderName"
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.tvStudySolveTitle.text = folderName
 
         navController = Navigation.findNavController(view)
 

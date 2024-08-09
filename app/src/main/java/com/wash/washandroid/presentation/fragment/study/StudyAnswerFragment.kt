@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -79,7 +80,18 @@ class StudyAnswerFragment : Fragment() {
             }
 
             override fun onScroll(scrollProgressPercent: Float) {
+                val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
                 // 스크롤 진행 상황
+                if (scrollProgressPercent > 0) {
+                    // 오른쪽으로 스와이프 중
+                    cardBg.setBackgroundResource(R.drawable.study_card_background_green)
+                } else if (scrollProgressPercent < 0) {
+                    // 왼쪽으로 스와이프 중
+                    cardBg.setBackgroundResource(R.drawable.study_card_background_red)
+                } else {
+                    // 스크롤 중이 아닌 상태로 되돌아올 때
+                    cardBg.setBackgroundResource(R.drawable.study_card_background)
+                }
             }
         })
 
