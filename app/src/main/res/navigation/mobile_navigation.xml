@@ -107,4 +107,25 @@
             app:popUpTo="@id/navigation_problem_category_chapter" />
     </fragment>
 
+    <fragment
+        android:id="@+id/navigation_withdrawal"
+        android:name="com.wash.washandroid.presentation.fragment.login.WithdrawalAccountFragment"
+        android:label="Withdrawal"
+        tools:layout="@layout/fragment_withdrawal_account">
+        <action
+            android:id="@+id/action_withdrawalAccountFragment_to_socialLoginFragment"
+            app:destination="@id/navigation_social_login"
+            app:popUpTo="@id/navigation_social_login" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_edit_account"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.EditAccountFragment"
+        tools:layout="@layout/fragment_edit_account"/>
+
+    <fragment
+        android:id="@+id/navigation_edit_nickname"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.EditNicknameFragment"
+        tools:layout="@layout/fragment_edit_nickname"/>
+
 </navigation>
