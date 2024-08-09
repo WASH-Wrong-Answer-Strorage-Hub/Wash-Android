@@ -31,7 +31,11 @@
         android:id="@+id/navigation_graph"
         android:name="com.wash.washandroid.presentation.fragment.graph.GraphFragment"
         android:label="@string/navigation_graph"
-        tools:layout="@layout/fragment_study" />
+        tools:layout="@layout/fragment_study" >
+        <action
+            android:id="@+id/action_navigation_graph_to_viewPieChartFragment"
+            app:destination="@id/viewPieChartFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_mypage"
@@ -115,5 +119,13 @@
         <action
             android:id="@+id/action_homeClickQuizFragment_to_homeDetailFragment"
             app:destination="@id/homeDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewPieChartFragment"
+        android:name="com.wash.washandroid.presentation.fragment.graph.ViewPieChartFragment"
+        android:label="ViewPieChartFragment" >
+        <action
+            android:id="@+id/action_viewPieChartFragment_to_navigation_graph"
+            app:destination="@id/navigation_graph" />
     </fragment>
 </navigation>

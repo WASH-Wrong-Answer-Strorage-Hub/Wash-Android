@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Wash"
 include(":app")
- 

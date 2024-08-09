@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_delet"
+            android:id="@+id/edit_button"
             android:text="편집"
             android:textSize="15sp"
             android:textColor="#000000"
@@ -53,14 +53,14 @@
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
         android:padding="8dp"
-        android:background="#F0F0F0">
+        android:background="@drawable/home_search_bar">
 
         <EditText
-            android:layout_width="0dp"
+            android:layout_width="49dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="12dp"
-            android:hint="검색하기" />
+            android:hint="검색하기"
+            android:background="@null"/>
 
         <ImageView
             android:layout_width="24dp"
@@ -69,11 +69,14 @@
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <!-- Notes list -->
     <GridLayout
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:columnCount="5"
         android:layout_marginTop="16dp">
@@ -82,10 +85,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="16dp"/>
-
+            android:layout_height="match_parent"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1" />
     </GridLayout>
+    </ScrollView>
 
 </LinearLayout>
