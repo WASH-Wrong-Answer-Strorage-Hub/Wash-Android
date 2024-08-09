@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
@@ -20,7 +21,11 @@ class StudyAnswerFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var swipeView: SwipeFlingAdapterView
     private lateinit var adapter: CardAdapter
-    private val data: MutableList<String> = mutableListOf("(a)")
+    private lateinit var viewModel: StudyViewModel
+
+    private val data: MutableList<String> = mutableListOf()
+
+    private var currentProblemIndex = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +39,17 @@ class StudyAnswerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
+        viewModel = ViewModelProvider(requireActivity()).get(StudyViewModel::class.java)
+
+        // 데이터 수신
+        val problemId = arguments?.getInt("problemId")
+        val answer = arguments?.getString("answer") ?: "정답 불러오기 실패"
+        val isLastProblem = arguments?.getBoolean("isLastProblem") ?: false
+
+//        Toast.makeText(requireContext(), "id : ${problemId}, answer : ${answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
+
+        // data 리스트에 정답을 추가
+        data.add(answer)
 
         swipeView = binding.studyCardFrame
         adapter = CardAdapter(requireContext(), data)
@@ -47,18 +63,21 @@ class StudyAnswerFragment : Fragment() {
 
             override fun onLeftCardExit(p0: Any?) {
                 // 왼쪽으로 스와이프될 때 동작
-//                Toast.makeText(requireContext(), "Left", Toast.LENGTH_SHORT).show()
+                viewModel.incrementLeftSwipe(currentProblemIndex)
+                currentProblemIndex++
             }
 
             override fun onRightCardExit(p0: Any?) {
-                // 오른쪽으로 스와이프될 때 동작
-//                Toast.makeText(requireContext(), "Right", Toast.LENGTH_SHORT).show()
+                viewModel.incrementRightSwipe(currentProblemIndex)
+                currentProblemIndex++
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // 어댑터가 비어가고 있을 때 동작
-                if (itemsInAdapter == 0) {
+                if (isLastProblem && itemsInAdapter == 0) { // 문제가 마지막 문제일 때, 완료 화면으로 이동
                     navController.navigate(R.id.action_navigation_study_answer_to_navigation_study_complete)
+                } else if (itemsInAdapter == 0) {
+                    navController.popBackStack()
                 }
             }
 
@@ -82,11 +101,18 @@ class StudyAnswerFragment : Fragment() {
         binding.btnStudyO.setOnClickListener {
             // 오른쪽으로 스와이프
             swipeView.topCardListener.selectRight()
+            // 맞은 문제 카운트
+            viewModel.incrementRightSwipe(currentProblemIndex)
+            currentProblemIndex++
+
         }
 
         binding.btnStudyX.setOnClickListener {
             // 왼쪽으로 스와이프
             swipeView.topCardListener.selectLeft()
+            // 틀린 문제 카운트
+            viewModel.incrementLeftSwipe(currentProblemIndex)
+            currentProblemIndex++
         }
 
         // 뒤로가기 클릭 시 다이얼로그 띄우기

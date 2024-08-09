@@ -38,7 +38,7 @@
         android:textColor="@color/black"
         android:text="총 16문제 중\n12문제를 맞췄습니다."
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/btn_study_back_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_study_complete_2" />

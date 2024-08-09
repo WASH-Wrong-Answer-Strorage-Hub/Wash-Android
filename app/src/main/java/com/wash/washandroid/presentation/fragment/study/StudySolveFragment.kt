@@ -75,6 +75,7 @@ class StudySolveFragment : Fragment() {
             viewModel.problems.value?.let { problemList ->
                 if (currentProblemIndex > 0) {
                     currentProblemIndex--
+                    viewModel.moveToPreviousProblem()
                     updateUI(problemList)
                 } else {
                     Toast.makeText(requireContext(), "첫 번째 문제입니다.", Toast.LENGTH_SHORT).show()
@@ -87,6 +88,7 @@ class StudySolveFragment : Fragment() {
             viewModel.problems.value?.let { problemList ->
                 if (currentProblemIndex < problemList.size - 1) {
                     currentProblemIndex++
+                    viewModel.moveToNextProblem()
                     updateUI(problemList)
                 } else {
                     Toast.makeText(requireContext(), "마지막 문제입니다.", Toast.LENGTH_SHORT).show()
@@ -94,13 +96,22 @@ class StudySolveFragment : Fragment() {
             }
         }
 
-
         binding.studySolveBackBtn.setOnClickListener {
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study)
         }
 
         binding.studySolveBtnAnswer.setOnClickListener {
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer)
+            val currentProblem = viewModel.getCurrentProblem()
+            val isLastProblem = viewModel.isLastProblem()
+
+            val bundle = Bundle().apply {
+                putInt("problemId", currentProblem.id)
+                putString("answer", currentProblem.answer)
+                putBoolean("isLastProblem", isLastProblem)
+//                Toast.makeText(requireContext(), "id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
+            }
+
+            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
         }
 
         binding.ivDrawer.setOnClickListener {
