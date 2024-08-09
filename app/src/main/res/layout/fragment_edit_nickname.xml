@@ -78,6 +78,9 @@
         app:layout_constraintTop_toTopOf="@id/account_information_tv"
         app:layout_constraintStart_toStartOf="@id/account_information_tv"
         android:layout_marginTop="29dp"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:singleLine="true"
         />
 
 

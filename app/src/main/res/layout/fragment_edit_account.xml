@@ -117,7 +117,7 @@
         android:id="@+id/edit_account_name_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="닉네임"
+        android:text="이름"
         android:textSize="13dp"
         android:textColor="@color/black"
         android:fontFamily="@font/mangoddobak_r"

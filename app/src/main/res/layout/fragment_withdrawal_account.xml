@@ -142,6 +142,9 @@
         app:layout_constraintTop_toBottomOf="@id/input_problem_tv"
         android:layout_marginTop="6dp"
         android:paddingLeft="10dp"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:singleLine="true"
         />
 
     <ImageButton
