@@ -44,7 +44,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_study_complete_2" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_study_back_home"
         style="@style/mg_15"
         android:layout_width="match_parent"
         android:layout_height="40dp"

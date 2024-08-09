@@ -1,12 +1,14 @@
 package com.wash.washandroid.presentation.fragment.study
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyCompleteBinding
@@ -40,9 +42,12 @@ class StudyCompleteFragment : Fragment(){
         (activity as MainActivity).hideBottomNavigation(true)
 
         // 홈으로 이동하기
-        binding.studyBackHome.setOnClickListener {
-            Toast.makeText(requireContext(), "clicked", Toast.LENGTH_SHORT).show()
-            navController.popBackStack()
+        binding.btnStudyBackHome.setOnClickListener {
+            navController.navigate(
+                R.id.action_navigation_study_complete_to_navigation_home,
+                null,
+                NavOptions.Builder().setPopUpTo(R.id.navigation_home, false).build()
+            )
         }
     }
 

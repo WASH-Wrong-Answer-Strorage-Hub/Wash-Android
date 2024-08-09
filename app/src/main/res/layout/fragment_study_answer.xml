@@ -150,9 +150,10 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="14.22dp"
                     android:background="@drawable/study_sm_incomplete"
+                    android:gravity="center"
                     android:text="미완료"
                     android:textColor="@color/black"
                     style="@style/mg_8" />

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.wash.washandroid.databinding.FragmentHomeBinding
+import com.wash.washandroid.presentation.base.MainActivity
 
 class HomeFragment : Fragment() {
 
@@ -19,6 +20,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        (activity as MainActivity).hideBottomNavigation(false)
 
         return binding.root
     }
