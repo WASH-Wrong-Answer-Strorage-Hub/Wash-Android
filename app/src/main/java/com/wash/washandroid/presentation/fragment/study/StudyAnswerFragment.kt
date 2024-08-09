@@ -22,9 +22,7 @@ class StudyAnswerFragment : Fragment() {
     private lateinit var swipeView: SwipeFlingAdapterView
     private lateinit var adapter: CardAdapter
     private lateinit var viewModel: StudyViewModel
-
     private val data: MutableList<String> = mutableListOf()
-
     private var currentProblemIndex = 0
 
     override fun onCreateView(
@@ -46,7 +44,7 @@ class StudyAnswerFragment : Fragment() {
         val answer = arguments?.getString("answer") ?: "정답 불러오기 실패"
         val isLastProblem = arguments?.getBoolean("isLastProblem") ?: false
 
-//        Toast.makeText(requireContext(), "id : ${problemId}, answer : ${answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(), "answer -- id : ${problemId}, answer : ${answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
 
         // data 리스트에 정답을 추가
         data.add(answer)
@@ -62,14 +60,13 @@ class StudyAnswerFragment : Fragment() {
             }
 
             override fun onLeftCardExit(p0: Any?) {
-                // 왼쪽으로 스와이프될 때 동작
-                viewModel.incrementLeftSwipe(currentProblemIndex)
-                currentProblemIndex++
+                viewModel.incrementLeftSwipe()
+                viewModel.moveToNextProblem()
             }
 
             override fun onRightCardExit(p0: Any?) {
-                viewModel.incrementRightSwipe(currentProblemIndex)
-                currentProblemIndex++
+                viewModel.incrementRightSwipe()
+                viewModel.moveToNextProblem()
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
@@ -87,7 +84,6 @@ class StudyAnswerFragment : Fragment() {
         })
 
         swipeView.setOnItemClickListener { itemPosition, dataObject ->
-//            Toast.makeText(requireContext(), "Clicked", Toast.LENGTH_SHORT).show()
         }
 
         binding.studySolveBackBtn.setOnClickListener {
@@ -102,8 +98,7 @@ class StudyAnswerFragment : Fragment() {
             // 오른쪽으로 스와이프
             swipeView.topCardListener.selectRight()
             // 맞은 문제 카운트
-            viewModel.incrementRightSwipe(currentProblemIndex)
-            currentProblemIndex++
+//            viewModel.incrementRightSwipe()
 
         }
 
@@ -111,8 +106,7 @@ class StudyAnswerFragment : Fragment() {
             // 왼쪽으로 스와이프
             swipeView.topCardListener.selectLeft()
             // 틀린 문제 카운트
-            viewModel.incrementLeftSwipe(currentProblemIndex)
-            currentProblemIndex++
+//            viewModel.incrementLeftSwipe()
         }
 
         // 뒤로가기 클릭 시 다이얼로그 띄우기

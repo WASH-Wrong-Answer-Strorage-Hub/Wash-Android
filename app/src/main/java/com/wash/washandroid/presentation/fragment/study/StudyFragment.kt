@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -31,6 +32,15 @@ class StudyFragment : Fragment() {
     ): View {
         _binding = FragmentStudyBinding.inflate(inflater, container, false)
         recyclerView = binding.studyRv
+
+        val studyViewModel = ViewModelProvider(requireActivity()).get(StudyViewModel::class.java)
+
+        // 현재 문제 인덱스 리셋
+        studyViewModel.resetCurrentProblemIndex()
+
+        // 스와이프 횟수 초기화
+        studyViewModel.resetSwipeCounts()
+
         return binding.root
     }
 

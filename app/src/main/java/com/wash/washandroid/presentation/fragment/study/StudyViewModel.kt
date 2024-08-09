@@ -9,15 +9,21 @@ class StudyViewModel : ViewModel() {
     private val _problems = MutableLiveData<List<StudyProblem>>()
     val problems: LiveData<List<StudyProblem>> get() = _problems
 
-    // 현재 문제의 인덱스를 저장하는 변수
-    var currentProblemIndex: Int = 0
-        private set
+    private var currentProblemIndex: Int = 0
+    private var rightSwipeCount: Int = 0
+    private var leftSwipeCount: Int = 0
+
 
     // 문제 데이터를 서버에서 로드하는 함수
     fun loadProblems() {
         // 서버에서 데이터를 가져와서 problems에 설정
         val fetchedProblems = fetchProblemsFromServer() // 서버에서 문제 데이터를 가져오는 함수
         _problems.value = fetchedProblems
+    }
+
+    // 현재 문제 인덱스를 초기화
+    fun resetCurrentProblemIndex() {
+        currentProblemIndex = 0
     }
 
     // 서버에서 문제 데이터를 가져오는 함수(임시)
@@ -52,30 +58,6 @@ class StudyViewModel : ViewModel() {
         )
     }
 
-    fun incrementRightSwipe(index: Int) {
-        _problems.value?.let {
-            val updatedProblems = it.toMutableList()
-            updatedProblems[index] = updatedProblems[index].copy(rightSwipes = updatedProblems[index].rightSwipes + 1)
-            _problems.value = updatedProblems
-        }
-    }
-
-    fun incrementLeftSwipe(index: Int) {
-        _problems.value?.let {
-            val updatedProblems = it.toMutableList()
-            updatedProblems[index] = updatedProblems[index].copy(leftSwipes = updatedProblems[index].leftSwipes + 1)
-            _problems.value = updatedProblems
-        }
-    }
-
-    fun getTotalRightSwipes(): Int {
-        return _problems.value?.sumOf { it.rightSwipes } ?: 0
-    }
-
-    fun getTotalLeftSwipes(): Int {
-        return _problems.value?.sumOf { it.leftSwipes } ?: 0
-    }
-
     fun getTotalProblems(): Int {
         return _problems.value?.size ?: 0
     }
@@ -102,5 +84,26 @@ class StudyViewModel : ViewModel() {
                 currentProblemIndex++
             }
         }
+    }
+
+    fun incrementRightSwipe() {
+        rightSwipeCount++
+    }
+
+    fun incrementLeftSwipe() {
+        leftSwipeCount++
+    }
+
+    fun getRightSwipeCount(): Int {
+        return rightSwipeCount
+    }
+
+    fun getLeftSwipeCount(): Int {
+        return leftSwipeCount
+    }
+
+    fun resetSwipeCounts() {
+        rightSwipeCount = 0
+        leftSwipeCount = 0
     }
 }

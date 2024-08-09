@@ -21,7 +21,6 @@ class StudySolveFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
-    private var currentProblemIndex = 0  // 현재 문제의 인덱스
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,11 +49,11 @@ class StudySolveFragment : Fragment() {
         // ViewModel 인스턴스 가져오기
         viewModel = ViewModelProvider(requireActivity()).get(StudyViewModel::class.java)
 
-        // ViewModel의 problems LiveData 보기
+        // 문제 데이터 업데이트 시 UI 업데이트
         viewModel.problems.observe(viewLifecycleOwner, Observer { problemList ->
-            // 문제가 비어있지 않으면 첫 번째 문제를 표시
+            // 문제가 비어있지 않으면 현재 문제를 표시
             if (problemList.isNotEmpty()) {
-                updateUI(problemList)
+                updateUI()
             }
         })
 
@@ -72,28 +71,14 @@ class StudySolveFragment : Fragment() {
 
         // 왼쪽 화살표 클릭 시 이전 문제로 이동
         binding.ivLeftArrow.setOnClickListener {
-            viewModel.problems.value?.let { problemList ->
-                if (currentProblemIndex > 0) {
-                    currentProblemIndex--
-                    viewModel.moveToPreviousProblem()
-                    updateUI(problemList)
-                } else {
-                    Toast.makeText(requireContext(), "첫 번째 문제입니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
+            viewModel.moveToPreviousProblem()
+            updateUI()
         }
 
         // 오른쪽 화살표 클릭 시 다음 문제로 이동
         binding.ivRightArrow.setOnClickListener {
-            viewModel.problems.value?.let { problemList ->
-                if (currentProblemIndex < problemList.size - 1) {
-                    currentProblemIndex++
-                    viewModel.moveToNextProblem()
-                    updateUI(problemList)
-                } else {
-                    Toast.makeText(requireContext(), "마지막 문제입니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
+            viewModel.moveToNextProblem()
+            updateUI()
         }
 
         binding.studySolveBackBtn.setOnClickListener {
@@ -108,7 +93,7 @@ class StudySolveFragment : Fragment() {
                 putInt("problemId", currentProblem.id)
                 putString("answer", currentProblem.answer)
                 putBoolean("isLastProblem", isLastProblem)
-//                Toast.makeText(requireContext(), "id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "solve -- id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
             }
 
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
@@ -119,8 +104,8 @@ class StudySolveFragment : Fragment() {
         }
     }
 
-    private fun updateUI(problemList: List<StudyProblem>) {
-        val currentProblem = problemList[currentProblemIndex]
+    private fun updateUI() {
+        val currentProblem = viewModel.getCurrentProblem()
         binding.tvStudySolveProblemId.text = "문제 " + currentProblem.id.toString()
 
         // 문제 이미지 로드

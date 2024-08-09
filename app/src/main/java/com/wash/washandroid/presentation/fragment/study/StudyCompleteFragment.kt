@@ -27,11 +27,6 @@ class StudyCompleteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStudyCompleteBinding.inflate(inflater, container, false)
-
-        // id, 폴더명 수신
-//        val folderId = arguments?.getInt("folderId")
-//        val folderName = arguments?.getString("folderName")
-
         return binding.root
     }
 
@@ -44,7 +39,8 @@ class StudyCompleteFragment : Fragment() {
         // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
 
-        val totalRightSwipes = viewModel.getTotalRightSwipes()
+        val totalRightSwipes = viewModel.getRightSwipeCount()
+        val totalLeftSwipes = viewModel.getLeftSwipeCount()
         val totalProblems = viewModel.getTotalProblems()
 
         binding.tvStudyComplete3.text = "총 ${totalProblems}문제 중\n${totalRightSwipes}문제를 맞췄습니다."
