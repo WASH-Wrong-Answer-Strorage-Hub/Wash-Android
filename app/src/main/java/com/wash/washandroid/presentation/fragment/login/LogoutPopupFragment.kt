@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
@@ -46,6 +47,12 @@ class LogoutPopupFragment : DialogFragment() {
                 Toast.makeText(requireContext(), "로그인 상태를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // 다이얼로그의 배경을 어둡게 설정
+        dialog?.window?.setDimAmount(0.7f)
     }
 
     private fun isKakaoLoggedIn(): Boolean {
