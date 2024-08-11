@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.wash.washandroid.presentation.fragment.problem.ProblemInfoViewModel" />
+            type="com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +36,7 @@
             android:id="@+id/dots_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:dotsColor="@color/main"
+            app:dotsColor="@color/white"
             app:dotsCornerRadius="8dp"
             app:dotsSize="16dp"
             app:dotsSpacing="4dp"
