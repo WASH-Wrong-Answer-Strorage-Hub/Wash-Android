@@ -91,7 +91,14 @@ class ProblemInfoFragment : Fragment() {
             if (isEditing) {
                 openProblemGallery()
             } else {
-                binding.problemInfoPhotoAdd.isClickable = false
+                // 사진이 존재하는지 확인
+                val currentPhotoUri = problemInfoViewModel.problemPhotoUri.value
+                val currentPhotoDrawable = binding.problemInfoPhoto.drawable
+
+                if (currentPhotoDrawable != null) {
+                    // 사진이 존재하면 뷰페이저로 이동
+                    openPhotoPager(listOf(currentPhotoUri.toString()), 0)  // 사진은 1개이므로 position은 0
+                }
             }
         }
 
@@ -118,6 +125,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(solutionPhotoList, photoAdapter, photoPath)
+                    binding.problemInfoSolutionRv.smoothScrollToPosition(0)
                 }
             }
         }
@@ -127,6 +135,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(printPhotoList, printAdapter, photoPath)
+                    binding.problemInfoPrintRv.smoothScrollToPosition(0)
                 }
             }
         }
@@ -136,6 +145,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(addPhotoList, addAdapter, photoPath)
+                    binding.problemInfoAddRv.smoothScrollToPosition(0)
                 }
             }
         }
@@ -176,12 +186,6 @@ class ProblemInfoFragment : Fragment() {
         // 편집 버튼 클릭 시
         binding.problemEditBtnLayout.setOnClickListener {
             toggleEditMode()
-            binding.photoDeleteLayout.visibility = View.VISIBLE
-        }
-        // 완료 버튼 클릭 시
-        binding.problemEditBtnLayout.setOnClickListener {
-            toggleEditMode()
-            binding.photoDeleteLayout.visibility = View.INVISIBLE
         }
     }
 
@@ -200,7 +204,7 @@ class ProblemInfoFragment : Fragment() {
         // 편집 모드일 때 정답, 메모 EditText 및 문제 사진 추가 버튼 활성화
         binding.problemInfoAnswer.isEnabled = isEditing
         binding.problemInfoMemo.isEnabled = isEditing
-        binding.problemInfoPhotoAdd.isClickable = isEditing
+        binding.photoDeleteLayout.visibility = if (isEditing) View.VISIBLE else View.GONE
     }
 
     private fun setupRecyclerView(
