@@ -13,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="visible"
-        app:lottie_rawRes="@raw/splash"
+        app:lottie_rawRes="@raw/splash_final"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         android:scaleType="fitXY"
