@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/navigation_problem_info"
-        android:name="com.wash.washandroid.presentation.fragment.problem.ProblemInfoFragment"
+        android:name="com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoFragment"
         tools:layout="@layout/fragment_problem_info" >
         <action
             android:id="@+id/action_navigation_problem_info_to_chat_fragment"
@@ -49,6 +49,20 @@
             android:id="@+id/action_navigation_problem_info_to_photo_slider_fragment"
             app:destination="@id/navigation_photo_slider"
             app:popUpTo="@id/navigation_photo_slider" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_problem_answer"
+        android:name="com.wash.washandroid.presentation.fragment.problem.add.ProblemAnswerFragment"
+        tools:layout="@layout/fragment_problem_answer" >
+        <action
+            android:id="@+id/action_navigation_problem_answer_to_photo_slider_fragment"
+            app:destination="@id/navigation_photo_slider"
+            app:popUpTo="@id/navigation_photo_slider" />
+        <action
+            android:id="@+id/action_navigation_problem_answer_to_category_subject_fragment"
+            app:destination="@id/navigation_problem_category_subject"
+            app:popUpTo="@id/navigation_problem_category_subject" />
     </fragment>
 
     <fragment
