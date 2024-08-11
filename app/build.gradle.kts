@@ -72,6 +72,9 @@ dependencies {
     implementation("com.navercorp.nid:oauth-jdk8:5.9.1")
     // kakao login
     implementation("com.kakao.sdk:v2-user:2.10.0")
+    // glide 추가
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 }
 
 fun getApiKey(propertyKey: String): String {
