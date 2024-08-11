@@ -9,6 +9,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentChatBinding
@@ -21,6 +23,8 @@ class ChatFragment : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private lateinit var chatAdapter: ChatAdapter
 
+    private lateinit var navController: NavController
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,8 +35,8 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         (requireActivity() as MainActivity).hideBottomNavigation(true)
+        navController = Navigation.findNavController(view)
 
         setupKeyboardListener()
 
@@ -63,6 +67,10 @@ class ChatFragment : Fragment() {
             chatViewModel.message.value = it.toString()
             binding.chatMessageSendBtn.setImageResource(R.drawable.chat_message_send)
             Log.d("ChatFragment", "글자 변화 감지: ${it.toString()}")
+        }
+
+        binding.categoryBackBtn.setOnClickListener {
+            navController.navigateUp()
         }
     }
 
