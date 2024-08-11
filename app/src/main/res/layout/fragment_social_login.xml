@@ -50,7 +50,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="90sp"
+            android:layout_marginStart="72sp"
             android:layout_marginTop="10sp"
             android:text="카카오 로그인"
             android:textColor="@color/black"
@@ -83,7 +83,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="90sp"
+            android:layout_marginStart="72sp"
             android:layout_marginTop="10sp"
             android:text="네이버 로그인"
             android:textColor="@color/white"
