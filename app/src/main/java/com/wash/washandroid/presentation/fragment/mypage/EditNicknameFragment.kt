@@ -37,16 +37,22 @@ class EditNicknameFragment : Fragment() {
             binding.editNicknameTv.setText(nickname)
         }
 
-        // Enter key action listener 설정
-        binding.editNicknameTv.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val newNickname = binding.editNicknameTv.text.toString()
-                mypageViewModel.setNickname(newNickname) // ViewModel에 닉네임 설정
-                Toast.makeText(requireContext(), "Nickname saved!", Toast.LENGTH_SHORT).show()
-                true
-            } else {
-                false
-            }
+//        // Enter key action listener 설정
+//        binding.editNicknameTv.setOnEditorActionListener { _, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                val newNickname = binding.editNicknameTv.text.toString()
+//                mypageViewModel.setNickname(newNickname) // ViewModel에 닉네임 설정
+//                Toast.makeText(requireContext(), "Nickname saved!", Toast.LENGTH_SHORT).show()
+//                true
+//            } else {
+//                false
+//            }
+//        }
+
+        binding.editNicknameBtn.setOnClickListener {
+            val newNickname = binding.editNicknameTv.text.toString()
+            mypageViewModel.setNickname(newNickname) // ViewModel에 닉네임 설정
+            Toast.makeText(requireContext(), "Nickname saved!", Toast.LENGTH_SHORT).show()
         }
 
         // Back button 클릭 시 이동
