@@ -1,4 +1,4 @@
-package com.wash.washandroid.presentation.fragment.problem
+package com.wash.washandroid.presentation.fragment.problem.old
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 import com.wash.washandroid.presentation.base.MainActivity
+import com.wash.washandroid.presentation.fragment.problem.PhotoAdapter
 import com.wash.washandroid.utils.ProblemInfoDecoration
 
 class ProblemInfoFragment : Fragment() {
@@ -173,12 +174,12 @@ class ProblemInfoFragment : Fragment() {
 
     private fun setupButtons() {
         // 편집 버튼 클릭 시
-        binding.problemEditBtn.setOnClickListener {
+        binding.problemEditBtnLayout.setOnClickListener {
             toggleEditMode()
             binding.photoDeleteLayout.visibility = View.VISIBLE
         }
         // 완료 버튼 클릭 시
-        binding.problemEditCompleteBtn.setOnClickListener {
+        binding.problemEditBtnLayout.setOnClickListener {
             toggleEditMode()
             binding.photoDeleteLayout.visibility = View.INVISIBLE
         }

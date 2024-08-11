@@ -1,4 +1,4 @@
-package com.wash.washandroid.presentation.fragment.problem
+package com.wash.washandroid.presentation.fragment.problem.old
 
 import android.net.Uri
 import androidx.lifecycle.LiveData

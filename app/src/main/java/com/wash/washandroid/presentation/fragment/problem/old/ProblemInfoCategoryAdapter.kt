@@ -1,4 +1,4 @@
-package com.wash.washandroid.presentation.fragment.problem
+package com.wash.washandroid.presentation.fragment.problem.old
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
