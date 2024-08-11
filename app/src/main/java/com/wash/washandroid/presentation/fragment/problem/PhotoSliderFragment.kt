@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.wash.washandroid.databinding.FragmentPhotoSliderBinding
+import com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoViewModel
 
 class PhotoSliderFragment : Fragment() {
 
