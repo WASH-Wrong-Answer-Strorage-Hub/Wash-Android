@@ -78,8 +78,10 @@ class PhotoAdapter(
 
             binding.photoIv.clipToOutline = true
 
-            binding.photoIv.setOnClickListener {
-                onPhotoClick(adapterPosition)
+            if (!isAddButtonVisible) {
+                binding.photoIv.setOnClickListener {
+                    onPhotoClick(adapterPosition)
+                }
             }
 
             binding.photoDeleteLayout.visibility = if (isAddButtonVisible) View.VISIBLE else View.GONE
