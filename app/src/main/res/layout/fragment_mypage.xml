@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/mypage_background_iv"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="220sp"
         android:src="@drawable/ic_mypage_background"
         android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,18 +25,18 @@
         android:textStyle="bold"
         android:fontFamily="@font/mangoddobak_b"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginTop="32sp"
+        android:layout_marginStart="24sp"
         />
 
     <ImageView
         android:id="@+id/mypage_profile_iv"
-        android:layout_width="83.16dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="72dp"
+        android:layout_width="83.16sp"
+        android:layout_height="80sp"
+        android:layout_marginTop="72sp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_mypage_profile"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,9 +51,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="130dp"
-        android:layout_marginStart="202dp"
-        android:layout_marginEnd="135dp"
+        android:layout_marginTop="130sp"
+        android:layout_marginStart="202sp"
+        android:layout_marginEnd="135sp"
         />
 
     <ImageButton
@@ -72,23 +72,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="사과 빠진 통나무 0612"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:fontFamily="@font/mangoddobak_r"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_profile_iv"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="14sp"
         />
 
     <ImageView
         android:id="@+id/mypage_rectangle_iv"
-        android:layout_width="312dp"
-        android:layout_height="123dp"
+        android:layout_width="312sp"
+        android:layout_height="123sp"
         android:src="@drawable/ic_mypage_rectangle"
         app:layout_constraintTop_toBottomOf="@id/mypage_background_iv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="30sp"
         />
 
     <TextView
@@ -96,14 +96,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="일반 버전"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:fontFamily="@font/mangoddobak_b"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@id/mypage_rectangle_iv"
         app:layout_constraintTop_toTopOf="@id/mypage_rectangle_iv"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="23dp"
+        android:layout_marginTop="15sp"
+        android:layout_marginStart="23sp"
         />
 
     <TextView
@@ -111,15 +111,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2023/03/01 ~ 2024/07/11"
-        android:textSize="8dp"
+        android:textSize="8sp"
         android:textColor="@color/middle_gray"
         android:fontFamily="@font/mangoddobak_l"
         app:layout_constraintTop_toTopOf="@id/normal_ver_tv"
         app:layout_constraintBottom_toBottomOf="@id/normal_ver_tv"
         app:layout_constraintStart_toEndOf="@id/normal_ver_tv"
         app:layout_constraintEnd_toEndOf="@id/mypage_rectangle_iv"
-        android:layout_marginStart="80dp"
-        android:layout_marginEnd="13dp"
+        android:layout_marginStart="80sp"
+        android:layout_marginEnd="13sp"
         />
 
     <TextView
@@ -127,19 +127,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="문제 풀기, 문제 유형 정리"
-        android:textSize="13dp"
+        android:textSize="13sp"
         android:fontFamily="@font/mangoddobak_r"
         app:layout_constraintStart_toStartOf="@id/normal_ver_tv"
         app:layout_constraintTop_toBottomOf="@id/normal_ver_tv"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="20sp"
         />
 
     <ImageButton
         android:id="@+id/upgrade_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="215dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="215sp"
+        android:layout_marginBottom="20sp"
         android:background="@drawable/ic_mypage_button"
         app:layout_constraintBottom_toBottomOf="@id/mypage_rectangle_iv"
         app:layout_constraintEnd_toEndOf="@id/ver_date_tv"
@@ -151,7 +151,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="업그레이드"
-        android:textSize="11dp"
+        android:textSize="11sp"
         android:fontFamily="@font/mangoddobak_r"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@id/upgrade_btn"
@@ -163,32 +163,32 @@
     <View
         android:id="@+id/mypage_view_1"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="5sp"
         android:background="@color/lighter_gray"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_rectangle_iv"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="30sp"
         />
 
     <LinearLayout
         android:id="@+id/mypage_subscribe_layout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="60sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_view_1"
-        android:layout_marginStart="24dp">
+        android:layout_marginStart="24sp">
 
         <TextView
             android:id="@+id/mypage_subscribe_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="구독"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textColor="@color/information2"
             android:fontFamily="@font/mangoddobak_r"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="20sp"
             />
 
         <ImageButton
@@ -198,31 +198,31 @@
             android:background="@drawable/ic_mypage_next_btn"
             app:layout_constraintBottom_toBottomOf="@id/mypage_subscribe_tv"
             app:layout_constraintTop_toTopOf="@id/mypage_subscribe_tv"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="329dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="20sp"
+            android:layout_marginStart="300sp"
             />
 
     </LinearLayout>
 
+
     <View
         android:id="@+id/mypage_line_1"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1sp"
         android:background="@color/lighter_gray"
         app:layout_constraintTop_toBottomOf="@id/mypage_subscribe_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="24sp"
         />
 
     <LinearLayout
         android:id="@+id/mypage_edit_name_layout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="60sp"
         android:orientation="horizontal"
-        android:layout_marginStart="24dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_line_1">
 
         <TextView
@@ -233,7 +233,7 @@
             android:textSize="15sp"
             android:textColor="@color/information2"
             android:fontFamily="@font/mangoddobak_r"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="20sp"
             />
 
         <ImageButton
@@ -241,8 +241,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_mypage_next_btn"
-            android:layout_marginStart="270dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="20sp"
+            android:layout_marginStart="234sp"
             />
     </LinearLayout>
 
@@ -250,7 +250,7 @@
     <View
         android:id="@+id/mypage_view_2"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="5sp"
         android:background="@color/lighter_gray"
         android:scaleType="fitXY"
         app:layout_constraintTop_toBottomOf="@id/mypage_edit_name_layout"
@@ -261,20 +261,20 @@
     <LinearLayout
         android:id="@+id/mypage_logout_layout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="40sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_view_2"
-        android:layout_marginStart="24dp">
+        android:layout_marginStart="24sp">
 
         <TextView
             android:id="@+id/mypage_logout_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="로그아웃"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textColor="@color/information2"
             android:fontFamily="@font/mangoddobak_r"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="20sp"
             />
 
     </LinearLayout>
@@ -282,20 +282,20 @@
     <View
         android:id="@+id/mypage_line_3"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1sp"
         android:background="@color/lighter_gray"
         app:layout_constraintTop_toBottomOf="@id/mypage_logout_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginTop="20sp"
+        android:layout_marginStart="24sp"
         />
 
     <LinearLayout
         android:id="@+id/mypage_withdrawal_layout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
+        android:layout_height="40sp"
+        android:layout_marginStart="24sp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mypage_line_3">

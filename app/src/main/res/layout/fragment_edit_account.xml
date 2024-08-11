@@ -22,9 +22,9 @@
         android:background="@drawable/ic_arrow_left"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="37dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="312dp"
+        android:layout_marginTop="37sp"
+        android:layout_marginStart="24sp"
+        android:layout_marginEnd="312sp"
         />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="계정 정보 수정"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="@color/white"
         android:fontFamily="@font/mangoddobak_b"
         android:textStyle="bold"
@@ -50,7 +50,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="75sp"
         />
 
     <TextView
@@ -58,13 +58,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="계정 정보"
-        android:textSize="17dp"
+        android:textSize="17sp"
         android:textColor="@color/black"
         android:fontFamily="@font/mangoddobak_b"
         app:layout_constraintStart_toStartOf="@id/edit_account_background_view"
         app:layout_constraintTop_toTopOf="@id/edit_account_background_view"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="83dp"
+        android:layout_marginStart="24sp"
+        android:layout_marginTop="83sp"
         />
 
     <TextView
@@ -72,41 +72,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="닉네임"
-        android:textSize="13dp"
+        android:textSize="13sp"
         android:textColor="@color/black"
         android:fontFamily="@font/mangoddobak_r"
         app:layout_constraintTop_toBottomOf="@id/account_information_tv"
         app:layout_constraintStart_toStartOf="@id/account_information_tv"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="30sp"
         />
-    
+
     <ImageButton
         android:id="@+id/edit_account_nickname_btn"
-        android:layout_width="7dp"
-        android:layout_height="14dp"
+        android:layout_width="7sp"
+        android:layout_height="14sp"
         android:background="@drawable/ic_mypage_next_btn"
         app:layout_constraintTop_toTopOf="@id/edit_account_nickname_title_tv"
         app:layout_constraintBottom_toBottomOf="@id/edit_account_nickname_title_tv"
         app:layout_constraintStart_toEndOf="@id/edit_account_nickname_title_tv"
-        android:layout_marginStart="300dp"
+        android:layout_marginStart="300sp"
         />
 
     <TextView
         android:id="@+id/edit_account_nickname_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:fontFamily="@font/mangoddobak_l"
         android:text="사과 빠진 통나무 0612"
         android:textColor="@color/darker_gray"
-        android:textSize="13dp"
+        android:textSize="13sp"
         app:layout_constraintStart_toStartOf="@id/edit_account_nickname_title_tv"
-        app:layout_constraintTop_toTopOf="@id/edit_account_nickname_title_tv" />
-    
+        app:layout_constraintTop_toTopOf="@id/edit_account_nickname_title_tv"
+        android:layout_marginTop="29sp"
+        />
+
     <View
         android:id="@+id/edit_account_view_1"
-        android:layout_width="345dp"
-        android:layout_height="1dp"
+        android:layout_width="345sp"
+        android:layout_height="1sp"
         android:background="@color/gray"
         app:layout_constraintStart_toStartOf="@id/edit_account_nickname_tv"
         app:layout_constraintTop_toBottomOf="@id/edit_account_nickname_tv"
@@ -118,12 +119,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="이름"
-        android:textSize="13dp"
+        android:textSize="13sp"
         android:textColor="@color/black"
         android:fontFamily="@font/mangoddobak_r"
         app:layout_constraintTop_toBottomOf="@id/edit_account_view_1"
         app:layout_constraintStart_toStartOf="@id/account_information_tv"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="30sp"
         />
 
     <TextView
@@ -131,18 +132,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="홍길동"
-        android:textSize="13dp"
+        android:textSize="13sp"
         android:fontFamily="@font/mangoddobak_l"
         android:textColor="@color/darker_gray"
         app:layout_constraintTop_toTopOf="@id/edit_account_name_title_tv"
         app:layout_constraintStart_toStartOf="@id/edit_account_name_title_tv"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="29sp"
         />
 
     <View
         android:id="@+id/edit_account_view_2"
-        android:layout_width="345dp"
-        android:layout_height="1dp"
+        android:layout_width="345sp"
+        android:layout_height="1sp"
         android:background="@color/gray"
         app:layout_constraintStart_toStartOf="@id/edit_account_name_tv"
         app:layout_constraintTop_toBottomOf="@id/edit_account_name_tv"
@@ -154,12 +155,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="연동 계정"
-        android:textSize="13dp"
+        android:textSize="13sp"
         android:textColor="@color/black"
         android:fontFamily="@font/mangoddobak_r"
         app:layout_constraintTop_toBottomOf="@id/edit_account_view_2"
         app:layout_constraintStart_toStartOf="@id/account_information_tv"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="30sp"
         />
 
     <TextView
@@ -167,18 +168,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="홍길동"
-        android:textSize="13dp"
+        android:textSize="13sp"
         android:fontFamily="@font/mangoddobak_l"
         android:textColor="@color/darker_gray"
         app:layout_constraintTop_toTopOf="@id/edit_linked_account_title_tv"
         app:layout_constraintStart_toStartOf="@id/edit_linked_account_title_tv"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="29sp"
         />
 
     <View
         android:id="@+id/edit_account_view_3"
-        android:layout_width="345dp"
-        android:layout_height="1dp"
+        android:layout_width="345sp"
+        android:layout_height="1sp"
         android:background="@color/gray"
         app:layout_constraintStart_toStartOf="@id/edit_linked_account_tv"
         app:layout_constraintTop_toBottomOf="@id/edit_linked_account_tv"
