@@ -43,5 +43,7 @@
     <string name="category_folder_3">영어</string>
     <string name="category_folder_4">Untitled</string>
     <string name="category_folder_5">2024 토플</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
