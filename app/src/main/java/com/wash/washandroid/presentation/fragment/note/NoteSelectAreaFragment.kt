@@ -51,7 +51,7 @@ class NoteSelectAreaFragment : Fragment() {
 
         // imguri2
         val imageUri2 = arguments?.getString("imgUri2")
-        if(imageUri2 == "0") {
+        if (imageUri2 == "0") {
             Log.d("fraglog", "imgUri2 : 이미지 불러오기 실패")
         } else {
             Log.d("fraglog", "imgUri2 : 이미지 불러오기 성공")

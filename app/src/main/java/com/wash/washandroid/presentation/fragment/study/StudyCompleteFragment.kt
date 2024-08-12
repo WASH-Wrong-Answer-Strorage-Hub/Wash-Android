@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.animation.Animator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
+import com.airbnb.lottie.LottieAnimationView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyCompleteBinding
 import com.wash.washandroid.presentation.base.MainActivity
@@ -20,6 +22,7 @@ class StudyCompleteFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
+    private lateinit var lottieAnimationView: LottieAnimationView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +48,32 @@ class StudyCompleteFragment : Fragment() {
 
         binding.tvStudyComplete3.text = "총 ${totalProblems}문제 중\n${totalRightSwipes}문제를 맞췄습니다."
 
+        // animation 초기화
+        lottieAnimationView = binding.studyCompleteAnimation
+
+        binding.ivStudyConfetti.visibility = View.GONE
+
+        lottieAnimationView.setAnimation(R.raw.study_complete_animation)
+        lottieAnimationView.repeatCount = 0
+        lottieAnimationView.playAnimation()
+
+        // animation 끝났을 때 리스너 설정
+        lottieAnimationView.addAnimatorListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(p0: Animator) {
+            }
+
+            override fun onAnimationEnd(p0: Animator) {
+                // 애니메이션 끝났을 때 이미지 표시
+                binding.ivStudyConfetti.visibility = View.VISIBLE
+            }
+
+            override fun onAnimationCancel(p0: Animator) {
+            }
+
+            override fun onAnimationRepeat(p0: Animator) {
+            }
+        })
+
         // 홈으로 이동하기
         binding.btnStudyBackHome.setOnClickListener {
             navController.navigate(
@@ -57,6 +86,7 @@ class StudyCompleteFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lottieAnimationView.pauseAnimation()
         _binding = null
     }
 }

@@ -64,8 +64,8 @@
             android:id="@+id/iv_study_solve"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/study_incomplete"
             android:layout_marginTop="32dp"
+            android:background="@drawable/study_incomplete"
             app:layout_constraintBottom_toTopOf="@+id/study_card_frame"
             app:layout_constraintEnd_toStartOf="@id/guideline_study_1st_v2"
             app:layout_constraintStart_toEndOf="@id/guideline_study_1st_v"
@@ -76,11 +76,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/iv_study_solve"
-            app:layout_constraintStart_toStartOf="@id/guideline_study_1st_v"
-            app:layout_constraintEnd_toEndOf="@id/guideline_study_1st_v2"
             app:layout_constraintBottom_toTopOf="@id/btn_study_x"
-            />
+            app:layout_constraintEnd_toEndOf="@id/guideline_study_1st_v2"
+            app:layout_constraintStart_toStartOf="@id/guideline_study_1st_v"
+            app:layout_constraintTop_toBottomOf="@id/iv_study_solve" />
 
 
         <Button
@@ -113,26 +112,26 @@
     <LinearLayout
         android:layout_width="152dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_gravity="end"
         android:background="#FFFFFF"
-        android:padding="16dp"
-        android:layout_gravity="end">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tv_drawer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/mangoddobak_b"
             android:text="풀이 진척도"
             android:textColor="@color/black"
-            android:textSize="15sp"
-            android:fontFamily="@font/mangoddobak_b" />
+            android:textSize="15sp" />
 
         <!-- 풀이 진척도를 표시하는 RecyclerView 또는 LinearLayout -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
 
             <!-- 각 문제에 대한 상태 표시 -->
             <LinearLayout
@@ -150,13 +149,13 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    style="@style/mg_8"
                     android:layout_width="48dp"
                     android:layout_height="14.22dp"
                     android:background="@drawable/study_sm_incomplete"
                     android:gravity="center"
                     android:text="미완료"
-                    android:textColor="@color/black"
-                    style="@style/mg_8" />
+                    android:textColor="@color/black" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

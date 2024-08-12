@@ -21,8 +21,8 @@ class StudySolveFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
-    private var folderId:Int = 0
-    private lateinit var folderName:String
+    private var folderId: Int = 0
+    private lateinit var folderName: String
 
     override fun onCreateView(
         inflater: LayoutInflater,

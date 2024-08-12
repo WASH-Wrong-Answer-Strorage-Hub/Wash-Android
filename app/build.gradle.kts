@@ -57,16 +57,19 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     // CameraX core
-    implementation ("androidx.camera:camera-core:1.1.0-beta01")
-    implementation ("androidx.camera:camera-camera2:1.1.0-beta01")
-    implementation ("androidx.camera:camera-lifecycle:1.1.0-beta01")
-    implementation ("androidx.camera:camera-view:1.0.0-alpha31")
-    implementation ("androidx.camera:camera-extensions:1.0.0-alpha31")
+    implementation("androidx.camera:camera-core:1.1.0-beta01")
+    implementation("androidx.camera:camera-camera2:1.1.0-beta01")
+    implementation("androidx.camera:camera-lifecycle:1.1.0-beta01")
+    implementation("androidx.camera:camera-view:1.0.0-alpha31")
+    implementation("androidx.camera:camera-extensions:1.0.0-alpha31")
 
     // glide
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
     // swipecards
     implementation("com.lorentzos.swipecards:library:1.0.9@aar")
+
+    // lottie 애니메이션
+    implementation("com.airbnb.android:lottie:6.3.0")
 }

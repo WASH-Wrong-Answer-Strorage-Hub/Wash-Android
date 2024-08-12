@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
+    android:orientation="vertical"
     android:padding="16dp">
 
     <View
@@ -40,13 +40,13 @@
 
     <TextView
         android:id="@+id/tv_study_card_title"
+        style="@style/mg_b25"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@android:color/black"
-        android:text="정답"
-        style="@style/mg_b25"
         android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="정답"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="@+id/tv_study_card"
         app:layout_constraintStart_toStartOf="@+id/tv_study_card"
         app:layout_constraintTop_toTopOf="@+id/tv_study_card" />

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragment.note.NoteSelectAreaFragment"
-    android:background="@color/black">
+    android:background="@color/black"
+    tools:context=".presentation.fragment.note.NoteSelectAreaFragment">
 
     <ImageView
         android:id="@+id/iv_captured"
@@ -13,10 +13,10 @@
         android:layout_marginTop="56dp"
         android:layout_marginBottom="64dp"
         android:scaleType="fitCenter"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
     <com.wash.washandroid.presentation.customview.CropOverlayView
@@ -56,16 +56,15 @@
 
     <Button
         android:id="@+id/btn_crop"
+        style="@style/mg_15"
         android:layout_width="93dp"
         android:layout_height="41dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="확인"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        style="@style/mg_15"
         android:background="@drawable/note_select_area_btn"
+        android:text="확인"
         android:textColor="@color/white"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,7 +24,6 @@ class StudyAnswerFragment : Fragment() {
     private lateinit var adapter: CardAdapter
     private lateinit var viewModel: StudyViewModel
     private val data: MutableList<String> = mutableListOf()
-    private var currentProblemIndex = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,12 +84,15 @@ class StudyAnswerFragment : Fragment() {
                 if (scrollProgressPercent > 0) {
                     // 오른쪽으로 스와이프 중
                     cardBg.setBackgroundResource(R.drawable.study_card_background_green)
+                    binding.ivStudySolve.setBackgroundResource(R.drawable.study_correct)
                 } else if (scrollProgressPercent < 0) {
                     // 왼쪽으로 스와이프 중
                     cardBg.setBackgroundResource(R.drawable.study_card_background_red)
+                    binding.ivStudySolve.setBackgroundResource(R.drawable.study_incorrect)
                 } else {
                     // 스크롤 중이 아닌 상태로 되돌아올 때
                     cardBg.setBackgroundResource(R.drawable.study_card_background)
+                    binding.ivStudySolve.setBackgroundResource(R.drawable.study_incomplete)
                 }
             }
         })
@@ -109,16 +111,11 @@ class StudyAnswerFragment : Fragment() {
         binding.btnStudyO.setOnClickListener {
             // 오른쪽으로 스와이프
             swipeView.topCardListener.selectRight()
-            // 맞은 문제 카운트
-//            viewModel.incrementRightSwipe()
-
         }
 
         binding.btnStudyX.setOnClickListener {
             // 왼쪽으로 스와이프
             swipeView.topCardListener.selectLeft()
-            // 틀린 문제 카운트
-//            viewModel.incrementLeftSwipe()
         }
 
         // 뒤로가기 클릭 시 다이얼로그 띄우기
