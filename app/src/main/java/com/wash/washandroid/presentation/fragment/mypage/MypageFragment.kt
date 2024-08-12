@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.mypage
 
+import MypageViewModel
 import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -17,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
@@ -36,6 +38,9 @@ class MypageFragment : Fragment() {
     // ActivityResultLauncher 선언
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
 
+    // ViewModel을 activityViewModels()를 사용하여 공유 ViewModel 가져오기
+    private val mypageViewModel: MypageViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,7 +54,6 @@ class MypageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 갤러리에서 이미지 선택 후 처리
         // 갤러리에서 이미지 선택 후 처리
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
@@ -66,6 +70,33 @@ class MypageFragment : Fragment() {
                     binding.mypageEclipseBtn.visibility = View.GONE
                 }
             }
+        }
+
+        // ViewModel에서 닉네임을 가져와서 TextView에 설정
+        mypageViewModel.nickname.observe(viewLifecycleOwner) { nickname ->
+            binding.mypageNameTv.text = nickname
+        }
+
+//        mypageViewModel.setSubscribed(true)  // 구독 상태를 true로 설정하여 테스트
+
+        // 구독 유무에 따른 UI 업데이트
+        mypageViewModel.isSubscribed.observe(viewLifecycleOwner) { isSubscribed ->
+            if (isSubscribed) {
+                binding.normalVerTv.text = "Pro 버전"
+                binding.normalVerExplainTv.text = "문제 풀기, 문제 유형 정리, 문제 텍스트 인식,\n" +
+                        "문제 검색, gpt 문제 풀이 \n"
+                binding.upgradeBtn.visibility = View.GONE
+                binding.upgradeTv.visibility = View.GONE
+            } else {
+                binding.normalVerTv.text = "일반 버전"
+                binding.normalVerExplainTv.text = "문제 풀기, 문제 유형 정리"
+                binding.upgradeBtn.visibility = View.VISIBLE
+                binding.upgradeTv.visibility = View.VISIBLE
+            }
+        }
+
+        binding.mypageSubscribeLayout.setOnClickListener {
+            findNavController().navigate(R.id.navigation_subscribe_menu)
         }
 
         binding.mypageEditNameLayout.setOnClickListener {

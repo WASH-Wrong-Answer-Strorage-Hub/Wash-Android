@@ -128,4 +128,14 @@
         android:name="com.wash.washandroid.presentation.fragment.mypage.EditNicknameFragment"
         tools:layout="@layout/fragment_edit_nickname"/>
 
+    <fragment
+        android:id="@+id/navigation_subscribe_menu"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.SubscribeMenuFragment"
+        tools:layout="@layout/fragment_subscribe_menu"/>
+
+    <fragment
+        android:id="@+id/navigation_subscribe"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.SubscribeFragment"
+        tools:layout="@layout/fragment_subscribe" />
+
 </navigation>

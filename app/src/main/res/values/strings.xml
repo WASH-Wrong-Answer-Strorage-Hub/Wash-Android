@@ -44,5 +44,6 @@
     <string name="category_folder_4">Untitled</string>
     <string name="category_folder_5">2024 토플</string>
 
-
+    <string name="o">O</string>
+    <string name="x">-</string>
 </resources>

@@ -21,6 +21,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> get() = _email
 
+    private val _isSubscribed = MutableLiveData<Boolean>()
+    val isSubscribed: LiveData<Boolean> get() = _isSubscribed
+
     init {
         // ViewModel 초기화 시 닉네임, 이름, 이메일 로드
         loadNickname()
@@ -44,6 +47,10 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     fun setEmail(newEmail: String) {
         _email.value = newEmail
         saveEmail(newEmail)
+    }
+
+    fun setSubscribed(isSubscribed: Boolean) {
+        _isSubscribed.value = isSubscribed
     }
 
     // 닉네임 저장
