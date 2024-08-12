@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/subscribe_menu_background_iv"
@@ -39,9 +43,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <View
+    <ImageView
         android:id="@+id/subscribe_menu_background_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_mypage_backgroud"
         app:layout_constraintTop_toTopOf="parent"
@@ -383,24 +387,26 @@
             android:layout_marginStart="38sp">
 
             <ImageView
+                android:id="@+id/subscribe_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/subscribe_btn" />
 
 
             <!-- text 안 보이는 것 추후 수정하겠습니다 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10sp"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="구독하기"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="10sp"-->
+<!--                android:fontFamily="@font/mangoddobak_r"-->
+<!--                android:text="구독하기"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="15sp" />-->
 
         </LinearLayout>
 
     </LinearLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
