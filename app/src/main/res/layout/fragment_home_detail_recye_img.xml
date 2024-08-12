@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/temporary_img"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"
+            android:padding="8dp"
+            android:scaleType="fitCenter" /> <!-- scaleType 설정 -->
+
+        <ImageView
+            android:id="@+id/deleteIconImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="4dp"
+            android:visibility="gone"
+            android:layout_gravity="top|right"
+            android:src="@drawable/ic_delete" />
+    </FrameLayout>
+</LinearLayout>

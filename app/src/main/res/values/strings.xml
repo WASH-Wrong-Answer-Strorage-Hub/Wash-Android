@@ -45,5 +45,7 @@
     <string name="category_folder_5">2024 토플</string>
     <string name="chat_message_input">Ask to WASH!</string>
     <string name="chat_title">AI 풀이</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
