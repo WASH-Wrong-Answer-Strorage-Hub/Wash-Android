@@ -36,7 +36,8 @@ class ChartDataAdapter(private val chartData: List<PieEntry>, private val colors
             percentageView.text = "${entry.value.toInt()}%"
             // 색상 적용
             colorView.setBackgroundColor(color)
-            Log.d("ChartDataAdapter", "Color: $color")
+            Log.d("ChartDataAdapter", "Color: $color") //여기서는 색상이 잘 나오는데,,
+            //파이차트 위에만 색상이 나오지 않아 확인 필요
         }
 
     }
