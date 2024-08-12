@@ -1,0 +1,90 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.wash.washandroid.presentation.fragment.chat.ChatViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ChatFragment">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_category_1st_v"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_category_1st_h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="42dp" />
+
+        <ImageView
+            android:id="@+id/category_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_btn"
+            app:layout_constraintStart_toStartOf="@id/guideline_category_1st_v"
+            app:layout_constraintTop_toTopOf="@+id/guideline_category_1st_h" />
+
+        <TextView
+            android:id="@+id/chat_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chat_title"
+            android:textColor="@color/black"
+            style="@style/mg_r20"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/category_back_btn"
+            app:layout_constraintTop_toTopOf="@id/guideline_category_1st_h" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chat_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chat_title"
+            app:layout_constraintBottom_toTopOf="@+id/chat_message_input"
+            tools:listitem="@layout/item_chat" />
+
+        <EditText
+            android:id="@+id/chat_message_input"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:text="@={viewModel.message}"
+            style="@style/mg_18"
+            android:hint="@string/chat_message_input"
+            android:textColorHint="@color/middle_gray"
+            android:paddingStart="10dp"
+            android:paddingEnd="5dp"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:background="@drawable/chat_message_input"
+            android:layout_marginStart="30dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageView
+            android:id="@+id/chat_message_send_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="10dp"
+            android:clickable="true"
+            android:src="@drawable/chat_message_send"
+            app:layout_constraintStart_toEndOf="@+id/chat_message_input"
+            app:layout_constraintTop_toTopOf="@+id/chat_message_input"
+            app:layout_constraintBottom_toBottomOf="@+id/chat_message_input"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

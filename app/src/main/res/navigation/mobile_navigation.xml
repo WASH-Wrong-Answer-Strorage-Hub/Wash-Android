@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_problem_info">
 
     <fragment
         android:id="@+id/navigation_home"
@@ -42,6 +42,46 @@
         android:name="com.wash.washandroid.presentation.fragment.mypage.MypageFragment"
         android:label="@string/navigation_mypage"
         tools:layout="@layout/fragment_mypage" />
+
+    <fragment
+        android:id="@+id/navigation_problem_info"
+        android:name="com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoFragment"
+        tools:layout="@layout/fragment_problem_info" >
+        <action
+            android:id="@+id/action_navigation_problem_info_to_chat_fragment"
+            app:destination="@id/navigation_chat"
+            app:popUpTo="@id/navigation_chat"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"/>
+        <action
+            android:id="@+id/action_navigation_problem_info_to_photo_slider_fragment"
+            app:destination="@id/navigation_photo_slider"
+            app:popUpTo="@id/navigation_photo_slider" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_problem_answer"
+        android:name="com.wash.washandroid.presentation.fragment.problem.add.ProblemAnswerFragment"
+        tools:layout="@layout/fragment_problem_answer" >
+        <action
+            android:id="@+id/action_navigation_problem_answer_to_photo_slider_fragment"
+            app:destination="@id/navigation_photo_slider"
+            app:popUpTo="@id/navigation_photo_slider" />
+        <action
+            android:id="@+id/action_navigation_problem_answer_to_category_subject_fragment"
+            app:destination="@id/navigation_problem_category_subject"
+            app:popUpTo="@id/navigation_problem_category_subject" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_problem_add"
+        android:name="com.wash.washandroid.presentation.fragment.problem.add.ProblemAddFragment"
+        tools:layout="@layout/fragment_problem_add" >
+        <action
+            android:id="@+id/action_navigation_problem_add_to_answer_fragment"
+            app:destination="@id/navigation_problem_answer"
+            app:popUpTo="@id/navigation_problem_answer" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_category_subject"
@@ -98,6 +138,22 @@
             app:destination="@id/navigation_problem_category_chapter"
             app:popUpTo="@id/navigation_problem_category_chapter" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.wash.washandroid.presentation.fragment.chat.ChatFragment"
+        tools:layout="@layout/fragment_chat" />
+
+    <fragment
+        android:id="@+id/navigation_photo_slider"
+        android:name="com.wash.washandroid.presentation.fragment.problem.PhotoSliderFragment"
+        tools:layout="@layout/fragment_photo_slider" >
+        <action
+            android:id="@+id/action_navigation_photo_slider_to_problem_info_fragment"
+            app:destination="@id/navigation_problem_info"
+            app:popUpTo="@id/navigation_problem_info" />
+    </fragment>
+  
     <fragment
         android:id="@+id/homeDetailFragment"
         android:name="com.wash.washandroid.presentation.fragment.home.HomeDetailFragment"
@@ -111,6 +167,7 @@
             android:id="@+id/action_homeDetailFragment_to_homeClickQuizFragment"
             app:destination="@id/homeClickQuizFragment" />
     </fragment>
+  
     <fragment
         android:id="@+id/homeClickQuizFragment"
         android:name="com.wash.washandroid.presentation.fragment.home.HomeClickQuizFragment"
@@ -120,6 +177,7 @@
             android:id="@+id/action_homeClickQuizFragment_to_homeDetailFragment"
             app:destination="@id/homeDetailFragment" />
     </fragment>
+  
     <fragment
         android:id="@+id/viewPieChartFragment"
         android:name="com.wash.washandroid.presentation.fragment.graph.ViewPieChartFragment"
