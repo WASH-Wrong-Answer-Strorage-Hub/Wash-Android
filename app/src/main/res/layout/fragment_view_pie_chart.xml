@@ -28,144 +28,39 @@
             android:textSize="20sp"
             android:textColor="#000000"
             android:gravity="center_vertical" />
-
     </LinearLayout>
 
     <!-- Pie chart -->
-    <ImageView
-        android:id="@+id/pie_chart"
-        android:padding="5dp"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="257dp"
-        android:src="@drawable/temp_pie"
-        android:scaleType="fitCenter"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- chart list -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-        <!-- First chart item -->
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChart"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_margin="16dp"/>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@color/main" />
-
-            <TextView
-                android:layout_width="0dp"
+            <!-- RecyclerView for chart items -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chart_items_recycler_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="도함수의 활용"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginStart="8dp"
-                android:gravity="center_vertical" />
-
-            <TextView
+                android:layout_marginTop="8dp"
+                android:orientation="vertical" />
+            <ImageView
+                android:id="@+id/view_more_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="45%"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:gravity="center_vertical" />
+                android:src="@drawable/ic_down_draw"
+                android:layout_margin="8dp"
+                android:layout_gravity="center"/>
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="6dp"
-            android:background="#cccccc" />
+    </ScrollView>
 
-        <!-- Second chart item -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@color/sub2" />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="여러 가지 미분법"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginStart="8dp"
-                android:gravity="center_vertical" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="25%"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:gravity="center_vertical" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="6dp"
-            android:background="#cccccc" />
-
-        <!-- Third chart item -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@color/sub3" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="정적분의 활용"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:layout_marginStart="8dp"
-                android:gravity="center_vertical" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="20%"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:gravity="center_vertical" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="6dp"
-            android:background="#cccccc" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/down_view_btn"
-            android:src="@drawable/ic_down_draw"
-            android:layout_marginTop="8dp"
-            android:layout_gravity="center"/>
-    </LinearLayout>
 
 </LinearLayout>

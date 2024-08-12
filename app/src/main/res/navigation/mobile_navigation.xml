@@ -128,4 +128,5 @@
             android:id="@+id/action_viewPieChartFragment_to_navigation_graph"
             app:destination="@id/navigation_graph" />
     </fragment>
+
 </navigation>

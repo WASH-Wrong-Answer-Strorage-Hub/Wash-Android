@@ -1,6 +1,7 @@
 package com.wash.washandroid.presentation.fragment.graph
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +31,7 @@ class GraphFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupRecyclerViews() {
+    fun setupRecyclerViews() {
         val subjects = listOf(
             Subject(1, "수학", "미적분"),
             Subject(2, "수학", "기하"),
@@ -47,7 +48,9 @@ class GraphFragment : Fragment() {
         // SubjectsRecyclerView 설정
         val SJadapter = SubjectsAdapter(subjects) { subject ->
             // 네비게이션을 사용하여 ViewPieChartFragment로 이동
+            Log.d("piechart","이동 전9")
             findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment)
+            Log.d("piechart","이동 완")
         }
         binding.subjectsRecyclerView.adapter = SJadapter
 
