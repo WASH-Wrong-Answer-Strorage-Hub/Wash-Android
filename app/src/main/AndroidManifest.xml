@@ -20,7 +20,7 @@
         <!-- 카카오 SDK 초기화 위한 메타 데이터 -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="848d8e24a85be1f0df0716a1f3eea7e3" />
+            android:value="@string/kakao_app_key" />
 
         <!-- MainActivity 설정 -->
         <activity
