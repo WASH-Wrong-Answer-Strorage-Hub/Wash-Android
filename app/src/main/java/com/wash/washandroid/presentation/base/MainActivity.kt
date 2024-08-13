@@ -1,13 +1,19 @@
+
 package com.wash.washandroid.presentation.base
 
 import android.os.Bundle
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.kakao.sdk.common.KakaoSdk
+import com.wash.washandroid.BuildConfig
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ActivityMainBinding
+import com.wash.washandroid.presentation.fragment.splash.SplashFragment
 import com.wash.washandroid.presentation.fragment.note.NoteCameraFragment
 import com.wash.washandroid.presentation.fragment.note.NoteOptionsBottomSheet
 
@@ -21,9 +27,15 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
+
+        // BottomNavigationView 설정
+        binding.bottomNavi.setupWithNavController(navController)
+
 
         // BottomNavigationView 설정
         binding.bottomNavi.setupWithNavController(navController)
@@ -55,12 +67,19 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+        // SplashFragment를 가장 먼저 보여줌
+        if (savedInstanceState == null) {
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+            navHostFragment.navController.setGraph(R.navigation.mobile_navigation)
+        }
+
     }
 
     fun hideBottomNavigation(state:Boolean){
         if(state) binding.bottomNavi.visibility = View.GONE else binding.bottomNavi.visibility=View.VISIBLE
     }
-    
+
     // Set main container padding
     fun setContainerPadding(paddingTop: Int) {
         findViewById<View>(R.id.container).setPadding(0, paddingTop, 0, 0)

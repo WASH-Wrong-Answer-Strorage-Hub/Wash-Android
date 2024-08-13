@@ -3,50 +3,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_problem_info">
+    app:startDestination="@+id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.wash.washandroid.presentation.fragment.splash.SplashFragment"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_socialLoginFragment"
+            app:destination="@id/navigation_social_login"
+            app:popUpTo="@id/navigation_social_login"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_social_login"
+        android:name="com.wash.washandroid.presentation.fragment.login.SocialLoginFragment"
+        tools:layout="@layout/fragment_social_login">
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.wash.washandroid.presentation.fragment.home.HomeFragment"
         android:label="@string/navigation_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_navigation_home_to_homeDetailFragment"
-            app:destination="@id/homeDetailFragment" />
+            app:destination="@id/homeDetailFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_study"
         android:name="com.wash.washandroid.presentation.fragment.study.StudyFragment"
         android:label="@string/navigation_study"
-        tools:layout="@layout/fragment_note" />
+        tools:layout="@layout/fragment_note"/>
 
     <fragment
         android:id="@+id/navigation_note"
         android:name="com.wash.washandroid.presentation.fragment.note.NoteFragment"
         android:label="@string/navigation_note"
-        tools:layout="@layout/fragment_study" />
+        tools:layout="@layout/fragment_study"/>
 
     <fragment
         android:id="@+id/navigation_graph"
         android:name="com.wash.washandroid.presentation.fragment.graph.GraphFragment"
         android:label="@string/navigation_graph"
-        tools:layout="@layout/fragment_study" >
+        tools:layout="@layout/fragment_study">
         <action
             android:id="@+id/action_navigation_graph_to_viewPieChartFragment"
-            app:destination="@id/viewPieChartFragment" />
+            app:destination="@id/viewPieChartFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_mypage"
         android:name="com.wash.washandroid.presentation.fragment.mypage.MypageFragment"
         android:label="@string/navigation_mypage"
-        tools:layout="@layout/fragment_mypage" />
+        tools:layout="@layout/fragment_mypage"/>
 
     <fragment
         android:id="@+id/navigation_problem_info"
         android:name="com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoFragment"
-        tools:layout="@layout/fragment_problem_info" >
+        tools:layout="@layout/fragment_problem_info">
         <action
             android:id="@+id/action_navigation_problem_info_to_chat_fragment"
             app:destination="@id/navigation_chat"
@@ -56,135 +72,164 @@
         <action
             android:id="@+id/action_navigation_problem_info_to_photo_slider_fragment"
             app:destination="@id/navigation_photo_slider"
-            app:popUpTo="@id/navigation_photo_slider" />
+            app:popUpTo="@id/navigation_photo_slider"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_answer"
         android:name="com.wash.washandroid.presentation.fragment.problem.add.ProblemAnswerFragment"
-        tools:layout="@layout/fragment_problem_answer" >
+        tools:layout="@layout/fragment_problem_answer">
         <action
             android:id="@+id/action_navigation_problem_answer_to_photo_slider_fragment"
             app:destination="@id/navigation_photo_slider"
-            app:popUpTo="@id/navigation_photo_slider" />
+            app:popUpTo="@id/navigation_photo_slider"/>
         <action
             android:id="@+id/action_navigation_problem_answer_to_category_subject_fragment"
             app:destination="@id/navigation_problem_category_subject"
-            app:popUpTo="@id/navigation_problem_category_subject" />
+            app:popUpTo="@id/navigation_problem_category_subject"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_add"
         android:name="com.wash.washandroid.presentation.fragment.problem.add.ProblemAddFragment"
-        tools:layout="@layout/fragment_problem_add" >
+        tools:layout="@layout/fragment_problem_add">
         <action
             android:id="@+id/action_navigation_problem_add_to_answer_fragment"
             app:destination="@id/navigation_problem_answer"
-            app:popUpTo="@id/navigation_problem_answer" />
+            app:popUpTo="@id/navigation_problem_answer"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_category_subject"
         android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategorySubjectFragment"
-        tools:layout="@layout/fragment_problem_category_subject" >
+        tools:layout="@layout/fragment_problem_category_subject">
         <action
             android:id="@+id/action_navigation_problem_category_subject_to_subfield_fragment"
             app:destination="@id/navigation_problem_category_subfield"
-            app:popUpTo="@id/navigation_problem_category_subfield" />
+            app:popUpTo="@id/navigation_problem_category_subfield"/>
         <action
             android:id="@+id/action_navigation_problem_category_subject_to_folder_fragment"
             app:destination="@id/navigation_problem_category_folder"
-            app:popUpTo="@id/navigation_problem_category_folder" />
+            app:popUpTo="@id/navigation_problem_category_folder"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_category_subfield"
         android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategorySubfieldFragment"
-        tools:layout="@layout/fragment_problem_category_subfield" >
+        tools:layout="@layout/fragment_problem_category_subfield">
         <action
             android:id="@+id/action_navigation_problem_category_subfield_to_chapter_fragment"
             app:destination="@id/navigation_problem_category_chapter"
-            app:popUpTo="@id/navigation_problem_category_chapter" />
+            app:popUpTo="@id/navigation_problem_category_chapter"/>
         <action
             android:id="@+id/action_navigation_problem_category_subfield_to_folder_fragment"
             app:destination="@id/navigation_problem_category_folder"
-            app:popUpTo="@id/navigation_problem_category_folder" />
+            app:popUpTo="@id/navigation_problem_category_folder"/>
         <action
             android:id="@+id/action_navigation_problem_category_subfield_to_subject_fragment"
             app:destination="@id/navigation_problem_category_subject"
-            app:popUpTo="@id/navigation_problem_category_subject" />
+            app:popUpTo="@id/navigation_problem_category_subject"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_category_chapter"
         android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategoryChapterFragment"
-        tools:layout="@layout/fragment_problem_category_chapter" >
+        tools:layout="@layout/fragment_problem_category_chapter">
         <action
             android:id="@+id/action_navigation_problem_category_chapter_to_folder_fragment"
             app:destination="@id/navigation_problem_category_folder"
-            app:popUpTo="@id/navigation_problem_category_folder" />
+            app:popUpTo="@id/navigation_problem_category_folder"/>
         <action
             android:id="@+id/action_navigation_problem_category_chapter_to_subfield_fragment"
             app:destination="@id/navigation_problem_category_subfield"
-            app:popUpTo="@id/navigation_problem_category_subfield" />
+            app:popUpTo="@id/navigation_problem_category_subfield"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_category_folder"
         android:name="com.wash.washandroid.presentation.fragment.category.ProblemCategoryFolderFragment"
-        tools:layout="@layout/fragment_problem_category_folder" >
+        tools:layout="@layout/fragment_problem_category_folder">
         <action
             android:id="@+id/action_navigation_problem_category_folder_to_chapter_fragment"
             app:destination="@id/navigation_problem_category_chapter"
-            app:popUpTo="@id/navigation_problem_category_chapter" />
+            app:popUpTo="@id/navigation_problem_category_chapter"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_withdrawal"
+        android:name="com.wash.washandroid.presentation.fragment.login.WithdrawalAccountFragment"
+        android:label="Withdrawal"
+        tools:layout="@layout/fragment_withdrawal_account">
+        <action
+            android:id="@+id/action_withdrawalAccountFragment_to_socialLoginFragment"
+            app:destination="@id/navigation_social_login"
+            app:popUpTo="@id/navigation_social_login"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_edit_account"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.EditAccountFragment"
+        tools:layout="@layout/fragment_edit_account"/>
+
+    <fragment
+        android:id="@+id/navigation_edit_nickname"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.EditNicknameFragment"
+        tools:layout="@layout/fragment_edit_nickname"/>
+
+    <fragment
+        android:id="@+id/navigation_subscribe_menu"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.SubscribeMenuFragment"
+        tools:layout="@layout/fragment_subscribe_menu"/>
+
+    <fragment
+        android:id="@+id/navigation_subscribe"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.SubscribeFragment"
+        tools:layout="@layout/fragment_subscribe"/>
 
     <fragment
         android:id="@+id/navigation_chat"
         android:name="com.wash.washandroid.presentation.fragment.chat.ChatFragment"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat"/>
 
     <fragment
         android:id="@+id/navigation_photo_slider"
         android:name="com.wash.washandroid.presentation.fragment.problem.PhotoSliderFragment"
-        tools:layout="@layout/fragment_photo_slider" >
+        tools:layout="@layout/fragment_photo_slider">
         <action
             android:id="@+id/action_navigation_photo_slider_to_problem_info_fragment"
             app:destination="@id/navigation_problem_info"
-            app:popUpTo="@id/navigation_problem_info" />
+            app:popUpTo="@id/navigation_problem_info"/>
     </fragment>
-  
+
     <fragment
         android:id="@+id/homeDetailFragment"
         android:name="com.wash.washandroid.presentation.fragment.home.HomeDetailFragment"
         android:label="HomeDetailFragment">
-        <!-- Add any necessary actions here -->
-
         <action
             android:id="@+id/action_homeDetailFragment_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            app:destination="@id/navigation_home"/>
         <action
             android:id="@+id/action_homeDetailFragment_to_homeClickQuizFragment"
-            app:destination="@id/homeClickQuizFragment" />
+            app:destination="@id/homeClickQuizFragment"/>
     </fragment>
-  
+
     <fragment
         android:id="@+id/homeClickQuizFragment"
         android:name="com.wash.washandroid.presentation.fragment.home.HomeClickQuizFragment"
         android:label="fragment_home_click_quiz"
-        tools:layout="@layout/fragment_home_click_quiz" >
+        tools:layout="@layout/fragment_home_click_quiz">
         <action
             android:id="@+id/action_homeClickQuizFragment_to_homeDetailFragment"
-            app:destination="@id/homeDetailFragment" />
+            app:destination="@id/homeDetailFragment"/>
     </fragment>
-  
+
     <fragment
         android:id="@+id/viewPieChartFragment"
         android:name="com.wash.washandroid.presentation.fragment.graph.ViewPieChartFragment"
-        android:label="ViewPieChartFragment" >
+        android:label="ViewPieChartFragment">
         <action
             android:id="@+id/action_viewPieChartFragment_to_navigation_graph"
-            app:destination="@id/navigation_graph" />
+            app:destination="@id/navigation_graph"/>
     </fragment>
 
 </navigation>

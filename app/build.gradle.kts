@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import java.util.Properties
 
 plugins {
@@ -23,8 +24,13 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "OPENAI_API_KEY", "\"$openAIAPIKEY\"")
+        buildConfigField("String","KAKAO_API_KEY", getApiKey("NATIVE_API_KEY"))
 
+        // local.properties 내부에서 naver login api key값 가져옴
+        buildConfigField("String", "NAVER_CLIENT_ID", getApiKey("NAVER_CLIENT_ID"))
+        buildConfigField("String", "NAVER_CLIENT_SECRET", getApiKey("NAVER_CLIENT_SECRET"))
+        buildConfigField("String", "NAVER_CLIENT_NAME", getApiKey("NAVER_CLIENT_NAME"))
+        buildConfigField("String", "OPENAI_API_KEY", "\"$openAIAPIKEY\"")
     }
 
     buildTypes {
@@ -63,7 +69,14 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-
+    
+    // lottie 애니메이션
+    implementation ("com.airbnb.android:lottie:6.3.0")
+    // naver login
+    implementation("com.navercorp.nid:oauth-jdk8:5.9.1")
+    // kakao login
+    implementation("com.kakao.sdk:v2-user:2.10.0")
+    
     // CameraX core
     implementation ("androidx.camera:camera-core:1.1.0-beta01")
     implementation ("androidx.camera:camera-camera2:1.1.0-beta01")
@@ -84,4 +97,10 @@ dependencies {
     
     //pie chart
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+}
+
+fun getApiKey(propertyKey: String): String {
+    val properties = Properties()
+    properties.load(rootProject.file("local.properties").inputStream())
+    return properties.getProperty(propertyKey)
 }

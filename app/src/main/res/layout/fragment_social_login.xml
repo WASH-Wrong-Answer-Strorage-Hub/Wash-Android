@@ -22,96 +22,73 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="84sp"
         />
 
     <LinearLayout
         android:id="@+id/social_login_kakao_layout"
-        android:layout_width="0dp"
-        android:layout_height="47dp"
+        android:layout_width="0sp"
+        android:layout_height="47sp"
         android:background="@drawable/kakao_btn_background"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="456dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp">
+        android:layout_marginTop="550sp"
+        android:layout_marginStart="24sp"
+        android:layout_marginEnd="24sp">
 
         <ImageView
             android:id="@+id/kakao_btn_img"
-            android:layout_width="19dp"
-            android:layout_height="19dp"
+            android:layout_width="19sp"
+            android:layout_height="19sp"
             android:src="@drawable/ic_kakao"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginStart="23sp"
+            android:layout_marginTop="14sp"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="90dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="72sp"
+            android:layout_marginTop="10sp"
             android:text="카카오 로그인"
             android:textColor="@color/black"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/social_login_naver_layout"
-        android:layout_width="0dp"
-        android:layout_height="47dp"
+        android:layout_width="0sp"
+        android:layout_height="47sp"
         android:background="@drawable/naver_btn_background"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/social_login_kakao_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp">
+        android:layout_marginTop="15sp"
+        android:layout_marginStart="24sp"
+        android:layout_marginEnd="24sp">
 
         <ImageView
             android:id="@+id/naver_btn_img"
-            android:layout_width="19dp"
-            android:layout_height="19dp"
+            android:layout_width="19sp"
+            android:layout_height="19sp"
             android:src="@drawable/ic_naver"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginStart="23sp"
+            android:layout_marginTop="14sp"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="90dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="72sp"
+            android:layout_marginTop="10sp"
             android:text="네이버 로그인"
             android:textColor="@color/white"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/social_login_signup_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="회원가입"
-        android:textSize="11dp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/mangoddobak_r"
-        app:layout_constraintTop_toBottomOf="@id/social_login_naver_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        />
-
-    <View
-        android:layout_width="41dp"
-        android:layout_height="1dp"
-        android:background="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/social_login_signup_tv"
-        app:layout_constraintStart_toStartOf="@id/social_login_signup_tv"
-        app:layout_constraintEnd_toEndOf="@id/social_login_signup_tv"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

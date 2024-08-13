@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 권한 선언 -->
+     <!-- 권한 선언 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -23,6 +25,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wash"
         tools:targetApi="31">
+
+        <!-- 카카오 SDK 초기화 위한 메타 데이터 -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
+
+        <!-- MainActivity 설정 -->
         <activity
             android:name=".presentation.base.MainActivity"
             android:exported="true"
@@ -30,10 +39,16 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- 카카오 로그인 리디렉션 설정 -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="kakao848d8e24a85be1f0df0716a1f3eea7e3" android:host="oauth"/>
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
