@@ -5,6 +5,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("kotlin-android")
+    id("androidx.navigation.safeargs")
 }
 
 val localProperties = Properties()
@@ -78,11 +80,11 @@ dependencies {
     implementation("com.kakao.sdk:v2-user:2.10.0")
     
     // CameraX core
-    implementation ("androidx.camera:camera-core:1.1.0-beta01")
-    implementation ("androidx.camera:camera-camera2:1.1.0-beta01")
-    implementation ("androidx.camera:camera-lifecycle:1.1.0-beta01")
-    implementation ("androidx.camera:camera-view:1.0.0-alpha31")
-    implementation ("androidx.camera:camera-extensions:1.0.0-alpha31")
+    implementation("androidx.camera:camera-core:1.1.0-beta01")
+    implementation("androidx.camera:camera-camera2:1.1.0-beta01")
+    implementation("androidx.camera:camera-lifecycle:1.1.0-beta01")
+    implementation("androidx.camera:camera-view:1.0.0-alpha31")
+    implementation("androidx.camera:camera-extensions:1.0.0-alpha31")
 
     // glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
@@ -97,6 +99,9 @@ dependencies {
     
     //pie chart
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // swipecards
+    implementation("com.lorentzos.swipecards:library:1.0.9@aar")
 }
 
 fun getApiKey(propertyKey: String): String {

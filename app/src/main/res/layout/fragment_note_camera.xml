@@ -5,12 +5,12 @@
     android:layout_height="match_parent">
 
     <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
+        android:id="@+id/view_finder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"></androidx.camera.view.PreviewView>
 
     <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/tv_study_solve_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
@@ -20,8 +20,47 @@
         android:textColor="@color/white"
         android:textSize="15sp" />
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="138dp"
+        android:layout_gravity="center|bottom"
+        android:background="#66000000" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_gravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="90dp"
+        app:tabBackground="@android:color/transparent"
+        app:tabIndicatorColor="@android:color/transparent"
+        app:tabIndicatorHeight="0dp"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/gray">
+
+        <com.google.android.material.tabs.TabItem
+            style="@style/mg_15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="한 문제" />
+
+        <com.google.android.material.tabs.TabItem
+            style="@style/mg_15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="여러 문제" />
+    </com.google.android.material.tabs.TabLayout>
+
     <ImageView
-        android:id="@+id/btnClose"
+        android:id="@+id/btn_close"
         android:layout_width="27.28dp"
         android:layout_height="27.28dp"
         android:layout_gravity="end"

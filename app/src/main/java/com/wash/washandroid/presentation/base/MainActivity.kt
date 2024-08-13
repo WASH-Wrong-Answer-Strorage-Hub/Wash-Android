@@ -2,6 +2,7 @@
 package com.wash.washandroid.presentation.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         // BottomNavigationView 설정
         binding.bottomNavi.setupWithNavController(navController)
+        binding.bottomNavi.itemIconTintList = null
 
 
         // BottomNavigationView 설정
@@ -52,8 +54,9 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_note -> {
-                    val bottomSheet = NoteOptionsBottomSheet()
-                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+//                    val bottomSheet = NoteOptionsBottomSheet()
+//                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+                    navController.navigate(R.id.navigation_note)
                     true
                 }
                 R.id.navigation_graph -> {
@@ -83,18 +86,5 @@ class MainActivity : AppCompatActivity() {
     // Set main container padding
     fun setContainerPadding(paddingTop: Int) {
         findViewById<View>(R.id.container).setPadding(0, paddingTop, 0, 0)
-    }
-
-    // Set Bottom navigation Visibility
-    fun setBottomNavigationVisibility(visibility: Int) {
-        findViewById<View>(R.id.bottom_navi).visibility = visibility
-    }
-
-    // Start camera fragment
-    fun startCameraFragment() {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, NoteCameraFragment())
-        transaction.addToBackStack(null)
-        transaction.commit()
     }
 }
