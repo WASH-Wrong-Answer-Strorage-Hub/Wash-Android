@@ -75,7 +75,8 @@ dependencies {
     // naver login
     implementation("com.navercorp.nid:oauth-jdk8:5.9.1")
     // kakao login
-    implementation("com.kakao.sdk:v2-user:2.10.0")
+    implementation ("com.kakao.sdk:v2-all:2.20.3") // 전체 모듈 설치
+    implementation ("com.kakao.sdk:v2-user:2.20.3") // 카카오 로그인 API 모듈
     
     // CameraX core
     implementation ("androidx.camera:camera-core:1.1.0-beta01")
