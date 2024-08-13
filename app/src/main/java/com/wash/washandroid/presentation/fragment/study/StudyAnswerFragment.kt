@@ -1,6 +1,5 @@
 package com.wash.washandroid.presentation.fragment.study
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -111,11 +110,17 @@ class StudyAnswerFragment : Fragment() {
         binding.btnStudyO.setOnClickListener {
             // 오른쪽으로 스와이프
             swipeView.topCardListener.selectRight()
+            val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
+            cardBg.setBackgroundResource(R.drawable.study_card_background_green)
+            binding.ivStudySolve.setBackgroundResource(R.drawable.study_correct)
         }
 
         binding.btnStudyX.setOnClickListener {
             // 왼쪽으로 스와이프
             swipeView.topCardListener.selectLeft()
+            val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
+            cardBg.setBackgroundResource(R.drawable.study_card_background_red)
+            binding.ivStudySolve.setBackgroundResource(R.drawable.study_incorrect)
         }
 
         // 뒤로가기 클릭 시 다이얼로그 띄우기
