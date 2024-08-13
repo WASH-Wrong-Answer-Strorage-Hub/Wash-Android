@@ -124,13 +124,14 @@
         android:textSize="11sp"
         android:textColor="@color/darker_gray"
         app:layout_constraintTop_toBottomOf="@id/withdrawal_account_view_1"
-        app:layout_constraintStart_toStartOf="@id/withdrawal_account_tv"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="35sp"
+        android:layout_marginStart="24sp"
         />
 
     <EditText
         android:id="@+id/withdrawal_account_problem_et"
-        android:layout_width="345sp"
+        android:layout_width="312sp"
         android:layout_height="40sp"
         android:hint="불편 사항을 입력해주세요."
         android:textSize="12sp"
@@ -139,6 +140,7 @@
         android:textColor="@color/middle_gray"
         android:background="@drawable/bt_password_input"
         app:layout_constraintStart_toStartOf="@id/input_problem_tv"
+
         app:layout_constraintTop_toBottomOf="@id/input_problem_tv"
         android:layout_marginTop="6sp"
         android:paddingLeft="10sp"
@@ -149,12 +151,12 @@
 
     <ImageButton
         android:id="@+id/withdrawal_btn"
-        android:layout_width="345sp"
+        android:layout_width="312sp"
         android:layout_height="wrap_content"
         android:background="@drawable/ic_withdrawal_button"
-        app:layout_constraintTop_toBottomOf="@id/input_problem_tv"
+        app:layout_constraintTop_toBottomOf="@id/withdrawal_account_problem_et"
         app:layout_constraintStart_toStartOf="@id/withdrawal_account_problem_et"
-        android:layout_marginTop="91sp"
+        android:layout_marginTop="45sp"
         />
 
     <TextView

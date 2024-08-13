@@ -64,9 +64,9 @@
         app:layout_constraintEnd_toEndOf="@id/subscribe_menu_background_view"
         android:layout_marginTop="66sp"
         />
-    <!-- crown 이미지가 svg로 다운 받으면 깨져서 나중에 다시 해보겠습니다 -->
 
     <ImageView
+        android:id="@+id/crown_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
@@ -74,6 +74,16 @@
         android:layout_marginTop="19sp"
         android:layout_marginStart="13sp"
         android:src="@drawable/crown_background"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/crown"
+        app:layout_constraintTop_toTopOf="@+id/crown_background"
+        app:layout_constraintBottom_toBottomOf="@id/crown_background"
+        app:layout_constraintStart_toStartOf="@id/crown_background"
+        app:layout_constraintEnd_toEndOf="@id/crown_background"
         />
 
     <TextView
