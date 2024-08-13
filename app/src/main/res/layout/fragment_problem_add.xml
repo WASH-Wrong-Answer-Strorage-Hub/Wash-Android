@@ -62,7 +62,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/problem_add_title" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageView
             android:id="@+id/problem_add_btn"
             android:layout_width="265dp"
             android:layout_height="157dp"
@@ -72,6 +72,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/problem_add_subtitle" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/problem_add_rv"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/problem_add_btn" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/problem_add_next_btn"
             android:layout_width="36dp"
@@ -80,7 +89,7 @@
             android:layout_marginEnd="24dp"
             android:layout_marginTop="50dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/problem_add_btn" />
+            app:layout_constraintTop_toBottomOf="@+id/problem_add_rv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

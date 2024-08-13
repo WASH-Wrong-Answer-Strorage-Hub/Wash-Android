@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/mangoddobak_b"
+        android:text="문제 인식"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/btnClose"
+        android:layout_width="27.28dp"
+        android:layout_height="27.28dp"
+        android:layout_gravity="end"
+        android:layout_margin="23dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/cameraCaptureButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/ic_cam_capture" />
+
+    <ImageView
+        android:id="@+id/btnSwitchCamera"
+        android:layout_width="46.2dp"
+        android:layout_height="48dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="32dp"
+        android:src="@drawable/ic_cam_rotate"
+        app:tint="@android:color/white" />
+
+</FrameLayout>

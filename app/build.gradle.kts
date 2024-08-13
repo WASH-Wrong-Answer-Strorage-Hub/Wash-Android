@@ -7,26 +7,30 @@ plugins {
     id("kotlin-kapt")
 }
 
+val localProperties = Properties()
+localProperties.load(project.rootProject.file("local.properties").inputStream())
+val openAIAPIKEY = localProperties.getProperty("openAIAPIKEY")?:""
+
 android {
     namespace = "com.wash.washandroid"
     compileSdk = 34
 
     defaultConfig {
         applicationId = "com.wash.washandroid"
-        minSdk = 30
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // local.properties 내부에서 kakao login api key값 가져옴
         buildConfigField("String","KAKAO_API_KEY", getApiKey("NATIVE_API_KEY"))
 
         // local.properties 내부에서 naver login api key값 가져옴
         buildConfigField("String", "NAVER_CLIENT_ID", getApiKey("NAVER_CLIENT_ID"))
         buildConfigField("String", "NAVER_CLIENT_SECRET", getApiKey("NAVER_CLIENT_SECRET"))
         buildConfigField("String", "NAVER_CLIENT_NAME", getApiKey("NAVER_CLIENT_NAME"))
+        buildConfigField("String", "OPENAI_API_KEY", "\"$openAIAPIKEY\"")
     }
 
     buildTypes {
@@ -65,16 +69,34 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-
+    
     // lottie 애니메이션
     implementation ("com.airbnb.android:lottie:6.3.0")
     // naver login
     implementation("com.navercorp.nid:oauth-jdk8:5.9.1")
     // kakao login
     implementation("com.kakao.sdk:v2-user:2.10.0")
-    // glide 추가
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    
+    // CameraX core
+    implementation ("androidx.camera:camera-core:1.1.0-beta01")
+    implementation ("androidx.camera:camera-camera2:1.1.0-beta01")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0-beta01")
+    implementation ("androidx.camera:camera-view:1.0.0-alpha31")
+    implementation ("androidx.camera:camera-extensions:1.0.0-alpha31")
+
+    // glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation("androidx.activity:activity-ktx:1.9.1")
+
+    implementation("com.tbuonomo:dotsindicator:5.0")
+    
+    //pie chart
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
 
 fun getApiKey(propertyKey: String): String {

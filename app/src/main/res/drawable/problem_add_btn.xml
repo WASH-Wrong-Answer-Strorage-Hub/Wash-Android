@@ -6,10 +6,4 @@
             <corners android:radius="10dp" />
         </shape>
     </item>
-    <item>
-        <bitmap
-            android:src="@drawable/plus"
-            android:gravity="center"
-            android:tileMode="disabled"/>
-    </item>
 </layer-list>
