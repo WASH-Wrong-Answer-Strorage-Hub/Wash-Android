@@ -1,7 +1,9 @@
 
 package com.wash.washandroid.presentation.base
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +15,7 @@ import com.kakao.sdk.common.KakaoSdk
 import com.wash.washandroid.BuildConfig
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ActivityMainBinding
+import com.wash.washandroid.presentation.fragment.login.SocialLoginFragment
 import com.wash.washandroid.presentation.fragment.splash.SplashFragment
 import com.wash.washandroid.presentation.fragment.note.NoteCameraFragment
 import com.wash.washandroid.presentation.fragment.note.NoteOptionsBottomSheet
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Kakao SDK 초기화
         KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
 
         val navHostFragment =
@@ -36,9 +40,6 @@ class MainActivity : AppCompatActivity() {
         // BottomNavigationView 설정
         binding.bottomNavi.setupWithNavController(navController)
 
-
-        // BottomNavigationView 설정
-        binding.bottomNavi.setupWithNavController(navController)
 
         // BottomNavigationView 아이템 선택 리스너 설정
         binding.bottomNavi.setOnItemSelectedListener { item ->
