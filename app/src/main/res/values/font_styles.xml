@@ -24,6 +24,12 @@
         <item name="android:fontWeight">400</item>
         <item name="android:textSize">20sp</item>
     </style>
+    <style name="mg_20">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">20sp</item>
+    </style>
     <style name="mg_18">
         <item name="android:fontStyle">normal</item>
         <item name="android:fontFamily">@font/mangoddobak_r</item>
@@ -35,6 +41,12 @@
         <item name="android:fontFamily">@font/mangoddobak_r</item>
         <item name="android:fontWeight">400</item>
         <item name="android:textSize">16sp</item>
+    </style>
+    <style name="mg_15">
+        <item name="android:fontStyle">normal</item>
+        <item name="android:fontFamily">@font/mangoddobak_r</item>
+        <item name="android:fontWeight">400</item>
+        <item name="android:textSize">15sp</item>
     </style>
     <style name="mg_13">
         <item name="android:fontStyle">normal</item>

@@ -5,7 +5,7 @@
     android:viewportHeight="36">
   <path
       android:pathData="M11,15.083L14.184,15.083A2,2 0,0 1,16.184 17.083L16.184,30A2,2 0,0 1,14.184 32L11,32A2,2 0,0 1,9 30L9,17.083A2,2 0,0 1,11 15.083z"
-      android:fillColor="#949494"/>
+      android:fillColor="@drawable/bottom_navigation_color"/>
   <path
       android:pathData="M20.948,5L24.132,5A1,1 0,0 1,25.132 6L25.132,30A1,1 0,0 1,24.132 31L20.948,31A1,1 0,0 1,19.948 30L19.948,6A1,1 0,0 1,20.948 5z"
       android:strokeWidth="2"
@@ -13,5 +13,5 @@
       android:strokeColor="#000000"/>
   <path
       android:pathData="M20.948,4L24.132,4A2,2 0,0 1,26.132 6L26.132,30A2,2 0,0 1,24.132 32L20.948,32A2,2 0,0 1,18.948 30L18.948,6A2,2 0,0 1,20.948 4z"
-      android:fillColor="#949494"/>
+      android:fillColor="@drawable/bottom_navigation_color"/>
 </vector>

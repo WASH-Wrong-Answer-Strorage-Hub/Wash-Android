@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 메인 컨텐츠 레이아웃 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_study_1st_v"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_study_1st_h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_study_1st_v2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="24dp" />
+
+        <TextView
+            android:id="@+id/tv_study_solve_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:fontFamily="@font/mangoddobak_b"
+            android:text="정답 확인"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/study_solve_back_btn"
+            app:layout_constraintTop_toTopOf="@+id/guideline_study_1st_h" />
+
+        <ImageView
+            android:id="@+id/study_solve_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_btn"
+            app:layout_constraintStart_toStartOf="@+id/guideline_study_1st_v"
+            app:layout_constraintTop_toTopOf="@+id/guideline_study_1st_h" />
+
+        <ImageView
+            android:id="@+id/iv_drawer"
+            android:layout_width="25dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_drawer"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2"
+            app:layout_constraintTop_toTopOf="@+id/guideline_study_1st_h" />
+
+        <ImageView
+            android:id="@+id/iv_study_solve"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/study_incomplete"
+            app:layout_constraintBottom_toTopOf="@+id/study_card_frame"
+            app:layout_constraintEnd_toStartOf="@id/guideline_study_1st_v2"
+            app:layout_constraintStart_toEndOf="@id/guideline_study_1st_v"
+            app:layout_constraintTop_toBottomOf="@+id/tv_study_solve_title" />
+
+        <com.lorentzos.flingswipe.SwipeFlingAdapterView
+            android:id="@+id/study_card_frame"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toTopOf="@id/btn_study_x"
+            app:layout_constraintEnd_toEndOf="@id/guideline_study_1st_v2"
+            app:layout_constraintStart_toStartOf="@id/guideline_study_1st_v"
+            app:layout_constraintTop_toBottomOf="@id/iv_study_solve" />
+
+
+        <Button
+            android:id="@+id/btn_study_x"
+            style="@style/mg_15"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/ic_card_negative"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_study_1st_v"
+            app:layout_constraintTop_toBottomOf="@id/study_card_frame" />
+
+        <Button
+            android:id="@+id/btn_study_o"
+            style="@style/mg_15"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="36dp"
+            android:background="@drawable/ic_card_positive"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_study_x"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2"
+            app:layout_constraintTop_toTopOf="@+id/btn_study_x" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 드로어 컨텐츠 레이아웃 -->
+    <LinearLayout
+        android:layout_width="152dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_drawer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/mangoddobak_b"
+            android:text="풀이 진척도"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <!-- 풀이 진척도를 표시하는 RecyclerView 또는 LinearLayout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <!-- 각 문제에 대한 상태 표시 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="1"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    style="@style/mg_8"
+                    android:layout_width="48dp"
+                    android:layout_height="14.22dp"
+                    android:background="@drawable/study_sm_incomplete"
+                    android:gravity="center"
+                    android:text="미완료"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
