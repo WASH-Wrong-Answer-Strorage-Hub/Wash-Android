@@ -62,6 +62,8 @@ class NoteCameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navController = Navigation.findNavController(view)
+
         // 현재 패딩을 저장하고 0으로 설정
         originalPaddingTop = (activity as MainActivity).findViewById<View>(R.id.container).paddingTop
         (activity as MainActivity).setContainerPadding(0)

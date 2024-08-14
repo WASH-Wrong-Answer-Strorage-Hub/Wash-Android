@@ -302,6 +302,9 @@
             android:defaultValue="0"
             app:argType="string"
             app:nullable="false" />
+        <action
+            android:id="@+id/action_navigation_note_select_area_to_navigation_problem_add"
+            app:destination="@id/navigation_problem_add" />
     </fragment>
 
     <fragment

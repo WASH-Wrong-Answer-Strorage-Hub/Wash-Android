@@ -7,7 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.wash.washandroid.R
@@ -19,6 +22,7 @@ class NoteSelectAreaFragment : Fragment() {
     private var _binding: FragmentNoteSelectAreaBinding? = null
     private val binding get() = _binding!!
     private var originalPaddingTop: Int = 0
+    private lateinit var navController:NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +36,8 @@ class NoteSelectAreaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
 
         // 현재 패딩을 저장하고 0으로 설정
         originalPaddingTop = (activity as MainActivity).findViewById<View>(R.id.container).paddingTop
@@ -58,12 +64,24 @@ class NoteSelectAreaFragment : Fragment() {
             loadCapturedImage(Uri.parse((imageUri2)))
         }
 
-        binding.btnCrop.setOnClickListener {
+        // 영역 추가
+        binding.btnAddArea.setOnClickListener {
+            binding.cropOverlayView.addNewRect()
+        }
 
+        // 확인 버튼
+        binding.btnCrop.setOnClickListener {
+//            val croppedUris = binding.cropOverlayView.cropAllRectangles(binding.ivCaptured)
+//            if (croppedUris.isNotEmpty()) {
+//                val bundle = bundleOf("croppedUris" to croppedUris.map { it.toString() }.toTypedArray())
+//                navController.navigate(R.id.action_navigation_note_select_area_to_navigation_problem_add, bundle)
+//            }
+            navController.navigate(R.id.action_navigation_note_select_area_to_navigation_problem_add)
         }
 
         binding.btnBack.setOnClickListener {
-            requireActivity().onBackPressed()
+            navController = Navigation.findNavController(view)
+            navController.navigateUp()
         }
     }
 

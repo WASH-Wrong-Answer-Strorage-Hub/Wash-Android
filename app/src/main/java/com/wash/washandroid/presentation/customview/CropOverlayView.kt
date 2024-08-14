@@ -30,44 +30,47 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
         strokeWidth = 5f
     }
 
-
     private val backgroundPaint = Paint().apply {
-        color = Color.parseColor("#80000000") // 검정색 50% 투명도
+//        color = Color.parseColor("#80000000") // 검정색 50% 투명도
+        color = Color.parseColor("#00000000") // 투명
     }
 
-    private val rect = RectF(100f, 200f, 500f, 600f)
-    private var movingCorner: Corner? = null
+    // 사각형 리스트
+    private val rects = mutableListOf<RectF>()
+    private var movingCorner: Pair<RectF, Corner>? = null
     private val cornerRadius = 20f // 둥근 모서리 반지름
+
+    init {
+        // 초기 사각형 추가
+        rects.add(RectF(100f, 200f, 500f, 600f))
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         val cornerRadius = 20f // 모든 모서리를 20f로 수정
 
-        // 선택되지 않은 부분 그리기
-        canvas.drawRect(0f, 0f, width.toFloat(), rect.top, backgroundPaint)
-        canvas.drawRect(0f, rect.bottom, width.toFloat(), height.toFloat(), backgroundPaint)
-        canvas.drawRect(0f, rect.top, rect.left, rect.bottom, backgroundPaint)
-        canvas.drawRect(rect.right, rect.top, width.toFloat(), rect.bottom, backgroundPaint)
+        rects.forEach { rect ->
+            // 선택되지 않은 부분 그리기
+            canvas.drawRect(0f, 0f, width.toFloat(), rect.top, backgroundPaint)
+            canvas.drawRect(0f, rect.bottom, width.toFloat(), height.toFloat(), backgroundPaint)
+            canvas.drawRect(0f, rect.top, rect.left, rect.bottom, backgroundPaint)
+            canvas.drawRect(rect.right, rect.top, width.toFloat(), rect.bottom, backgroundPaint)
 
-        // 선택된 영역 반투명 흰색으로 채우기
-        val selectedAreaPaint = Paint().apply {
-            color = Color.parseColor("#66FFFFFF") // 흰색 40% 투명도
-            style = Paint.Style.FILL
+            // 선택된 영역 반투명 흰색으로 채우기
+            val selectedAreaPaint = Paint().apply {
+                color = Color.parseColor("#66FFFFFF") // 흰색 40% 투명도
+                style = Paint.Style.FILL
+            }
+            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, selectedAreaPaint)
+
+            // 선택된 영역 테두리 그리기
+            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
+            drawCorners(canvas, rect)
         }
-        canvas.drawRoundRect(rect, cornerRadius, cornerRadius, selectedAreaPaint)
-
-        // 선택된 영역 테두리 그리기
-        canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
-        drawCorners(canvas)
     }
 
-
-
-
-
-
-    private fun drawCorners(canvas: Canvas) {
+    private fun drawCorners(canvas: Canvas, rect: RectF) {
         val cornerRadius = 20f
         val cornerLength = 30f
 
@@ -83,31 +86,21 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
         // 하단 오른쪽
         canvas.drawLine(rect.right, rect.bottom, rect.right - cornerLength, rect.bottom, cornerPaint)
         canvas.drawLine(rect.right, rect.bottom, rect.right, rect.bottom - cornerLength, cornerPaint)
-
-        // 각 모서리에 둥근 부분 그리기
-//        canvas.drawArc(RectF(rect.left - cornerRadius, rect.top - cornerRadius, rect.left + cornerRadius, rect.top + cornerRadius), 180f, 90f, false, cornerPaint)
-//        canvas.drawArc(RectF(rect.right - cornerRadius, rect.top - cornerRadius, rect.right + cornerRadius, rect.top + cornerRadius), -90f, 90f, false, cornerPaint)
-//        canvas.drawArc(RectF(rect.left - cornerRadius, rect.bottom - cornerRadius, rect.left + cornerRadius, rect.bottom + cornerRadius), 90f, 90f, false, cornerPaint)
-//        canvas.drawArc(RectF(rect.right - cornerRadius, rect.bottom - cornerRadius, rect.right + cornerRadius, rect.bottom + cornerRadius), 0f, 90f, false, cornerPaint)
     }
-
-
-
-
-
-
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 movingCorner = getCorner(event.x, event.y)
             }
+
             MotionEvent.ACTION_MOVE -> {
-                movingCorner?.let {
-                    updateRect(event.x, event.y, it)
+                movingCorner?.let { (rect, corner) ->
+                    updateRect(event.x, event.y, rect, corner)
                     invalidate()
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 movingCorner = null
             }
@@ -115,14 +108,18 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
         return true
     }
 
-    private fun getCorner(x: Float, y: Float): Corner? {
-        return when {
-            isNearCorner(x, y, rect.left, rect.top) -> Corner.TOP_LEFT
-            isNearCorner(x, y, rect.right, rect.top) -> Corner.TOP_RIGHT
-            isNearCorner(x, y, rect.left, rect.bottom) -> Corner.BOTTOM_LEFT
-            isNearCorner(x, y, rect.right, rect.bottom) -> Corner.BOTTOM_RIGHT
-            else -> null
+    private fun getCorner(x: Float, y: Float): Pair<RectF, Corner>? {
+        rects.forEach { rect ->
+            val corner = when {
+                isNearCorner(x, y, rect.left, rect.top) -> Corner.TOP_LEFT
+                isNearCorner(x, y, rect.right, rect.top) -> Corner.TOP_RIGHT
+                isNearCorner(x, y, rect.left, rect.bottom) -> Corner.BOTTOM_LEFT
+                isNearCorner(x, y, rect.right, rect.bottom) -> Corner.BOTTOM_RIGHT
+                else -> null
+            }
+            if (corner != null) return Pair(rect, corner)
         }
+        return null
     }
 
     private fun isNearCorner(x: Float, y: Float, cornerX: Float, cornerY: Float): Boolean {
@@ -130,20 +127,23 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
         return (x - cornerX).absoluteValue < threshold && (y - cornerY).absoluteValue < threshold
     }
 
-    private fun updateRect(x: Float, y: Float, corner: Corner) {
+    private fun updateRect(x: Float, y: Float, rect: RectF, corner: Corner) {
         when (corner) {
             Corner.TOP_LEFT -> {
                 rect.left = x
                 rect.top = y
             }
+
             Corner.TOP_RIGHT -> {
                 rect.right = x
                 rect.top = y
             }
+
             Corner.BOTTOM_LEFT -> {
                 rect.left = x
                 rect.bottom = y
             }
+
             Corner.BOTTOM_RIGHT -> {
                 rect.right = x
                 rect.bottom = y
@@ -151,8 +151,43 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
         }
     }
 
+    fun addNewRect() {
+//        rects.add(RectF(100f, 200f, 400f, 600f)) // 새 사각형 위치 설정
+        val newRect = findNonOverlappingRect()
+        rects.add(newRect)
+        invalidate() // 화면 갱신
+    }
+
+    private fun findNonOverlappingRect(): RectF {
+        val padding = 20f // 사각형들 사이의 최소 간격
+        var left: Float
+        var top: Float
+        var right: Float
+        var bottom: Float
+
+        var isOverlapping: Boolean
+
+        do {
+            // 랜덤하게 새 사각형의 위치 설정
+            left = (0..(width - 300)).random().toFloat() // 새 사각형의 left 좌표
+            top = (0..(height - 400)).random().toFloat() // 새 사각형의 top 좌표
+            right = left + 300 // 새 사각형의 너비
+            bottom = top + 400 // 새 사각형의 높이
+
+            val newRect = RectF(left, top, right, bottom)
+
+            // 기존 사각형들과 겹치는지 확인
+            isOverlapping = rects.any { existingRect ->
+                RectF.intersects(existingRect, newRect)
+            }
+        } while (isOverlapping) // 겹치는 경우 새로운 위치를 찾음
+
+        return RectF(left, top, right, bottom)
+    }
+
     private enum class Corner {
         TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
     }
 }
+
 
