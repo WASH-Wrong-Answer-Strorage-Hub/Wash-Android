@@ -1,10 +1,10 @@
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.wash.washandroid.R
+import com.wash.washandroid.databinding.FragmentHomeDetailRecyeImgBinding
 
 class ImageAdapter(
     private val itemCount: Int,
@@ -14,18 +14,16 @@ class ImageAdapter(
     private val onDeleteIconClick: (Int) -> Unit // 삭제 아이콘 클릭 이벤트
 ) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
-    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView: ImageView = itemView.findViewById(R.id.image_view)
-        val deleteIconImageView: ImageView = itemView.findViewById(R.id.deleteIconImageView)
+    inner class ImageViewHolder(val binding: FragmentHomeDetailRecyeImgBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-            itemView.setOnClickListener {
+            binding.root.setOnClickListener {
                 if (!isEditing) { // 편집 모드가 아닐 때만 클릭 이벤트 처리
                     onItemClick(adapterPosition)
                 }
             }
 
-            deleteIconImageView.setOnClickListener {
+            binding.deleteIconImageView.setOnClickListener {
                 if (isEditing) { // 편집 모드일 때만 삭제 아이콘 클릭 이벤트 처리
                     onDeleteIconClick(adapterPosition)
                 }
@@ -34,14 +32,14 @@ class ImageAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_home_detail_recye_img, parent, false)
-        return ImageViewHolder(view)
+        // 뷰 바인딩 객체 생성
+        val binding = FragmentHomeDetailRecyeImgBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ImageViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         // 레이아웃 파라미터 설정
-        val layoutParams = holder.imageView.layoutParams as FrameLayout.LayoutParams
+        val layoutParams = holder.binding.imageView.layoutParams as FrameLayout.LayoutParams
         layoutParams.width = itemWidth
         layoutParams.height = itemWidth
 
@@ -50,17 +48,17 @@ class ImageAdapter(
         val density = holder.itemView.resources.displayMetrics.density
         val marginPx = (margin * density).toInt()
         layoutParams.setMargins(marginPx, marginPx, marginPx, marginPx)
-        holder.imageView.layoutParams = layoutParams
+        holder.binding.imageView.layoutParams = layoutParams
 
         // scaleType 설정
-        holder.imageView.scaleType = ImageView.ScaleType.CENTER_CROP // 또는 fitCenter
+        holder.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP // 또는 fitCenter
 
         if (isEditing) {
-            holder.deleteIconImageView.visibility = View.VISIBLE
-            holder.imageView.isEnabled = false // 이미지 뷰 비활성화
+            holder.binding.deleteIconImageView.visibility = View.VISIBLE
+            holder.binding.imageView.isEnabled = false // 이미지 뷰 비활성화
         } else {
-            holder.deleteIconImageView.visibility = View.GONE
-            holder.imageView.isEnabled = true // 이미지 뷰 활성화
+            holder.binding.deleteIconImageView.visibility = View.GONE
+            holder.binding.imageView.isEnabled = true // 이미지 뷰 활성화
         }
     }
 

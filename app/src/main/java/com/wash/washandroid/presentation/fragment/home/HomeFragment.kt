@@ -43,9 +43,9 @@ class HomeFragment : Fragment() {
     private fun onCategoryClick(note: Note) {
         val navController = findNavController()
         val currentDestination = navController.currentDestination?.id
-        Log.d("HomeFragment", "Navigating to HomeDetailFragment")
         Log.d("HomeFragment", "Current destination: $currentDestination")
         navController.navigate(R.id.action_navigation_home_to_homeDetailFragment)
+        Log.d("HomeFragment", "Navigating to HomeDetailFragment")
     }
 
 
