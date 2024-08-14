@@ -3,6 +3,7 @@ package com.wash.washandroid.presentation.fragment.note
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -31,6 +33,7 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val REQUEST_PERMISSIONS = 100
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
+    private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,18 +52,18 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
         checkPermissions { }
 
-        // gallery launcher 초기화
-        galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            Toast.makeText(requireContext(), "gallery result received : ${uri}", Toast.LENGTH_SHORT).show()
-            Log.d("fraglog", "Gallery result received")
-            uri?.let {
-                Log.d("fraglog", it.toString())
-                val imgUri = bundleOf("imgUri2" to it.toString())
-                // select area fragment로 이동
-                findNavController().navigate(R.id.action_navigation_note_to_navigation_note_select_area, imgUri)
-                dismiss()
 
-            } ?: Log.d("fraglog", "Uri is null")
+        // sdk에 따라 앨범 다르게 보여주기
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // API 33 이상인 경우 Photo Picker 초기화
+            photoPickerLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+                handleUriResult(uri)
+            }
+        } else {
+            // API 33 이하인 경우 기존의 gallery launcher 초기화
+            galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+                handleUriResult(uri)
+            }
         }
         return binding.root
     }
@@ -76,13 +79,34 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
 
         // 앨범에서 선택하기
         binding.buttonGallery.setOnClickListener {
-            galleryLauncher.launch("image/*")
-            Log.d("fraglog", "buttongallery")
+            pickImage()
         }
 
         // 취소 버튼
         binding.buttonCancel.setOnClickListener {
             dismiss()
+        }
+    }
+
+    private fun handleUriResult(uri: Uri?) {
+        Toast.makeText(requireContext(), "Result received: ${uri}", Toast.LENGTH_SHORT).show()
+        Log.d("fraglog", "Result received")
+        uri?.let {
+            Log.d("fraglog", it.toString())
+            val imgUri = bundleOf("imgUri2" to it.toString())
+            // select area fragment로 이동
+            findNavController().navigate(R.id.action_navigation_note_to_navigation_note_select_area, imgUri)
+            dismiss()
+        } ?: Log.d("fraglog", "Uri is null")
+    }
+
+    fun pickImage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // API 33 이상인 경우 Photo Picker 사용
+            photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } else {
+            // API 33 이하인 경우 기존의 gallery launcher 사용
+            galleryLauncher.launch("image/*")
         }
     }
 
