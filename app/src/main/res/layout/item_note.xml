@@ -32,21 +32,15 @@
 <!--        android:visibility="gone"-->
 <!--        android:layout_gravity="top|right" />-->
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ImageView
         android:id="@+id/item_delete_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:src="@drawable/photo_delete"
         android:background="@drawable/photo_home_delete_background"
         android:layout_gravity="top|right"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/photo_delete"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </FrameLayout>
