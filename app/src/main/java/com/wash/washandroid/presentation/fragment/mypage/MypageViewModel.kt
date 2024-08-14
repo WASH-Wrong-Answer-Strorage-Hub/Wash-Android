@@ -29,6 +29,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         loadNickname()
         loadName()
         loadEmail()
+        loadSubscriptionStatus()
     }
 
     // 닉네임 설정
@@ -68,6 +69,11 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         sharedPreferences.edit().putString("email", email).apply()
     }
 
+    // 구독 상태 저장
+    private fun saveSubscriptionStatus(isSubscribed: Boolean) {
+        sharedPreferences.edit().putBoolean("isSubscribed", isSubscribed).apply()
+    }
+
     // 닉네임 로드
     private fun loadNickname() {
         val savedNickname = sharedPreferences.getString("nickname", "default_nickname")
@@ -84,5 +90,16 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     private fun loadEmail() {
         val savedEmail = sharedPreferences.getString("email", "default_email")
         _email.value = savedEmail
+    }
+
+    // 구독 상태 로드
+    private fun loadSubscriptionStatus() {
+        val savedSubscriptionStatus = sharedPreferences.getBoolean("isSubscribed", false)
+        _isSubscribed.value = savedSubscriptionStatus
+    }
+
+    // 구독 상태 확인
+    fun checkSubscriptionStatus(): Boolean {
+        return _isSubscribed.value ?: false
     }
 }

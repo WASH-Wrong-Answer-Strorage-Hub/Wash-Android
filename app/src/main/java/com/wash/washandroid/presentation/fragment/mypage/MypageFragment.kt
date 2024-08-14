@@ -96,7 +96,12 @@ class MypageFragment : Fragment() {
         }
 
         binding.mypageSubscribeLayout.setOnClickListener {
-            findNavController().navigate(R.id.navigation_subscribe_menu)
+
+            if (mypageViewModel.checkSubscriptionStatus()) {
+                findNavController().navigate(R.id.navigation_subscribe)
+            } else {
+                findNavController().navigate(R.id.navigation_subscribe_menu)
+            }
         }
 
         binding.mypageEditNameLayout.setOnClickListener {

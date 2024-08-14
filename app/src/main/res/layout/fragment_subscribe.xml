@@ -46,11 +46,12 @@
     <ImageView
         android:id="@+id/subscribe_menu_background_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@drawable/layout_mypage_backgroud"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="75sp" />
 
     <ImageView
@@ -63,9 +64,9 @@
         app:layout_constraintEnd_toEndOf="@id/subscribe_menu_background_view"
         android:layout_marginTop="66sp"
         />
-    <!-- crown 이미지가 svg로 다운 받으면 깨져서 나중에 다시 해보겠습니다 -->
 
     <ImageView
+        android:id="@+id/crown_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
@@ -73,6 +74,16 @@
         android:layout_marginTop="19sp"
         android:layout_marginStart="13sp"
         android:src="@drawable/crown_background"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/crown"
+        app:layout_constraintTop_toTopOf="@+id/crown_background"
+        app:layout_constraintBottom_toBottomOf="@id/crown_background"
+        app:layout_constraintStart_toStartOf="@id/crown_background"
+        app:layout_constraintEnd_toEndOf="@id/crown_background"
         />
 
     <TextView
@@ -390,7 +401,9 @@
         android:fontFamily="@font/mangoddobak_r"
         app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
         app:layout_constraintTop_toBottomOf="@id/subscribe_menu_explain_background_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="30sp"
+        android:layout_marginBottom="83sp"
         />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

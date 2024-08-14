@@ -191,16 +191,13 @@
             android:layout_marginTop="20sp"
             />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/mypage_subscribe_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_mypage_next_btn"
-            app:layout_constraintBottom_toBottomOf="@id/mypage_subscribe_tv"
-            app:layout_constraintTop_toTopOf="@id/mypage_subscribe_tv"
+            android:layout_marginStart="290sp"
             android:layout_marginTop="20sp"
-            android:layout_marginStart="300sp"
-            />
+            android:background="@drawable/ic_mypage_next_btn" />
 
     </LinearLayout>
 
@@ -236,14 +233,13 @@
             android:layout_marginTop="20sp"
             />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/mypage_edit_name_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_mypage_next_btn"
+            android:layout_marginStart="230sp"
             android:layout_marginTop="20sp"
-            android:layout_marginStart="234sp"
-            />
+            android:background="@drawable/ic_mypage_next_btn" />
     </LinearLayout>
 
 

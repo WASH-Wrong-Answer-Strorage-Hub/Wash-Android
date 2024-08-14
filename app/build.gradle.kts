@@ -12,6 +12,8 @@ plugins {
 val localProperties = Properties()
 localProperties.load(project.rootProject.file("local.properties").inputStream())
 val openAIAPIKEY = localProperties.getProperty("openAIAPIKEY")?:""
+//val NATIVE_API_KEY = localProperties.getProperty("NATIVE_API_KEY")?:""
+//val KAKAO_APP_KEY_SCHEME = localProperties.getProperty("KAKAO_APP_KEY_SCHEME")?:""
 
 android {
     namespace = "com.wash.washandroid"
@@ -33,6 +35,10 @@ android {
         buildConfigField("String", "NAVER_CLIENT_SECRET", getApiKey("NAVER_CLIENT_SECRET"))
         buildConfigField("String", "NAVER_CLIENT_NAME", getApiKey("NAVER_CLIENT_NAME"))
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAIAPIKEY\"")
+
+        // manifest에서 kakao key값 선언
+        manifestPlaceholders["NATIVE_API_KEY"] = properties["NATIVE_API_KEY"]?:""
+        manifestPlaceholders["KAKAO_APP_KEY_SCHEME"] = properties["KAKAO_APP_KEY_SCHEME"]?:""
     }
 
     buildTypes {
@@ -77,7 +83,8 @@ dependencies {
     // naver login
     implementation("com.navercorp.nid:oauth-jdk8:5.9.1")
     // kakao login
-    implementation("com.kakao.sdk:v2-user:2.10.0")
+    implementation ("com.kakao.sdk:v2-all:2.20.3") // 전체 모듈 설치
+    implementation ("com.kakao.sdk:v2-user:2.20.3") // 카카오 로그인 API 모듈
     
     // CameraX core
     implementation("androidx.camera:camera-core:1.1.0-beta01")
