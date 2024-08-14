@@ -1,7 +1,10 @@
 package com.wash.washandroid.presentation.fragment.note
 
 import android.Manifest
+import android.app.Dialog
 import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -9,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
@@ -19,6 +23,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.NoteBottomSheetOptionsBinding
@@ -39,6 +45,29 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.NoDimBottomSheetDialog)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
+            bottomSheet?.let {
+                val behavior = BottomSheetBehavior.from(it)
+                it.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+
+                // 하단에 공간을 남겨두기 위해 bottomSheet의 높이를 조정
+                it.post {
+                    val height = it.height
+                    behavior.peekHeight = height + 50.dpToPx()
+                }
+
+                // 배경을 투명하게 설정
+                it.setBackgroundColor(Color.TRANSPARENT)
+            }
+        }
+
+        return dialog
     }
 
     override fun onCreateView(
@@ -86,6 +115,10 @@ class NoteOptionsBottomSheet : BottomSheetDialogFragment() {
         binding.buttonCancel.setOnClickListener {
             dismiss()
         }
+    }
+
+    fun Int.dpToPx(): Int {
+        return (this * Resources.getSystem().displayMetrics.density).toInt()
     }
 
     private fun handleUriResult(uri: Uri?) {
