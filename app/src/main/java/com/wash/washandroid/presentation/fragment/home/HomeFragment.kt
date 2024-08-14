@@ -13,6 +13,7 @@ import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeBinding
 import com.wash.washandroid.presentation.adapter.Note
 import com.wash.washandroid.presentation.adapter.NoteAdapter
+import com.wash.washandroid.presentation.base.MainActivity
 
 class HomeFragment : Fragment() {
 
@@ -26,6 +27,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        (activity as MainActivity).hideBottomNavigation(false)
 
         setupRecyclerView()
 
