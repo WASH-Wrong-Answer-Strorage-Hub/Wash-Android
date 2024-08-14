@@ -36,7 +36,7 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
     }
 
     // 사각형 리스트
-    private val rects = mutableListOf<RectF>()
+    val rects = mutableListOf<RectF>()
     private var movingCorner: Pair<RectF, Corner>? = null
     private val cornerRadius = 20f // 둥근 모서리 반지름
 
