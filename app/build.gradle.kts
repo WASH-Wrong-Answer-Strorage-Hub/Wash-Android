@@ -10,6 +10,8 @@ plugins {
 val localProperties = Properties()
 localProperties.load(project.rootProject.file("local.properties").inputStream())
 val openAIAPIKEY = localProperties.getProperty("openAIAPIKEY")?:""
+//val NATIVE_API_KEY = localProperties.getProperty("NATIVE_API_KEY")?:""
+//val KAKAO_APP_KEY_SCHEME = localProperties.getProperty("KAKAO_APP_KEY_SCHEME")?:""
 
 android {
     namespace = "com.wash.washandroid"
@@ -31,6 +33,10 @@ android {
         buildConfigField("String", "NAVER_CLIENT_SECRET", getApiKey("NAVER_CLIENT_SECRET"))
         buildConfigField("String", "NAVER_CLIENT_NAME", getApiKey("NAVER_CLIENT_NAME"))
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAIAPIKEY\"")
+
+        // manifest에서 kakao key값 선언
+        manifestPlaceholders["NATIVE_API_KEY"] = properties["NATIVE_API_KEY"]?:""
+        manifestPlaceholders["KAKAO_APP_KEY_SCHEME"] = properties["KAKAO_APP_KEY_SCHEME"]?:""
     }
 
     buildTypes {
