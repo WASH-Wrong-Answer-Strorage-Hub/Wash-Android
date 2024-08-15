@@ -30,6 +30,7 @@ class NoteSelectAreaFragment : Fragment() {
     private val binding get() = _binding!!
     private var originalPaddingTop: Int = 0
     private lateinit var navController: NavController
+    private var rotationAngle = 0f // 초기 회전 각도
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,6 +86,11 @@ class NoteSelectAreaFragment : Fragment() {
             }
         }
 
+        // 회전 버튼
+        binding.ivNoteSelectRotate.setOnClickListener {
+            rotateImage()
+        }
+
         binding.btnBack.setOnClickListener {
             navController = Navigation.findNavController(view)
             navController.navigateUp()
@@ -95,6 +101,24 @@ class NoteSelectAreaFragment : Fragment() {
         Glide.with(this)
             .load(uri)
             .into(binding.ivCaptured)
+    }
+
+    // 이미지 회전 로직
+    private fun rotateImage() {
+        val drawable = binding.ivCaptured.drawable as? BitmapDrawable
+        val bitmap = drawable?.bitmap ?: return
+
+        // 비트맵을 회전
+        val matrix = Matrix()
+        rotationAngle += 90f
+        if (rotationAngle >= 360f) rotationAngle = 0f
+        matrix.postRotate(90f)
+
+        // 새로운 회전된 비트맵 생성
+        val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+
+        // 회전된 비트맵을 ImageView에 설정
+        binding.ivCaptured.setImageBitmap(rotatedBitmap)
     }
 
     /**
