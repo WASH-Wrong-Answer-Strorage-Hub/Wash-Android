@@ -11,15 +11,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentNoteSelectAreaBinding
 import com.wash.washandroid.presentation.base.MainActivity
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Matrix
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
 import android.widget.ImageView

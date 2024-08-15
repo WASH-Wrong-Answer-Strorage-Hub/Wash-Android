@@ -11,7 +11,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.wash.washandroid.R
+import com.wash.washandroid.presentation.fragment.note.DeleteRectangleBottomSheet
 import kotlin.math.absoluteValue
 
 
@@ -92,6 +94,16 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 movingCorner = getCorner(event.x, event.y)
+
+                // 모서리가 아닌 부분을 길게 눌렀을 때만 바텀 시트 표시
+                if (movingCorner == null) {
+                    handler.postDelayed({
+                        val selectedRect = getSelectedRect(event.x, event.y)
+                        selectedRect?.let {
+                            showBottomSheet(it)
+                        }
+                    }, 500L) // 500ms 길게 누르기 감지
+                }
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -103,11 +115,13 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 movingCorner = null
+                handler.removeCallbacksAndMessages(null) // 길게 누르기 취소
             }
         }
         return true
     }
 
+    // 모서리 감지 로직
     private fun getCorner(x: Float, y: Float): Pair<RectF, Corner>? {
         rects.forEach { rect ->
             val corner = when {
@@ -122,11 +136,27 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
         return null
     }
 
+    private fun getSelectedRect(x: Float, y: Float): RectF? {
+        return rects.firstOrNull { rect ->
+            x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
+        }
+    }
+
+    private fun showBottomSheet(selectedRect: RectF) {
+        val bottomSheet = DeleteRectangleBottomSheet {
+            // 사각형 삭제 로직
+            rects.remove(selectedRect)
+            invalidate()  // 뷰 업데이트
+        }
+        bottomSheet.show((context as FragmentActivity).supportFragmentManager, bottomSheet.tag)
+    }
+
     private fun isNearCorner(x: Float, y: Float, cornerX: Float, cornerY: Float): Boolean {
         val threshold = 40
         return (x - cornerX).absoluteValue < threshold && (y - cornerY).absoluteValue < threshold
     }
 
+    // 사각형 크기 조정 로직
     private fun updateRect(x: Float, y: Float, rect: RectF, corner: Corner) {
         when (corner) {
             Corner.TOP_LEFT -> {

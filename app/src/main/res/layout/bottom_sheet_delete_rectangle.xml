@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/transparent"
+    android:paddingBottom="8dp">
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/note_add_btn_line"
+        android:text="영역 삭제"
+        style="@style/mg_15"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/note_add_btn"
+        android:text="취소"
+        style="@style/mg_15"
+        android:textColor="@android:color/white" />
+</LinearLayout>
