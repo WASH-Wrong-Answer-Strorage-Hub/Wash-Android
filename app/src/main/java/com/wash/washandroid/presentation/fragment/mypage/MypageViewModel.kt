@@ -1,8 +1,15 @@
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.wash.washandroid.data.entity.request.LoginRequest
+import com.wash.washandroid.data.service.RetrofitClient
+import com.wash.washandroid.presentation.fragment.study.StudyExitDialog.Companion.TAG
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class MypageViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -102,4 +109,42 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     fun checkSubscriptionStatus(): Boolean {
         return _isSubscribed.value ?: false
     }
+
+    // 서버로 사용자 정보 전송
+    fun sendSocialTokenToServer(socialType: String, token: String) {
+        val bearerToken = "Bearer $token"
+
+        viewModelScope.launch {
+            try {
+                val response = when (socialType) {
+                    "kakao" -> RetrofitClient.apiService.postKakaoLogin(bearerToken)
+                    "naver" -> RetrofitClient.apiService.postNaverLogin(bearerToken)
+                    else -> throw IllegalArgumentException("Unknown social login type")
+                }
+
+                if (response.isSuccessful) {
+                    val loginResponse = response.body()
+                    if (loginResponse?.isSuccess == true) {
+                        Log.i(TAG, "$socialType token sent to server successfully")
+                        val refreshToken = loginResponse.result?.refreshToken
+                        // refreshToken을 사용하여 필요한 추가 작업 수행
+                        Log.i(TAG, "Received refresh token: $refreshToken")
+                    } else {
+                        Log.e(TAG, "Server returned an error: ${loginResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "Failed to send $socialType token to server: ${response.errorBody()?.string()}")
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "Error sending $socialType token to server", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error occurred", e)
+            }
+        }
+    }
+
+    companion object {
+        private const val TAG = "MyPageViewModel"
+    }
+
 }

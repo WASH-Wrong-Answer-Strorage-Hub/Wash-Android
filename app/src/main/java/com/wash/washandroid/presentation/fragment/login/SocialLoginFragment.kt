@@ -58,10 +58,10 @@ class SocialLoginFragment : Fragment() {
         }
         binding.socialLoginKakaoLayout.setOnClickListener {
             Log.d(TAG, "Kakao login button clicked")
-//            kakaoLogin()
+            kakaoLogin()
             // Bottom Navigation 보이기
             (activity as? MainActivity)?.hideBottomNavigation(false)
-            navigateToHomeFragment() // kakao login 완성 전까지 임시로
+//            navigateToHomeFragment() // kakao login 완성 전까지 임시로
         }
     }
 
@@ -73,6 +73,7 @@ class SocialLoginFragment : Fragment() {
             } else if (token != null) {
                 Log.i(TAG, "카카오 계정으로 로그인 성공 ${token.accessToken}")
                 getKakaoUserInfo() // 로그인 성공 후 사용자 정보 가져오기
+                mypageViewModel.sendSocialTokenToServer("kakao", token.accessToken)
                 navigateToHomeFragment()  // HomeFragment로 이동
             } else {
                 Log.w(TAG, "Kakao login callback invoked with no error and no token")
@@ -93,6 +94,7 @@ class SocialLoginFragment : Fragment() {
                 } else if (token != null) {
                     Log.i(TAG, "카카오로 로그인 성공 ${token.accessToken}")
                     getKakaoUserInfo()
+                    mypageViewModel.sendSocialTokenToServer("kakao", token.accessToken)
                     navigateToHomeFragment()
                 }
             }
@@ -104,7 +106,7 @@ class SocialLoginFragment : Fragment() {
 
     private fun getKakaoUserInfo() {
         Log.d(TAG, "Requesting Kakao user info")
-            UserApiClient.instance.me { user, error ->
+        UserApiClient.instance.me { user, error ->
             if (error != null) {
                 Log.e(TAG, "Login failed: ${error.message}")
             } else if (user != null) {
@@ -149,7 +151,22 @@ class SocialLoginFragment : Fragment() {
                 Log.d(TAG, "TokenType : " + NaverIdLoginSDK.getTokenType())
                 Log.d(TAG, "State : " + NaverIdLoginSDK.getState().toString())
 
-                getNaverUserInfo() // 로그인 성공 후 사용자 정보 가져오기
+                val accessToken = NaverIdLoginSDK.getAccessToken()
+                val refreshToken = NaverIdLoginSDK.getRefreshToken()
+
+                // Check if the access token is expired
+                val expiresAt = NaverIdLoginSDK.getExpiresAt() * 1000  // 초 단위를 밀리초로 변환
+                if (accessToken != null && expiresAt < System.currentTimeMillis()) {
+                    Log.d(TAG, "Access token is expired, refreshing token")
+                    NaverIdLoginSDK.getRefreshToken()
+                }
+
+                val newAccessToken = NaverIdLoginSDK.getAccessToken()
+                if (newAccessToken != null) {
+                    mypageViewModel.sendSocialTokenToServer("naver", newAccessToken)
+                } else {
+                    Log.e(TAG, "Failed to refresh Naver token")
+                }
                 navigateToHomeFragment()
             }
 
