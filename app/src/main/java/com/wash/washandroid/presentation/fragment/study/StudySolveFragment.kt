@@ -25,6 +25,7 @@ class StudySolveFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
     private lateinit var folderName: String
+    private val photoList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +34,6 @@ class StudySolveFragment : Fragment() {
     ): View {
         _binding = FragmentStudySolveBinding.inflate(inflater, container, false)
 
-        // 폴더명 수신
         folderName = arguments?.getString("folderName") ?: "folderName"
 
         // ViewModel 인스턴스 가져오기
@@ -57,13 +57,10 @@ class StudySolveFragment : Fragment() {
         val progressAdapter = StudyProgressAdapter(emptyList())
         binding.rvDrawerProgress.adapter = progressAdapter
 
-
         viewModel.loadProblems()
 
-        // 문제 데이터 업데이트 시 UI 업데이트
         viewModel.problems.observe(viewLifecycleOwner, Observer { problemList ->
 
-            // 문제가 비어있지 않으면 현재 문제를 표시
             if (problemList.isNotEmpty()) {
                 updateUI(problemList)
 
@@ -75,18 +72,13 @@ class StudySolveFragment : Fragment() {
             }
         })
 
-        // 초기화가 필요하지 않을 경우 문제 상태 유지
         if (viewModel.isResetRequired) {
             viewModel.resetProblemsStatus() // 문제 상태 초기화
         }
 
         // 지문 보기
         binding.studySolveBtnDes.setOnClickListener {
-            if (binding.ivSolveCardDes.visibility == View.VISIBLE) {
-                binding.ivSolveCardDes.visibility = View.GONE
-            } else {
-                binding.ivSolveCardDes.visibility = View.VISIBLE
-            }
+            openPhotoPager()
         }
 
         // 왼쪽 화살표 클릭 시 이전 문제로 이동
@@ -134,14 +126,20 @@ class StudySolveFragment : Fragment() {
         Glide.with(this)
             .load(currentProblem.problemText)
             .into(binding.ivSolveCard)
+    }
 
-        // 지문 이미지 로드
-        Glide.with(this)
-            .load(currentProblem.descriptionUrl)
-            .into(binding.ivSolveCardDes)
+    private fun openPhotoPager() {
+        val currentProblem = viewModel.getCurrentProblem()
+        val descriptionUrls = currentProblem.descriptionUrl // descriptionUrl 리스트
 
-        // 지문 이미지를 초기에는 숨겨둠
-        binding.ivSolveCardDes.visibility = View.GONE
+        // descriptionUrls를 photoUris로 설정
+        viewModel.setPhotoUris(descriptionUrls)
+
+        // initialPosition: 0
+        viewModel.setSelectedPhotoPosition(0)
+
+        // 네비게이션으로 뷰페이저로 이동
+        navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_photo_slider)
     }
 
     override fun onDestroyView() {

@@ -6,13 +6,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 
 class StudyViewModel : ViewModel() {
-    // 문제 데이터 리스트를 저장하는 MutableLiveData
     private val _problems = MutableLiveData<List<StudyProblem>>()
     val problems: LiveData<List<StudyProblem>> get() = _problems
     var currentProblemIndex: Int = 0
     private var rightSwipeCount: Int = 0
     private var leftSwipeCount: Int = 0
     var isResetRequired: Boolean = true // study fragment 방문 여부 확인
+
+    // 사진 Uri 리스트와 선택된 사진의 위치를 저장
+    private val _photoUris = MutableLiveData<List<String>>(emptyList())
+    val photoUris: LiveData<List<String>> get() = _photoUris
+
+    private val _selectedPhotoPosition = MutableLiveData<Int>()
+    val selectedPhotoPosition: LiveData<Int> get() = _selectedPhotoPosition
+
+    fun setPhotoUris(uris: List<String>) {
+        _photoUris.value = uris
+    }
+
+    fun setSelectedPhotoPosition(position: Int) {
+        _selectedPhotoPosition.value = position
+    }
 
 
     // 문제 데이터를 서버에서 로드하는 함수
@@ -52,7 +66,11 @@ class StudyViewModel : ViewModel() {
                 "미완료",
                 0,
                 0,
-                "https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"
+                listOf(
+                    "https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg",
+                    "https://i.pinimg.com/originals/4f/d9/a3/4fd9a3816c3630d2dc7821c0556235ba.jpg",
+                    "https://i.pinimg.com/originals/ba/9a/09/ba9a09a7a3fa88c99021bb358ba2f84d.jpg"
+                )
 
             ),
             StudyProblem(
@@ -63,7 +81,7 @@ class StudyViewModel : ViewModel() {
                 "미완료",
                 0,
                 0,
-                "https://i.pinimg.com/originals/4f/d9/a3/4fd9a3816c3630d2dc7821c0556235ba.jpg"
+                listOf ("https://i.pinimg.com/originals/4f/d9/a3/4fd9a3816c3630d2dc7821c0556235ba.jpg")
 
             ),
             StudyProblem(
@@ -74,7 +92,7 @@ class StudyViewModel : ViewModel() {
                 "미완료",
                 0,
                 0,
-                "https://i.pinimg.com/originals/ba/9a/09/ba9a09a7a3fa88c99021bb358ba2f84d.jpg"
+                listOf ("https://i.pinimg.com/originals/ba/9a/09/ba9a09a7a3fa88c99021bb358ba2f84d.jpg")
             ),
             StudyProblem(
                 4,
@@ -84,7 +102,7 @@ class StudyViewModel : ViewModel() {
                 "미완료",
                 0,
                 0,
-                "https://i.pinimg.com/originals/ff/83/ec/ff83ece9abe0cdd120c2cce0687bc1e2.jpg",
+                listOf ("https://i.pinimg.com/originals/ff/83/ec/ff83ece9abe0cdd120c2cce0687bc1e2.jpg")
             )
             // 추가 문제 데이터...
         )
