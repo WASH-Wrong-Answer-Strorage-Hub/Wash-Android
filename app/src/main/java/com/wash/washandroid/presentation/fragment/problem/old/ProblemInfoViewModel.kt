@@ -26,4 +26,18 @@ class ProblemInfoViewModel : ViewModel() {
     fun setSelectedPhotoPosition(position: Int) {
         _selectedPhotoPosition.value = position
     }
+
+    private val _firstPhotoUri = MutableLiveData<String?>()
+    val firstPhotoUri: LiveData<String?> get() = _firstPhotoUri
+
+    private val _remainingPhotoUris = MutableLiveData<List<String>>()
+    val remainingPhotoUris: LiveData<List<String>> get() = _remainingPhotoUris
+
+    fun setFirstPhoto(uri: String?) {
+        _firstPhotoUri.value = uri
+    }
+
+    fun setRemainingPhotos(uris: List<String>) {
+        _remainingPhotoUris.value = uris
+    }
 }

@@ -125,7 +125,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(solutionPhotoList, photoAdapter, photoPath)
-                    binding.problemInfoSolutionRv.smoothScrollToPosition(0)
+                    binding.problemInfoSolutionRv.smoothScrollToPosition(solutionPhotoList.size)
                 }
             }
         }
@@ -135,7 +135,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(printPhotoList, printAdapter, photoPath)
-                    binding.problemInfoPrintRv.smoothScrollToPosition(0)
+                    binding.problemInfoPrintRv.smoothScrollToPosition(printPhotoList.size)
                 }
             }
         }
@@ -145,7 +145,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(addPhotoList, addAdapter, photoPath)
-                    binding.problemInfoAddRv.smoothScrollToPosition(0)
+                    binding.problemInfoAddRv.smoothScrollToPosition(addPhotoList.size)
                 }
             }
         }
