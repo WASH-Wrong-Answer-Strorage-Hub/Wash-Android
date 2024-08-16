@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tv_problem_number"
+        style="@style/mg_12"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@android:color/black" />
+
+    <ImageView
+        android:id="@+id/iv_problem_status"
+        android:layout_width="48dp"
+        android:layout_height="14.22dp"
+        android:src="@drawable/study_sm_incomplete"
+        android:gravity="center" />
+</LinearLayout>

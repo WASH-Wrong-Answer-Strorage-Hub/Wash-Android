@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,7 +22,6 @@ class StudySolveFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
-    private var folderId: Int = 0
     private lateinit var folderName: String
 
     override fun onCreateView(
@@ -31,9 +31,11 @@ class StudySolveFragment : Fragment() {
     ): View {
         _binding = FragmentStudySolveBinding.inflate(inflater, container, false)
 
-        // id, 폴더명 수신
-        folderId = arguments?.getInt("folderId") ?: 0
+        // 폴더명 수신
         folderName = arguments?.getString("folderName") ?: "folderName"
+
+        // ViewModel 인스턴스 가져오기
+        viewModel = ViewModelProvider(requireActivity()).get(StudyViewModel::class.java)
 
         return binding.root
     }
@@ -48,19 +50,22 @@ class StudySolveFragment : Fragment() {
         // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
 
-        // ViewModel 인스턴스 가져오기
-        viewModel = ViewModelProvider(requireActivity()).get(StudyViewModel::class.java)
+        // recycler view 설정
+        val progressAdapter = StudyProgressAdapter(emptyList())
+        binding.rvDrawerProgress.adapter = progressAdapter
+
+        viewModel.loadProblems()
 
         // 문제 데이터 업데이트 시 UI 업데이트
         viewModel.problems.observe(viewLifecycleOwner, Observer { problemList ->
             // 문제가 비어있지 않으면 현재 문제를 표시
             if (problemList.isNotEmpty()) {
-                updateUI()
+                updateUI(problemList)
+
+                // recycler view에 문제 리스트 갱신
+                progressAdapter.updateProgressList(problemList)
             }
         })
-
-        // 문제 데이터를 로드
-        viewModel.loadProblems()
 
         // 지문 보기
         binding.studySolveBtnDes.setOnClickListener {
@@ -74,45 +79,48 @@ class StudySolveFragment : Fragment() {
         // 왼쪽 화살표 클릭 시 이전 문제로 이동
         binding.ivLeftArrow.setOnClickListener {
             viewModel.moveToPreviousProblem()
-            updateUI()
+            updateUI(viewModel.problems.value ?: emptyList())
         }
 
         // 오른쪽 화살표 클릭 시 다음 문제로 이동
         binding.ivRightArrow.setOnClickListener {
             viewModel.moveToNextProblem()
-            updateUI()
+            updateUI(viewModel.problems.value ?: emptyList())
         }
 
         binding.studySolveBackBtn.setOnClickListener {
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study)
         }
 
+        // 정답 확인 버튼 클릭
         binding.studySolveBtnAnswer.setOnClickListener {
             val currentProblem = viewModel.getCurrentProblem()
-            val isLastProblem = viewModel.isLastProblem()
 
-            val bundle = Bundle().apply {
-                putInt("problemId", currentProblem.id)
-                putString("answer", currentProblem.answer)
-                putBoolean("isLastProblem", isLastProblem)
+            val bundle = bundleOf(
+                "problemId" to currentProblem.problemId,
+                "answer" to currentProblem.answerText,
+            )
 //                Toast.makeText(requireContext(), "solve -- id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
-            }
 
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
         }
 
         binding.ivDrawer.setOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.END)
+            binding.studyDrawerLayout.openDrawer(GravityCompat.END)
+        }
+
+        binding.btnRvDrawerFinish.setOnClickListener {
+            navController.navigate(R.id.action_navigation_study_answer_to_navigation_study_complete)
         }
     }
 
-    private fun updateUI() {
+    private fun updateUI(problemList: List<StudyProblem>) {
         val currentProblem = viewModel.getCurrentProblem()
-        binding.tvStudySolveProblemId.text = "문제 " + currentProblem.id.toString()
+        binding.tvStudySolveProblemId.text = "문제 " + currentProblem.problemId.toString()
 
         // 문제 이미지 로드
         Glide.with(this)
-            .load(currentProblem.imageUrl)
+            .load(currentProblem.problemText)
             .into(binding.ivSolveCard)
 
         // 지문 이미지 로드

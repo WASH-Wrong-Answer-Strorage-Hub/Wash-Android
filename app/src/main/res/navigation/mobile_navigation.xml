@@ -49,9 +49,6 @@
             android:id="@+id/action_navigation_study_to_navigation_study_solve"
             app:destination="@id/navigation_study_solve" />
         <argument
-            android:name="folderId"
-            app:argType="integer" />
-        <argument
             android:name="folderName"
             app:argType="string" />
     </fragment>
@@ -312,9 +309,6 @@
         android:name="com.wash.washandroid.presentation.fragment.study.StudySolveFragment"
         tools:layout="@layout/fragment_study_solve">
         <argument
-            android:name="folderId"
-            app:argType="integer" />
-        <argument
             android:name="folderName"
             app:argType="string" />
         <action
@@ -323,6 +317,9 @@
         <action
             android:id="@+id/action_navigation_study_solve_to_navigation_study_answer"
             app:destination="@id/navigation_study_answer" />
+        <action
+            android:id="@+id/action_navigation_study_solve_to_navigation_study_complete"
+            app:destination="@id/navigation_study_complete" />
     </fragment>
 
     <fragment

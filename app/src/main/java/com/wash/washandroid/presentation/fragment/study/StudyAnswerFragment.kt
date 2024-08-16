@@ -41,7 +41,6 @@ class StudyAnswerFragment : Fragment() {
         // 데이터 수신
         val problemId = arguments?.getInt("problemId")
         val answer = arguments?.getString("answer") ?: "정답 불러오기 실패"
-        val isLastProblem = arguments?.getBoolean("isLastProblem") ?: false
 
 //        Toast.makeText(requireContext(), "answer -- id : ${problemId}, answer : ${answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
 
@@ -60,19 +59,19 @@ class StudyAnswerFragment : Fragment() {
 
             override fun onLeftCardExit(p0: Any?) {
                 viewModel.incrementLeftSwipe()
+                viewModel.updateProblemStatus(isCorrect = false)
                 viewModel.moveToNextProblem()
             }
 
             override fun onRightCardExit(p0: Any?) {
                 viewModel.incrementRightSwipe()
+                viewModel.updateProblemStatus(isCorrect = true)
                 viewModel.moveToNextProblem()
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // 어댑터가 비어가고 있을 때 동작
-                if (isLastProblem && itemsInAdapter == 0) { // 문제가 마지막 문제일 때, 완료 화면으로 이동
-                    navController.navigate(R.id.action_navigation_study_answer_to_navigation_study_complete)
-                } else if (itemsInAdapter == 0) {
+                if (itemsInAdapter == 0) {
                     navController.popBackStack()
                 }
             }
@@ -103,16 +102,13 @@ class StudyAnswerFragment : Fragment() {
             StudyExitDialog.showDialog(childFragmentManager)
         }
 
-        binding.ivDrawer.setOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.END)
-        }
-
         binding.btnStudyO.setOnClickListener {
             // 오른쪽으로 스와이프
             swipeView.topCardListener.selectRight()
             val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
             cardBg.setBackgroundResource(R.drawable.study_card_background_green)
             binding.ivStudySolve.setBackgroundResource(R.drawable.study_correct)
+            viewModel.updateProblemStatus(isCorrect = true)
         }
 
         binding.btnStudyX.setOnClickListener {
@@ -121,6 +117,7 @@ class StudyAnswerFragment : Fragment() {
             val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
             cardBg.setBackgroundResource(R.drawable.study_card_background_red)
             binding.ivStudySolve.setBackgroundResource(R.drawable.study_incorrect)
+            viewModel.updateProblemStatus(isCorrect = false)
         }
 
         // 뒤로가기 클릭 시 다이얼로그 띄우기

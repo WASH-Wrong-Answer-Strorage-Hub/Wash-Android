@@ -27,7 +27,7 @@ class FolderAdapter(
         private val folderNameTextView: TextView = itemView.findViewById(R.id.tv_study_folder_name)
 
         fun bind(folder: StudyFolder) {
-            folderNameTextView.text = folder.name
+            folderNameTextView.text = folder.folderName
             itemView.setOnClickListener { onClick(folder) }
         }
     }
