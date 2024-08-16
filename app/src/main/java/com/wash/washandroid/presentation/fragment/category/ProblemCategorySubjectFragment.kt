@@ -81,6 +81,10 @@ class ProblemCategorySubjectFragment : Fragment() {
         binding.skipBtn.setOnClickListener {
             navController.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
         }
+
+        binding.categoryBackBtn.setOnClickListener {
+            navController.navigateUp()
+        }
     }
 
     private fun updateButtonBackgrounds() {
