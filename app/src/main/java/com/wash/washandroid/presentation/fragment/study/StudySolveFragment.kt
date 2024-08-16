@@ -1,6 +1,7 @@
 package com.wash.washandroid.presentation.fragment.study
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudySolveBinding
@@ -51,21 +53,32 @@ class StudySolveFragment : Fragment() {
         (activity as MainActivity).hideBottomNavigation(true)
 
         // recycler view 설정
+        binding.rvDrawerProgress.layoutManager = LinearLayoutManager(requireContext())
         val progressAdapter = StudyProgressAdapter(emptyList())
         binding.rvDrawerProgress.adapter = progressAdapter
+
 
         viewModel.loadProblems()
 
         // 문제 데이터 업데이트 시 UI 업데이트
         viewModel.problems.observe(viewLifecycleOwner, Observer { problemList ->
+
             // 문제가 비어있지 않으면 현재 문제를 표시
             if (problemList.isNotEmpty()) {
                 updateUI(problemList)
 
                 // recycler view에 문제 리스트 갱신
                 progressAdapter.updateProgressList(problemList)
+//                Log.d("fraglog", "Progress list updated with size: ${problemList.size}")
+            } else {
+//                Log.d("fraglog", "Problem list is empty")
             }
         })
+
+        // 초기화가 필요하지 않을 경우 문제 상태 유지
+        if (viewModel.isResetRequired) {
+            viewModel.resetProblemsStatus() // 문제 상태 초기화
+        }
 
         // 지문 보기
         binding.studySolveBtnDes.setOnClickListener {
@@ -95,10 +108,9 @@ class StudySolveFragment : Fragment() {
         // 정답 확인 버튼 클릭
         binding.studySolveBtnAnswer.setOnClickListener {
             val currentProblem = viewModel.getCurrentProblem()
-
             val bundle = bundleOf(
                 "problemId" to currentProblem.problemId,
-                "answer" to currentProblem.answerText,
+                "answer" to currentProblem.answerText
             )
 //                Toast.makeText(requireContext(), "solve -- id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
 
@@ -110,12 +122,12 @@ class StudySolveFragment : Fragment() {
         }
 
         binding.btnRvDrawerFinish.setOnClickListener {
-            navController.navigate(R.id.action_navigation_study_answer_to_navigation_study_complete)
+            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_complete)
         }
     }
 
     private fun updateUI(problemList: List<StudyProblem>) {
-        val currentProblem = viewModel.getCurrentProblem()
+        val currentProblem = problemList[viewModel.currentProblemIndex]
         binding.tvStudySolveProblemId.text = "문제 " + currentProblem.problemId.toString()
 
         // 문제 이미지 로드

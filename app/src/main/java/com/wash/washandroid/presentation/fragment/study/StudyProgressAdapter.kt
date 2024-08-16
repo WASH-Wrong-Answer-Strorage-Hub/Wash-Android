@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ class StudyProgressAdapter(private var progressList: List<StudyProblem>) :
 
     override fun onBindViewHolder(holder: ProgressViewHolder, position: Int) {
         val currentItem = progressList[position]
+//        Log.d("fraglog", "Binding problem: ${currentItem.problemId}, status: ${currentItem.status}")
         holder.problemNumberTextView.text = currentItem.problemId.toString()
 
         // 문제 상태에 따른 배경 설정

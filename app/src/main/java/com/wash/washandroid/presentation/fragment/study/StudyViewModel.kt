@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
@@ -8,7 +9,7 @@ class StudyViewModel : ViewModel() {
     // 문제 데이터 리스트를 저장하는 MutableLiveData
     private val _problems = MutableLiveData<List<StudyProblem>>()
     val problems: LiveData<List<StudyProblem>> get() = _problems
-    private var currentProblemIndex: Int = 0
+    var currentProblemIndex: Int = 0
     private var rightSwipeCount: Int = 0
     private var leftSwipeCount: Int = 0
     var isResetRequired: Boolean = true // study fragment 방문 여부 확인
@@ -16,16 +17,14 @@ class StudyViewModel : ViewModel() {
 
     // 문제 데이터를 서버에서 로드하는 함수
     fun loadProblems() {
-        if (_problems.value == null) {
-            // 서버에서 데이터를 처음 로드할 때만 호출
+        if (_problems.value == null || isResetRequired) {
             val fetchedProblems = fetchProblemsFromServer()
             _problems.value = fetchedProblems
-        }
-    }
+            resetProblemsStatus() // StudyFragment로 돌아갔을 때 초기화
+            isResetRequired = false
 
-    // 현재 문제 인덱스를 초기화
-    fun resetCurrentProblemIndex() {
-        currentProblemIndex = 0
+//            Log.d("fraglog", "Problems loaded: ${fetchedProblems.size}")
+        }
     }
 
     // 모든 문제의 상태를 미완료, 0으로 초기화하는 함수 (StudyFragment에서 StudySolveFragment로 진입 시 호출)
@@ -33,6 +32,11 @@ class StudyViewModel : ViewModel() {
         _problems.value = _problems.value?.map { problem ->
             problem.copy(status = "미완료", correctCount = 0, incorrectCount = 0)
         }
+        currentProblemIndex = 0
+    }
+
+    // 현재 문제 인덱스를 초기화
+    fun resetCurrentProblemIndex() {
         currentProblemIndex = 0
     }
 
@@ -141,6 +145,11 @@ class StudyViewModel : ViewModel() {
     fun getLeftSwipeCount(): Int {
         return leftSwipeCount
     }
+
+    fun getCorrectProblemCount(): Int {
+        return _problems.value?.count { it.status == "맞은 문제" } ?: 0
+    }
+
 
     fun resetSwipeCounts() {
         rightSwipeCount = 0

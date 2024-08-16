@@ -42,11 +42,12 @@ class StudyCompleteFragment : Fragment() {
         // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
 
-        val totalRightSwipes = viewModel.getRightSwipeCount()
-        val totalLeftSwipes = viewModel.getLeftSwipeCount()
+//        val totalRightSwipes = viewModel.getRightSwipeCount()
+//        val totalLeftSwipes = viewModel.getLeftSwipeCount()
+        val totalCorrectProblems = viewModel.getCorrectProblemCount()
         val totalProblems = viewModel.getTotalProblems()
 
-        binding.tvStudyComplete3.text = "총 ${totalProblems}문제 중\n${totalRightSwipes}문제를 맞췄습니다."
+        binding.tvStudyComplete3.text = "총 ${totalProblems}문제 중\n${totalCorrectProblems}문제를 맞췄습니다."
 
         // animation 초기화
         lottieAnimationView = binding.studyCompleteAnimation

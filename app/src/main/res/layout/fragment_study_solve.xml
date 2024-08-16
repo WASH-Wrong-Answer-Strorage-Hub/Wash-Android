@@ -187,7 +187,7 @@
         <!-- 풀이 진척도를 표시하는 RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_drawer_progress"
-            android:layout_width="match_parent"
+            android:layout_width="128dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:orientation="vertical" />

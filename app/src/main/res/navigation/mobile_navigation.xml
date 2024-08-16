@@ -329,9 +329,6 @@
         <action
             android:id="@+id/action_navigation_study_answer_to_navigation_study_solve"
             app:destination="@id/navigation_study_solve" />
-        <action
-            android:id="@+id/action_navigation_study_answer_to_navigation_study_complete"
-            app:destination="@id/navigation_study_complete" />
     </fragment>
 
     <dialog
