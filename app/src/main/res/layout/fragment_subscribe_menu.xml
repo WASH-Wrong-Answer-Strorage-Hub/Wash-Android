@@ -46,7 +46,7 @@
         <ImageView
             android:id="@+id/subscribe_menu_background_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:background="@drawable/layout_mypage_backgroud"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

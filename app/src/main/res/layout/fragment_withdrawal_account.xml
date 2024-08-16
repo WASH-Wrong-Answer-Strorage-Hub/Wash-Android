@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
     <ImageView
         android:id="@+id/withdrawal_account_background_iv"
         android:layout_width="match_parent"
@@ -140,7 +141,6 @@
         android:textColor="@color/middle_gray"
         android:background="@drawable/bt_password_input"
         app:layout_constraintStart_toStartOf="@id/input_problem_tv"
-
         app:layout_constraintTop_toBottomOf="@id/input_problem_tv"
         android:layout_marginTop="6sp"
         android:paddingLeft="10sp"
@@ -149,9 +149,9 @@
         android:singleLine="true"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/withdrawal_btn"
-        android:layout_width="312dp"
+        android:layout_width="312sp"
         android:layout_height="wrap_content"
         android:background="@drawable/ic_withdrawal_button"
         app:layout_constraintTop_toBottomOf="@id/withdrawal_account_problem_et"
