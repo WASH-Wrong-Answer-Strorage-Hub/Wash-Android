@@ -1,11 +1,21 @@
 package com.wash.washandroid.presentation.fragment.study
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
+import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
+import com.wash.washandroid.presentation.fragment.study.data.model.StudyProblem
+import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyFolderResponse
+import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class StudyViewModel : ViewModel() {
+class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
     private val _problems = MutableLiveData<List<StudyProblem>>()
     val problems: LiveData<List<StudyProblem>> get() = _problems
     var currentProblemIndex: Int = 0
@@ -16,9 +26,40 @@ class StudyViewModel : ViewModel() {
     // 사진 Uri 리스트와 선택된 사진의 위치를 저장
     private val _photoUris = MutableLiveData<List<String>>(emptyList())
     val photoUris: LiveData<List<String>> get() = _photoUris
-
     private val _selectedPhotoPosition = MutableLiveData<Int>()
     val selectedPhotoPosition: LiveData<Int> get() = _selectedPhotoPosition
+
+    private val _studyFolder = MutableLiveData<StudyFolder>()
+    val studyFolder: LiveData<StudyFolder> get() = _studyFolder
+
+    private val _studyFolders = MutableLiveData<List<StudyFolder>>()
+    val studyFolders: LiveData<List<StudyFolder>> get() = _studyFolders
+
+    private val loadedFolders = mutableListOf<StudyFolder>()
+
+    // folders 불러오기
+    fun loadStudyFolders(folderIds: List<String>) {
+        loadedFolders.clear() // 기존 데이터를 비움
+        folderIds.forEach { folderId ->
+            repository.getStudyFolder(folderId) { folder ->
+                folder?.let {
+                    loadedFolders.add(it)
+                    _studyFolders.postValue(loadedFolders.toList())
+                }
+            }
+        }
+    }
+
+    // folder불러오기
+    fun loadStudyFolder(folderId: String) {
+        repository.getStudyFolder(folderId) { folder ->
+            if (folder != null) {
+                _studyFolder.postValue(folder!!)
+            } else {
+                Log.e("fraglog", "Failed to load study folder for id: $folderId")
+            }
+        }
+    }
 
     fun setPhotoUris(uris: List<String>) {
         _photoUris.value = uris
@@ -37,7 +78,7 @@ class StudyViewModel : ViewModel() {
             resetProblemsStatus() // StudyFragment로 돌아갔을 때 초기화
             isResetRequired = false
 
-//            Log.d("fraglog", "Problems loaded: ${fetchedProblems.size}")
+            Log.d("fraglog", "Problems loaded: ${fetchedProblems}")
         }
     }
 
@@ -81,7 +122,7 @@ class StudyViewModel : ViewModel() {
                 "미완료",
                 0,
                 0,
-                listOf ("https://i.pinimg.com/originals/4f/d9/a3/4fd9a3816c3630d2dc7821c0556235ba.jpg")
+                listOf("https://i.pinimg.com/originals/4f/d9/a3/4fd9a3816c3630d2dc7821c0556235ba.jpg")
 
             ),
             StudyProblem(
@@ -92,7 +133,7 @@ class StudyViewModel : ViewModel() {
                 "미완료",
                 0,
                 0,
-                listOf ("https://i.pinimg.com/originals/ba/9a/09/ba9a09a7a3fa88c99021bb358ba2f84d.jpg")
+                listOf("https://i.pinimg.com/originals/ba/9a/09/ba9a09a7a3fa88c99021bb358ba2f84d.jpg")
             ),
             StudyProblem(
                 4,
@@ -102,7 +143,7 @@ class StudyViewModel : ViewModel() {
                 "미완료",
                 0,
                 0,
-                listOf ("https://i.pinimg.com/originals/ff/83/ec/ff83ece9abe0cdd120c2cce0687bc1e2.jpg")
+                listOf("https://i.pinimg.com/originals/ff/83/ec/ff83ece9abe0cdd120c2cce0687bc1e2.jpg")
             )
             // 추가 문제 데이터...
         )
@@ -156,21 +197,17 @@ class StudyViewModel : ViewModel() {
         leftSwipeCount++
     }
 
-    fun getRightSwipeCount(): Int {
-        return rightSwipeCount
-    }
-
-    fun getLeftSwipeCount(): Int {
-        return leftSwipeCount
-    }
-
     fun getCorrectProblemCount(): Int {
         return _problems.value?.count { it.status == "맞은 문제" } ?: 0
     }
+}
 
-
-    fun resetSwipeCounts() {
-        rightSwipeCount = 0
-        leftSwipeCount = 0
+class StudyViewModelFactory(private val repository: StudyRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(StudyViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return StudyViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

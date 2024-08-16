@@ -9,7 +9,7 @@ import com.wash.washandroid.R
 import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
 
 class FolderAdapter(
-    private val folders: List<StudyFolder>,
+    private var folders: List<StudyFolder>,
     private val onClick: (StudyFolder) -> Unit
 ) : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
 
@@ -19,17 +19,21 @@ class FolderAdapter(
     }
 
     override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
-        holder.bind(folders[position])
+        val folder = folders[position]
+        holder.bind(folder, position + 1) // position+1을 넘겨서 번호를 설정
+        holder.itemView.setOnClickListener { onClick(folder) }
     }
 
     override fun getItemCount() = folders.size
 
-    inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val folderNameTextView: TextView = itemView.findViewById(R.id.tv_study_folder_name)
+    fun updateFolders(newFolders: List<StudyFolder>) {
+        this.folders = newFolders
+        notifyDataSetChanged()
+    }
 
-        fun bind(folder: StudyFolder) {
-            folderNameTextView.text = folder.folderName
-            itemView.setOnClickListener { onClick(folder) }
+    class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(folder: StudyFolder, position: Int) {
+            itemView.findViewById<TextView>(R.id.tv_study_folder_name).text = "${folder.folderName}"
         }
     }
 }
