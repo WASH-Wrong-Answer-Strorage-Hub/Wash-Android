@@ -6,9 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentNoteSelectAreaBinding
@@ -19,6 +19,7 @@ class NoteSelectAreaFragment : Fragment() {
     private var _binding: FragmentNoteSelectAreaBinding? = null
     private val binding get() = _binding!!
     private var originalPaddingTop: Int = 0
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +33,8 @@ class NoteSelectAreaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
 
         // 현재 패딩을 저장하고 0으로 설정
         originalPaddingTop = (activity as MainActivity).findViewById<View>(R.id.container).paddingTop
@@ -59,7 +62,7 @@ class NoteSelectAreaFragment : Fragment() {
         }
 
         binding.btnCrop.setOnClickListener {
-
+            navController.navigate(R.id.action_navigation_note_select_area_to_problem_add_fragment)
         }
 
         binding.btnBack.setOnClickListener {
