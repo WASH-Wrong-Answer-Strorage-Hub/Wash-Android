@@ -38,8 +38,7 @@ class StudyFragment : Fragment() {
         // 현재 문제 인덱스 리셋
         studyViewModel.resetCurrentProblemIndex()
 
-        // 스와이프 횟수 초기화
-        studyViewModel.resetSwipeCounts()
+        // 스와이프, 상태 초기화
 
         return binding.root
     }
@@ -53,17 +52,16 @@ class StudyFragment : Fragment() {
         (activity as MainActivity).hideBottomNavigation(false)
 
         val folders = listOf(
-            StudyFolder(1, "국어"),
-            StudyFolder(2, "수학"),
-            StudyFolder(3, "영어"),
-            StudyFolder(4, "Untitled")
+            StudyFolder("", "국어", listOf("1", "2", "3")),
+            StudyFolder("", "수학", listOf("2")),
+            StudyFolder("", "영어", listOf("3")),
+            StudyFolder("", "Untitled", listOf("4"))
         ) // Todo : 서버로부터 받은 데이터로 교체
 
         folderAdapter = FolderAdapter(folders) { folder ->
 //            Toast.makeText(requireContext(), "${folder.name} 클릭됨", Toast.LENGTH_SHORT).show()
             val bundle = Bundle().apply {
-                putInt("folderId", folder.id)
-                putString("folderName", folder.name)
+                putString("folderName", folder.folderName)
             }
             navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
         }
