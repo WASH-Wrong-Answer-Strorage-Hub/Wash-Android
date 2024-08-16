@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
+import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
 
 class FolderAdapter(
     private val folders: List<StudyFolder>,

@@ -1,11 +1,9 @@
 package com.wash.washandroid.presentation.fragment.study
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -18,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudySolveBinding
 import com.wash.washandroid.presentation.base.MainActivity
+import com.wash.washandroid.presentation.fragment.study.data.model.StudyProblem
 
 class StudySolveFragment : Fragment() {
     private var _binding: FragmentStudySolveBinding? = null

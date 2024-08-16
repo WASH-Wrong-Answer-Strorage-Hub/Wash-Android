@@ -1,6 +1,5 @@
 package com.wash.washandroid.presentation.fragment.study
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
+import com.wash.washandroid.presentation.fragment.study.data.model.StudyProblem
 
 class StudyProgressAdapter(private var progressList: List<StudyProblem>) :
     RecyclerView.Adapter<StudyProgressAdapter.ProgressViewHolder>() {
