@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.R
 import com.wash.washandroid.model.CategoryType
-import com.wash.washandroid.presentation.fragment.category.CategoryApiService
-import com.wash.washandroid.presentation.fragment.category.NetworkModule
+import com.wash.washandroid.presentation.fragment.category.network.CategoryApiService
+import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
 import kotlinx.coroutines.launch
 
 class CategorySubfieldViewModel : ViewModel() {

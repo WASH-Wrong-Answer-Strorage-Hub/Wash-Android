@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategorySubfieldBinding
+import com.wash.washandroid.presentation.fragment.category.adapter.CategorySubfieldAdapter
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubfieldViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration

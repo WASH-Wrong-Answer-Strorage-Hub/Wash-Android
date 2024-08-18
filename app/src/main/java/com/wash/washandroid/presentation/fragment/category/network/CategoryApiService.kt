@@ -1,4 +1,4 @@
-package com.wash.washandroid.presentation.fragment.category
+package com.wash.washandroid.presentation.fragment.category.network
 
 import com.wash.washandroid.model.CategoryAddRequest
 import com.wash.washandroid.model.CategoryAddResponse

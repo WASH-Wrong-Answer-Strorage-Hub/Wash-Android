@@ -1,16 +1,16 @@
-package com.wash.washandroid.presentation.fragment.category
+package com.wash.washandroid.presentation.fragment.category.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.databinding.ItemCategoryBtnBinding
 import com.wash.washandroid.model.CategoryType
-import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryChapterViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubfieldViewModel
 
-class CategoryChapterAdapter(
+class CategorySubfieldAdapter(
     var categoryTypes: List<CategoryType>,
-    private val viewModel: CategoryChapterViewModel
-) : RecyclerView.Adapter<CategoryChapterAdapter.CategoryViewHolder>() {
+    private val viewModel: CategorySubfieldViewModel
+) : RecyclerView.Adapter<CategorySubfieldAdapter.CategoryViewHolder>() {
 
     private var selectedPosition: Int = RecyclerView.NO_POSITION
 

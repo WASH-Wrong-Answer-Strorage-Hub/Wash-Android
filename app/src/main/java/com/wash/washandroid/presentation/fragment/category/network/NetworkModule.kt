@@ -1,4 +1,4 @@
-package com.wash.washandroid.presentation.fragment.category
+package com.wash.washandroid.presentation.fragment.category.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
