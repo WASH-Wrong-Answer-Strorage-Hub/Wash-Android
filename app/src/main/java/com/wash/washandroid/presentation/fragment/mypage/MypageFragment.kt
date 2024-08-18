@@ -53,6 +53,7 @@ class MypageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mypageViewModel.getAccountInfo()
 
         // 갤러리에서 이미지 선택 후 처리
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

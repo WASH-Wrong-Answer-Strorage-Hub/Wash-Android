@@ -5,9 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.data.entity.request.LoginRequest
+import com.wash.washandroid.data.entity.request.NicknameRequest
 import com.wash.washandroid.data.service.RetrofitClient
-import com.wash.washandroid.presentation.fragment.study.StudyExitDialog.Companion.TAG
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -46,6 +45,8 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     fun setNickname(newNickname: String) {
         _nickname.value = newNickname
         saveNickname(newNickname)
+        // 서버로 닉네임 변경 요청
+        changeNicknameOnServer(newNickname)
     }
 
     // 이름 설정
@@ -213,6 +214,72 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "회원탈퇴 중 서버 오류 발생", e)
             } catch (e: Exception) {
                 Log.e(TAG, "회원탈퇴 중 예기치 않은 오류 발생", e)
+            }
+        }
+    }
+
+    fun getAccountInfo() {
+        val token = _refreshToken.value
+        if (token.isNullOrEmpty()) {
+            Log.e(TAG, "토큰이 존재하지 않습니다. 유저조회를 할 수 없습니다.")
+            return
+        }
+
+        val bearerToken = "Bearer $token"
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.getUserInfo(bearerToken)
+                if (response.isSuccessful) {
+                    val getUserInfoResponse = response.body()
+                    if (getUserInfoResponse?.isSuccess == true) {
+                        val userInfo = getUserInfoResponse.result
+                        _nickname.value = userInfo.nickname
+                        _name.value = userInfo.name
+                        _email.value = userInfo.email
+                        Log.i(TAG, "유저조회 성공: ${getUserInfoResponse.message}")
+                    } else {
+                        Log.e(TAG, "유저조회 실패: ${getUserInfoResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "유저조회 요청 실패: ${response.errorBody()?.string()}")
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "유저조회 중 서버 오류 발생", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "유저조회 중 예기치 않은 오류 발생", e)
+            }
+        }
+    }
+
+    private fun changeNicknameOnServer(newNickname: String) {
+        val token = _refreshToken.value
+        if (token.isNullOrEmpty()) {
+            Log.e(TAG, "토큰이 존재하지 않습니다. 닉네임 변경 요청을 할 수 없습니다.")
+            return
+        }
+
+        val bearerToken = "Bearer $token"
+        val nicknameRequest = NicknameRequest(newNickname)
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.changeNickname(bearerToken, nicknameRequest)
+                if (response.isSuccessful) {
+                    val changeNicknameResponse = response.body()
+                    if (changeNicknameResponse?.isSuccess == true) {
+                        _nickname.value = changeNicknameResponse.result.nickname
+                        Log.i(TAG, "닉네임 변경 성공: ${changeNicknameResponse.message}")
+                    } else {
+                        Log.e(TAG, "닉네임 변경 실패: ${changeNicknameResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "닉네임 변경 요청 실패: ${response.errorBody()?.string()}")
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "닉네임 변경 중 서버 오류 발생", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "닉네임 변경 중 예기치 않은 오류 발생", e)
             }
         }
     }

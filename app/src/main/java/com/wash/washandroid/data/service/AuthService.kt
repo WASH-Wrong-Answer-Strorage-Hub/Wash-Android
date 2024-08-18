@@ -1,9 +1,14 @@
 package com.wash.washandroid.data.service
 
+import com.wash.washandroid.data.entity.request.NicknameRequest
+import com.wash.washandroid.data.entity.response.ChangeNicknameResponse
 import com.wash.washandroid.data.entity.response.DeleteUserResponse
+import com.wash.washandroid.data.entity.response.GetUserInfoResponse
 import com.wash.washandroid.data.entity.response.LoginResponse
 import com.wash.washandroid.data.entity.response.LogoutResponse
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -29,4 +34,15 @@ interface AuthService {
     suspend fun logoutUser(
         @Header("Authorization") token: String
     ): Response<LogoutResponse>
+
+    @GET("users/info")
+    suspend fun getUserInfo(
+        @Header("Authorization") token: String
+    ): Response<GetUserInfoResponse>
+
+    @PATCH("users/info/nickname")
+    suspend fun changeNickname(
+        @Header("Authorization") token: String,
+        @Body nicknameRequest: NicknameRequest
+    ): Response<ChangeNicknameResponse>
 }
