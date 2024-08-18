@@ -94,73 +94,18 @@
             app:layout_constraintStart_toStartOf="@id/guideline_category_1st_v"
             app:layout_constraintTop_toBottomOf="@+id/category_problem_title" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/category_language"
-            android:layout_width="360dp"
-            android:layout_height="38dp"
-            android:text="@string/category_language"
-            android:textColor="@color/black"
-            style="@style/mg_16"
-            android:background="@drawable/category_choice_btn"
-            android:layout_marginTop="163dp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/category_subject_rv"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:layout_marginTop="60dp"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/category_problem_subtitle" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/category_math"
-            android:layout_width="360dp"
-            android:layout_height="38dp"
-            android:text="@string/category_math"
-            android:textColor="@color/black"
-            style="@style/mg_16"
-            android:background="@drawable/category_choice_btn"
-            android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_language" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/category_english"
-            android:layout_width="360dp"
-            android:layout_height="38dp"
-            android:text="@string/category_english"
-            android:textColor="@color/black"
-            style="@style/mg_16"
-            android:background="@drawable/category_choice_btn"
-            android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_math" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/category_society"
-            android:layout_width="360dp"
-            android:layout_height="38dp"
-            android:text="@string/category_society"
-            android:textColor="@color/black"
-            style="@style/mg_16"
-            android:background="@drawable/category_choice_btn"
-            android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_english" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/category_science"
-            android:layout_width="360dp"
-            android:layout_height="38dp"
-            android:text="@string/category_science"
-            android:textColor="@color/black"
-            style="@style/mg_16"
-            android:background="@drawable/category_choice_btn"
-            android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_society" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/category_add"
+            android:id="@+id/category_add_btn"
             android:layout_width="360dp"
             android:layout_height="38dp"
             android:text="@string/category_add"
@@ -170,7 +115,7 @@
             android:layout_marginTop="15dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_science" />
+            app:layout_constraintTop_toBottomOf="@+id/category_subject_rv" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/category_next_btn"
@@ -180,7 +125,7 @@
             android:layout_marginEnd="24dp"
             android:layout_marginTop="50dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_add" />
+            app:layout_constraintTop_toBottomOf="@+id/category_add_btn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
