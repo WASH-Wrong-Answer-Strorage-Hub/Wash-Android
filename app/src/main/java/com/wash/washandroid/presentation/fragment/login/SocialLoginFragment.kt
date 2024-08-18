@@ -74,6 +74,8 @@ class SocialLoginFragment : Fragment() {
                 Log.i(TAG, "카카오 계정으로 로그인 성공 ${token.accessToken}")
                 getKakaoUserInfo() // 로그인 성공 후 사용자 정보 가져오기
                 mypageViewModel.sendSocialTokenToServer("kakao", token.accessToken)
+                // 토큰을 ViewModel에 저장
+//                mypageViewModel.setAccessToken(token.accessToken)
                 navigateToHomeFragment()  // HomeFragment로 이동
             } else {
                 Log.w(TAG, "Kakao login callback invoked with no error and no token")
@@ -94,6 +96,9 @@ class SocialLoginFragment : Fragment() {
                 } else if (token != null) {
                     Log.i(TAG, "카카오로 로그인 성공 ${token.accessToken}")
                     getKakaoUserInfo()
+                    // 토큰을 ViewModel에 저장
+//                    mypageViewModel.setAccessToken(token.accessToken)
+                    // 서버로 토큰 전송
                     mypageViewModel.sendSocialTokenToServer("kakao", token.accessToken)
                     navigateToHomeFragment()
                 }
@@ -163,10 +168,13 @@ class SocialLoginFragment : Fragment() {
 
                 val newAccessToken = NaverIdLoginSDK.getAccessToken()
                 if (newAccessToken != null) {
+                    // 토큰을 ViewModel에 저장
+//                    mypageViewModel.setAccessToken(newAccessToken)
                     mypageViewModel.sendSocialTokenToServer("naver", newAccessToken)
                 } else {
                     Log.e(TAG, "Failed to refresh Naver token")
                 }
+                getNaverUserInfo()
                 navigateToHomeFragment()
             }
 

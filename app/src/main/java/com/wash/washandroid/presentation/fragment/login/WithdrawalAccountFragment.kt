@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.login
 
+import MypageViewModel
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
@@ -24,6 +27,8 @@ class WithdrawalAccountFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    private lateinit var mypageViewModel: MypageViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,8 +40,9 @@ class WithdrawalAccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mypageViewModel = activityViewModels<MypageViewModel>().value
+
         binding.withdrawalAccountBackBtn.setOnClickListener {
-            Toast.makeText(requireContext(), "되돌아가시겠습니까?", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack() // 이전 프래그먼트로 돌아가기
         }
 
@@ -49,6 +55,7 @@ class WithdrawalAccountFragment : Fragment() {
                 Toast.makeText(requireContext(), "로그인 상태를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            mypageViewModel.deleteUserAccount()
             navigateToLoginFragment() // 탈퇴 후 로그인 화면으로 이동
         }
     }
@@ -65,25 +72,30 @@ class WithdrawalAccountFragment : Fragment() {
         NidOAuthLogin().callDeleteTokenApi(object : OAuthLoginCallback {
             override fun onSuccess() {
                 // Naver 로그아웃 성공
+                Log.i(TAG, "네이버 탈퇴 성공. SDK에서 토큰 삭제됨")
             }
+
             override fun onFailure(httpStatus: Int, message: String) {
-                Log.d(TAG, "errorCode: ${NaverIdLoginSDK.getLastErrorCode().code}")
-                Log.d(TAG, "errorDesc: ${NaverIdLoginSDK.getLastErrorDescription()}")
+                Log.d(TAG, "네이버 탈퇴 실패: ${NaverIdLoginSDK.getLastErrorCode().code}")
+                Log.d(TAG, "네이버 탈퇴 실패: ${NaverIdLoginSDK.getLastErrorDescription()}")
             }
+
             override fun onError(errorCode: Int, message: String) {
                 onFailure(errorCode, message)
             }
         })
+        Log.e(TAG, "네이버 액세스 토큰을 가져오지 못했습니다.")
     }
 
     private fun kakaoWithdrawal() {
         UserApiClient.instance.unlink { error ->
             if (error != null) {
-                Log.e(TAG, "연결 끊기 실패", error)
+                Log.e(TAG, "카카오 탈퇴 실패", error)
             } else {
-                Log.i(TAG, "연결 끊기 성공. SDK에서 토큰 삭제 됨")
+                Log.i(TAG, "카카오 탈퇴 성공. SDK에서 토큰 삭제됨")
             }
         }
+        Log.e(TAG, "카카오 액세스 토큰을 가져오지 못했습니다.")
     }
 
     private fun navigateToLoginFragment() {
@@ -93,5 +105,9 @@ class WithdrawalAccountFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val TAG = "WithdrawalAccountFragment"
     }
 }

@@ -31,6 +31,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     private val _isSubscribed = MutableLiveData<Boolean>()
     val isSubscribed: LiveData<Boolean> get() = _isSubscribed
 
+    // 토큰 관리 변수 추가
+    private val _refreshToken = MutableLiveData<String?>()
+
     init {
         // ViewModel 초기화 시 닉네임, 이름, 이메일 로드
         loadNickname()
@@ -110,7 +113,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         return _isSubscribed.value ?: false
     }
 
-    // 서버로 사용자 정보 전송
+    // 서버로 사용자 정보 전송 후 액세스 토큰 저장
     fun sendSocialTokenToServer(socialType: String, token: String) {
         val bearerToken = "Bearer $token"
 
@@ -126,9 +129,16 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     val loginResponse = response.body()
                     if (loginResponse?.isSuccess == true) {
                         Log.i(TAG, "$socialType token sent to server successfully")
-                        val refreshToken = loginResponse.result?.refreshToken
-                        // refreshToken을 사용하여 필요한 추가 작업 수행
-                        Log.i(TAG, "Received refresh token: $refreshToken")
+
+                        // 서버로부터 받은 새로운 액세스 토큰을 헤더에서 가져옴
+                        val newAccessToken = response.headers()["authorization"]?.replace("Bearer ", "")
+
+                        if (!newAccessToken.isNullOrEmpty()) {
+                            setAccessToken(newAccessToken)  // 새로운 액세스 토큰을 저장
+                            Log.i(TAG, "New access token stored: $newAccessToken")
+                        } else {
+                            Log.e(TAG, "Failed to retrieve new access token from server response")
+                        }
                     } else {
                         Log.e(TAG, "Server returned an error: ${loginResponse?.message}")
                     }
@@ -141,6 +151,82 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "Unexpected error occurred", e)
             }
         }
+    }
+
+    // 로그아웃 요청 시 새로운 액세스 토큰 사용
+    fun logoutUser() {
+        val token = _refreshToken.value
+        if (token.isNullOrEmpty()) {
+            Log.e(TAG, "토큰이 존재하지 않습니다. 로그아웃 요청을 할 수 없습니다.")
+            return
+        }
+
+        val bearerToken = "Bearer $token"
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.logoutUser(bearerToken)
+                if (response.isSuccessful) {
+                    val logoutResponse = response.body()
+                    if (logoutResponse?.isSuccess == true) {
+                        Log.i(TAG, "로그아웃 성공: ${logoutResponse.message}")
+                        clearToken() // 로그아웃 성공 시 토큰 삭제
+                    } else {
+                        Log.e(TAG, "로그아웃 실패: ${logoutResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "로그아웃 요청 실패: ${response.errorBody()?.string()}")
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "로그아웃 중 서버 오류 발생", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "로그아웃 중 예기치 않은 오류 발생", e)
+            }
+        }
+    }
+
+    // 탈퇴 요청 시 새로운 액세스 토큰 사용
+    fun deleteUserAccount() {
+        val token = _refreshToken.value
+        if (token.isNullOrEmpty()) {
+            Log.e(TAG, "토큰이 존재하지 않습니다. 탈퇴 요청을 할 수 없습니다.")
+            return
+        }
+
+        val bearerToken = "Bearer $token"
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.deleteUser(bearerToken)
+                if (response.isSuccessful) {
+                    val deleteResponse = response.body()
+                    if (deleteResponse?.isSuccess == true) {
+                        clearToken()
+                        Log.i(TAG, "회원탈퇴 성공: ${deleteResponse.message}")
+                    } else {
+                        Log.e(TAG, "회원탈퇴 실패: ${deleteResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "회원탈퇴 요청 실패: ${response.errorBody()?.string()}")
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "회원탈퇴 중 서버 오류 발생", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "회원탈퇴 중 예기치 않은 오류 발생", e)
+            }
+        }
+    }
+
+    // 토큰 초기화 함수
+    fun clearToken() {
+        _refreshToken.value = null
+        sharedPreferences.edit().remove("accessToken").apply()
+        Log.i(TAG, "Access token cleared from ViewModel and SharedPreferences")
+    }
+
+    // 토큰 저장 함수 추가
+    fun setAccessToken(token: String?) {
+        _refreshToken.value = token
     }
 
     companion object {
