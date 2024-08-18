@@ -38,7 +38,7 @@ class SubscribeFragment: Fragment() {
         }
 
         binding.subscribeBackBtn.setOnClickListener {
-            findNavController().navigate(R.id.navigation_subscribe_menu)
+            findNavController().navigate(R.id.navigation_mypage)
         }
 
     }
