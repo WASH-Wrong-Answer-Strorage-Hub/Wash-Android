@@ -8,109 +8,104 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/subscribe_menu_background_iv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_mypage_background"
-        android:scaleType="fitXY"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <ImageView
+            android:id="@+id/subscribe_menu_background_iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mypage_background"
+            android:scaleType="fitXY"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton
-        android:id="@+id/subscribe_back_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_arrow_left"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="37sp"
-        android:layout_marginStart="24sp"
-        android:layout_marginEnd="312sp" />
+        <ImageButton
+            android:id="@+id/subscribe_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_arrow_left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="37dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="312dp" />
 
-    <TextView
-        android:id="@+id/ubscribe_menu_title_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="구독"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:fontFamily="@font/mangoddobak_b"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/subscribe_back_btn"
-        app:layout_constraintBottom_toBottomOf="@id/subscribe_back_btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/ubscribe_menu_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="구독"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/mangoddobak_b"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/subscribe_back_btn"
+            app:layout_constraintBottom_toBottomOf="@id/subscribe_back_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageView
-        android:id="@+id/subscribe_menu_background_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/layout_mypage_backgroud"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="75sp" />
+        <ImageView
+            android:id="@+id/subscribe_menu_background_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/layout_mypage_backgroud"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="75dp" />
 
-    <ImageView
-        android:id="@+id/subscribe_pro_background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/subscribe_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_menu_background_view"
-        app:layout_constraintStart_toStartOf="@id/subscribe_menu_background_view"
-        app:layout_constraintEnd_toEndOf="@id/subscribe_menu_background_view"
-        android:layout_marginTop="66sp"
-        />
+        <ImageView
+            android:id="@+id/subscribe_pro_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/subscribe_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_background_view"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_background_view"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_background_view"
+            android:layout_marginTop="66dp" />
 
-    <ImageView
-        android:id="@+id/crown_background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
-        android:layout_marginTop="19sp"
-        android:layout_marginStart="13sp"
-        android:src="@drawable/crown_background"
-        />
+        <ImageView
+            android:id="@+id/crown_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
+            android:layout_marginTop="19dp"
+            android:layout_marginStart="13dp"
+            android:src="@drawable/crown_background" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/crown"
-        app:layout_constraintTop_toTopOf="@+id/crown_background"
-        app:layout_constraintBottom_toBottomOf="@id/crown_background"
-        app:layout_constraintStart_toStartOf="@id/crown_background"
-        app:layout_constraintEnd_toEndOf="@id/crown_background"
-        />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/crown"
+            app:layout_constraintTop_toTopOf="@+id/crown_background"
+            app:layout_constraintBottom_toBottomOf="@id/crown_background"
+            app:layout_constraintStart_toStartOf="@id/crown_background"
+            app:layout_constraintEnd_toEndOf="@id/crown_background" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pro 버전"
-        android:fontFamily="@font/mangoddobak_r"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
-        android:layout_marginTop="21sp"
-        android:layout_marginStart="65sp"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pro 버전"
+            android:fontFamily="@font/mangoddobak_r"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
+            android:layout_marginTop="21sp"
+            android:layout_marginStart="65sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2023/03/01 - 2024/07/11"
-        android:textColor="@color/dark_gray"
-        android:textSize="8sp"
-        android:fontFamily="@font/mangoddobak_r"
-        app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
-        android:layout_marginStart="62sp"
-        android:layout_marginTop="49sp"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2023/03/01 - 2024/07/11"
+            android:textColor="@color/dark_gray"
+            android:textSize="8sp"
+            android:fontFamily="@font/mangoddobak_r"
+            app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
+            android:layout_marginStart="62sp"
+            android:layout_marginTop="49sp" />
 
         <View
             android:id="@+id/subscribe_menu_explain_background_layout"
@@ -120,8 +115,7 @@
             app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
             app:layout_constraintEnd_toEndOf="@id/subscribe_pro_background"
             app:layout_constraintTop_toBottomOf="@id/subscribe_pro_background"
-            android:layout_marginTop="32dp"
-            />
+            android:layout_marginTop="32dp" />
 
         <TextView
             android:id="@+id/normal_text"
@@ -134,8 +128,7 @@
             app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
             app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginStart="202dp"
-            android:layout_marginTop="44dp"
-            />
+            android:layout_marginTop="44dp" />
 
         <TextView
             android:id="@+id/pro_text"
@@ -148,8 +141,7 @@
             app:layout_constraintStart_toEndOf="@id/normal_text"
             app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginStart="19dp"
-            android:layout_marginTop="44dp"
-            />
+            android:layout_marginTop="44dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -161,8 +153,7 @@
             app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
             app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="79.5dp"
-            android:layout_marginStart="28dp"
-            />
+            android:layout_marginStart="28dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -174,8 +165,7 @@
             app:layout_constraintTop_toBottomOf="@id/normal_text"
             app:layout_constraintStart_toStartOf="@id/normal_text"
             app:layout_constraintEnd_toEndOf="@id/normal_text"
-            android:layout_marginTop="10dp"
-            />
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -187,8 +177,7 @@
             app:layout_constraintTop_toBottomOf="@id/pro_text"
             app:layout_constraintStart_toStartOf="@id/pro_text"
             app:layout_constraintEnd_toEndOf="@id/pro_text"
-            android:layout_marginTop="10dp"
-            />
+            android:layout_marginTop="10dp" />
 
         <View
             android:layout_width="0dp"
@@ -199,8 +188,7 @@
             app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="107dp"
             android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
-            />
+            android:layout_marginEnd="28dp" />
 
         <TextView
             android:id="@+id/problem_organize_text"
@@ -213,8 +201,7 @@
             app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
             app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="119.5dp"
-            android:layout_marginStart="28dp"
-            />
+            android:layout_marginStart="28dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -226,8 +213,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_organize_text"
             app:layout_constraintBottom_toBottomOf="@id/problem_organize_text"
             app:layout_constraintStart_toStartOf="@id/normal_text"
-            app:layout_constraintEnd_toEndOf="@id/normal_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -239,8 +225,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_organize_text"
             app:layout_constraintBottom_toBottomOf="@id/problem_organize_text"
             app:layout_constraintStart_toStartOf="@id/pro_text"
-            app:layout_constraintEnd_toEndOf="@id/pro_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
 
         <View
             android:layout_width="0dp"
@@ -251,8 +236,7 @@
             app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="10dp"
             android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
-            />
+            android:layout_marginEnd="28dp" />
 
         <TextView
             android:id="@+id/problem_text_recognize"
@@ -265,8 +249,7 @@
             app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
             app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="159.5dp"
-            android:layout_marginStart="28dp"
-            />
+            android:layout_marginStart="28dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -278,8 +261,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_text_recognize"
             app:layout_constraintBottom_toBottomOf="@id/problem_text_recognize"
             app:layout_constraintStart_toStartOf="@id/normal_text"
-            app:layout_constraintEnd_toEndOf="@id/normal_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -291,8 +273,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_text_recognize"
             app:layout_constraintBottom_toBottomOf="@id/problem_text_recognize"
             app:layout_constraintStart_toStartOf="@id/pro_text"
-            app:layout_constraintEnd_toEndOf="@id/pro_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
 
         <View
             android:layout_width="0dp"
@@ -303,8 +284,7 @@
             app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="10dp"
             android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
-            />
+            android:layout_marginEnd="28dp" />
 
         <TextView
             android:id="@+id/problem_search"
@@ -317,8 +297,7 @@
             app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
             app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="199.5dp"
-            android:layout_marginStart="28dp"
-            />
+            android:layout_marginStart="28dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -330,8 +309,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_search"
             app:layout_constraintBottom_toBottomOf="@id/problem_search"
             app:layout_constraintStart_toStartOf="@id/normal_text"
-            app:layout_constraintEnd_toEndOf="@id/normal_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -343,8 +321,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_search"
             app:layout_constraintBottom_toBottomOf="@id/problem_search"
             app:layout_constraintStart_toStartOf="@id/pro_text"
-            app:layout_constraintEnd_toEndOf="@id/pro_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
 
         <View
             android:layout_width="0dp"
@@ -355,8 +332,7 @@
             app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="10dp"
             android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
-            />
+            android:layout_marginEnd="28dp" />
 
         <TextView
             android:id="@+id/problem_gpt"
@@ -369,8 +345,7 @@
             app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
             app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="239.5dp"
-            android:layout_marginStart="28dp"
-            />
+            android:layout_marginStart="28dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -382,8 +357,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_gpt"
             app:layout_constraintBottom_toBottomOf="@id/problem_gpt"
             app:layout_constraintStart_toStartOf="@id/normal_text"
-            app:layout_constraintEnd_toEndOf="@id/normal_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -395,8 +369,7 @@
             app:layout_constraintTop_toTopOf="@id/problem_gpt"
             app:layout_constraintBottom_toBottomOf="@id/problem_gpt"
             app:layout_constraintStart_toStartOf="@id/pro_text"
-            app:layout_constraintEnd_toEndOf="@id/pro_text"
-            />
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
 
         <View
             android:layout_width="0dp"
@@ -407,23 +380,21 @@
             app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
             android:layout_marginTop="10dp"
             android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
-            />
+            android:layout_marginEnd="28dp" />
 
-    <TextView
-        android:id="@+id/terminate_subscribe_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="11sp"
-        android:text="해지하기"
-        android:textColor="#247DCF"
-        android:fontFamily="@font/mangoddobak_r"
-        app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
-        app:layout_constraintTop_toBottomOf="@id/subscribe_menu_explain_background_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="30sp"
-        android:layout_marginBottom="83sp"
-        />
+        <TextView
+            android:id="@+id/terminate_subscribe_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:text="해지하기"
+            android:textColor="#247DCF"
+            android:fontFamily="@font/mangoddobak_r"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintTop_toBottomOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="30sp"
+            android:layout_marginBottom="83sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
