@@ -1,6 +1,8 @@
 package com.wash.washandroid.presentation.fragment.category
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +11,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategoryFolderBinding
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
+import com.wash.washandroid.utils.CategoryItemDecoration
 
 class ProblemCategoryFolderFragment : Fragment() {
 
@@ -38,54 +42,35 @@ class ProblemCategoryFolderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
-        val buttonList = listOf(
-            binding.categoryFolder1,
-            binding.categoryFolder2,
-            binding.categoryFolder3,
-            binding.categoryFolder4,
-            binding.categoryFolder5
-        )
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+        val selectedSubjectTypeId = sharedPref?.getInt("selectedSubjectTypeId", -1)
+        val selectedSubfieldTypeId = sharedPref?.getInt("selectedSubfieldTypeId", -1)
+        val selectedChapterTypeId = sharedPref?.getInt("selectedChapterTypeId", -1)
 
-        buttonList.forEach { button ->
-            button.setOnClickListener {
-                categoryFolderViewModel.onButtonClicked(button.id)
-                updateButtonBackgrounds()
-                categoryViewModel.submitCategoryChapter(button.text.toString())
-            }
-        }
+        Log.d("subjectType", "Received typeId: $selectedSubjectTypeId")
+        Log.d("subfieldType", "Received typeId: $selectedSubfieldTypeId")
+        Log.d("chapterType", "Received typeId: $selectedChapterTypeId")
 
-        categoryFolderViewModel.selectedButtonId.observe(viewLifecycleOwner) {
-            updateButtonBackgrounds()
-        }
+        val verticalSpaceHeight = resources.getDimensionPixelSize(R.dimen.category_item_space)
+        binding.categoryFolderRv.addItemDecoration(CategoryItemDecoration(verticalSpaceHeight))
 
-        categoryFolderViewModel.isNextButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
-            // TODO: 다음 버튼 활성화 로직
-        }
+        val adapter = CategoryFolderAdapter(emptyList(), categoryFolderViewModel)
+        binding.categoryFolderRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.categoryFolderRv.adapter = adapter
 
-        binding.categoryAdd.setOnClickListener {
-            // TODO: 추가하기 버튼 로직
-            categoryViewModel.submitAddOption()
+        categoryFolderViewModel.categoryTypes.observe(viewLifecycleOwner) { types ->
+            adapter.folderTypes = types
+            adapter.notifyDataSetChanged() // 모든 아이템을 업데이트하는 대신 notifyItemChanged()로 최적화 가능
         }
 
         binding.categoryFolderCheckBtn.setOnClickListener {
-            // TODO: 문제 저장 후 이동 로직
+            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
+                Log.d("typeId", "$typeId")
+            }
         }
 
         binding.categoryBackBtn.setOnClickListener {
-            navController.navigate(R.id.action_navigation_problem_category_folder_to_chapter_fragment)
-        }
-    }
-
-    private fun updateButtonBackgrounds() {
-        val buttonList = listOf(
-            binding.categoryFolder1,
-            binding.categoryFolder2,
-            binding.categoryFolder3,
-            binding.categoryFolder4,
-            binding.categoryFolder5
-        )
-        buttonList.forEach { button ->
-            button.setBackgroundResource(categoryFolderViewModel.getButtonBackground(button.id))
+            navController.navigateUp()
         }
     }
 
