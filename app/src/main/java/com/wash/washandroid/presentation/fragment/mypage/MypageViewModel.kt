@@ -8,7 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.data.entity.request.NicknameRequest
 import com.wash.washandroid.data.service.RetrofitClient
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.HttpException
+import java.io.File
 
 class MypageViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -282,6 +286,46 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "닉네임 변경 중 예기치 않은 오류 발생", e)
             }
         }
+    }
+
+    fun uploadProfileImage(imagePath: String) {
+        val token = _refreshToken.value
+        if (token.isNullOrEmpty()) {
+            Log.e(TAG, "토큰이 존재하지 않습니다. 프로필 이미지를 업로드할 수 없습니다.")
+            return
+        }
+
+        val bearerToken = "Bearer $token"
+        val imagePart = createImagePart(imagePath)
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.changeProfileImage(bearerToken, imagePart)
+                if (response.isSuccessful) {
+                    val uploadResponse = response.body()
+                    if (uploadResponse?.isSuccess == true) {
+                        Log.i(TAG, "프로필 이미지 업로드 성공: ${uploadResponse.message}")
+                    } else {
+                        Log.e(TAG, "프로필 이미지 업로드 실패: ${uploadResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "프로필 이미지 업로드 요청 실패: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "프로필 이미지 업로드 중 오류 발생", e)
+            }
+        }
+    }
+
+    private fun createImagePart(filePath: String, partName: String = "imageFile"): MultipartBody.Part {
+        // 파일 경로를 사용하여 파일 객체 생성
+        val file = File(filePath)
+
+        // 파일과 MIME 타입을 사용하여 요청 바디 생성
+        val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
+
+        // MultipartBody.Part 객체 생성
+        return MultipartBody.Part.createFormData(partName, file.name, requestFile)
     }
 
     // 토큰 초기화 함수
