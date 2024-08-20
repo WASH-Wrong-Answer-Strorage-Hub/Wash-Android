@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -75,6 +76,16 @@ class ProblemAddFragment : Fragment() {
 
         val horizontalSpaceHeight = resources.getDimensionPixelSize(R.dimen.item_space)
         binding.problemAddRv.addItemDecoration(ProblemInfoDecoration(horizontalSpaceHeight))
+
+        // NoteSelectAreaFragment에서 전달된 크롭된 이미지들의 URI를 수신
+        val croppedUris = arguments?.getStringArray("croppedUris")
+        croppedUris?.let {
+            for (uri in it) {
+                addPhoto(photoList, photoAdapter, uri)
+                binding.problemAddBtn.setImageURI(uri.toUri())
+            }
+            binding.problemAddRv.smoothScrollToPosition(0)
+        }
     }
 
     private fun openPhotoPager(photoList: List<String>, initialPosition: Int) {
