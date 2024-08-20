@@ -1,6 +1,7 @@
 package com.wash.washandroid.presentation.fragment.study
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ import com.wash.washandroid.databinding.FragmentStudyBinding
 import com.wash.washandroid.presentation.base.MainActivity
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
-import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance.retrofit
+//import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance.retrofit
 import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 
@@ -55,39 +56,35 @@ class StudyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-        viewModel = ViewModelProvider(this).get(StudyViewModel::class.java)
 
-        // Bottom navigation bar 보이게
-        (activity as MainActivity).hideBottomNavigation(false)
+        // RecyclerView 설정
+        folderAdapter = FolderAdapter(emptyList()) { folderName ->
+            // 아이템 클릭 시 해당 폴더 이름에 대한 ID를 가져오기
+            val folderId = viewModel.getIdByName(folderName)
+//            Log.d("fraglog", "solve -- Folder ID found for $folderName: $folderId")
+            folderId?.let {
+                viewModel.loadStudyFolderById(it.toString()) // 폴더 내용 불러오기
 
-        /*val folders = listOf(
-            StudyFolder("", "국어", listOf("1", "2", "3")),
-            StudyFolder("", "수학", listOf("2")),
-            StudyFolder("", "영어", listOf("3")),
-            StudyFolder("", "Untitled", listOf("4"))
-        ) // Todo : 서버로부터 받은 데이터로 교체*/
-
-        folderAdapter = FolderAdapter(emptyList()) { folder ->
-//            Toast.makeText(requireContext(), "${folder.name} 클릭됨", Toast.LENGTH_SHORT).show()
-            val bundle = Bundle().apply {
-                putString("folderName", folder.folderName)
+                val bundle = Bundle().apply {
+                    putInt("folderId", it)
+                    putString("folderName", folderName)
+                }
+                navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
+            } ?: run {
+//                Log.e("fraglog", "Folder ID not found for name: $folderName")
             }
-            navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = folderAdapter
 
-        // 폴더 아이디 목록 생성
-        val folderIds = listOf("1", "2", "3", "4", "5", "6") // 폴더 아이디를 순차적으로 넣음
-
-        // API 호출하여 폴더 데이터를 불러옴
-        viewModel.loadStudyFolders(folderIds)
-
         // LiveData 관찰하여 폴더 데이터가 로드될 때마다 RecyclerView 업데이트
-        viewModel.studyFolders.observe(viewLifecycleOwner, Observer { folders ->
-            folderAdapter.updateFolders(folders)
+        viewModel.studyFolders.observe(viewLifecycleOwner, Observer { folderNames ->
+            folderAdapter.updateFolders(folderNames)
         })
+
+        // 폴더 로드
+        viewModel.loadStudyFolders()
     }
 
     override fun onDestroyView() {

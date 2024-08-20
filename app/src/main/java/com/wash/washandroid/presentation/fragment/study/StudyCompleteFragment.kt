@@ -16,12 +16,15 @@ import com.airbnb.lottie.LottieAnimationView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyCompleteBinding
 import com.wash.washandroid.presentation.base.MainActivity
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
+import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 
 class StudyCompleteFragment : Fragment() {
     private var _binding: FragmentStudyCompleteBinding? = null
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
+    private lateinit var repository: StudyRepository
     private lateinit var lottieAnimationView: LottieAnimationView
 
     override fun onCreateView(
@@ -30,6 +33,13 @@ class StudyCompleteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStudyCompleteBinding.inflate(inflater, container, false)
+
+        val studyApiService = StudyRetrofitInstance.api
+        repository = StudyRepository(studyApiService)
+
+        val factory = StudyViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
+
         return binding.root
     }
 
@@ -37,13 +47,13 @@ class StudyCompleteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-        viewModel = ViewModelProvider(requireActivity()).get(StudyViewModel::class.java)
 
         // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
 
 //        val totalRightSwipes = viewModel.getRightSwipeCount()
 //        val totalLeftSwipes = viewModel.getLeftSwipeCount()
+        viewModel.loadStudyProgress(viewModel.currentFolderId.toString())
         val totalCorrectProblems = viewModel.getCorrectProblemCount()
         val totalProblems = viewModel.getTotalProblems()
 

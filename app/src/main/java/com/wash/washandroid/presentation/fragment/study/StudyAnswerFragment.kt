@@ -14,6 +14,9 @@ import androidx.navigation.Navigation
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyAnswerBinding
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
+import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 
 class StudyAnswerFragment : Fragment() {
     private var _binding: FragmentStudyAnswerBinding? = null
@@ -22,6 +25,7 @@ class StudyAnswerFragment : Fragment() {
     private lateinit var swipeView: SwipeFlingAdapterView
     private lateinit var adapter: CardAdapter
     private lateinit var viewModel: StudyViewModel
+    private lateinit var repository: StudyRepository
     private val data: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
@@ -29,6 +33,13 @@ class StudyAnswerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentStudyAnswerBinding.inflate(inflater, container, false)
+
+        val studyApiService = StudyRetrofitInstance.api
+        repository = StudyRepository(studyApiService)
+
+        val factory = StudyViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
+
         return binding.root
     }
 
@@ -36,12 +47,11 @@ class StudyAnswerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-        viewModel = ViewModelProvider(requireActivity()).get(StudyViewModel::class.java)
 
         // 데이터 수신
-        val problemId = arguments?.getInt("problemId")
+        val folderId = arguments?.getString("folderId") ?: "1"
+        val problemId = arguments?.getString("problemId") ?: "1"
         val answer = arguments?.getString("answer") ?: "정답 불러오기 실패"
-
 //        Toast.makeText(requireContext(), "answer -- id : ${problemId}, answer : ${answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
 
         // data 리스트에 정답을 추가
@@ -59,14 +69,14 @@ class StudyAnswerFragment : Fragment() {
 
             override fun onLeftCardExit(p0: Any?) {
                 viewModel.incrementLeftSwipe()
-                viewModel.updateProblemStatus(isCorrect = false)
-                viewModel.moveToNextProblem()
+                viewModel.submitAnswer(folderId, problemId, "left")
+                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onRightCardExit(p0: Any?) {
                 viewModel.incrementRightSwipe()
-                viewModel.updateProblemStatus(isCorrect = true)
-                viewModel.moveToNextProblem()
+                viewModel.submitAnswer(folderId, problemId, "right")
+                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
@@ -78,7 +88,6 @@ class StudyAnswerFragment : Fragment() {
 
             override fun onScroll(scrollProgressPercent: Float) {
                 val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
-                // 스크롤 진행 상황
                 if (scrollProgressPercent > 0) {
                     // 오른쪽으로 스와이프 중
                     cardBg.setBackgroundResource(R.drawable.study_card_background_green)
@@ -108,7 +117,7 @@ class StudyAnswerFragment : Fragment() {
             val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
             cardBg.setBackgroundResource(R.drawable.study_card_background_green)
             binding.ivStudySolve.setBackgroundResource(R.drawable.study_correct)
-            viewModel.updateProblemStatus(isCorrect = true)
+            viewModel.submitAnswer(folderId, problemId, "right")
         }
 
         binding.btnStudyX.setOnClickListener {
@@ -117,7 +126,7 @@ class StudyAnswerFragment : Fragment() {
             val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
             cardBg.setBackgroundResource(R.drawable.study_card_background_red)
             binding.ivStudySolve.setBackgroundResource(R.drawable.study_incorrect)
-            viewModel.updateProblemStatus(isCorrect = false)
+            viewModel.submitAnswer(folderId, problemId, "left")
         }
 
         // 뒤로가기 클릭 시 다이얼로그 띄우기

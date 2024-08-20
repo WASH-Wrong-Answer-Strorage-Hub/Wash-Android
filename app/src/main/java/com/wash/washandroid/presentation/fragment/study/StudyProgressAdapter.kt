@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 import com.wash.washandroid.presentation.fragment.study.data.model.StudyProblem
 
-class StudyProgressAdapter(private var progressList: List<StudyProblem>) :
+class StudyProgressAdapter(private var progressList: List<Pair<String, String>>) :
     RecyclerView.Adapter<StudyProgressAdapter.ProgressViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressViewHolder {
@@ -21,10 +21,10 @@ class StudyProgressAdapter(private var progressList: List<StudyProblem>) :
     override fun onBindViewHolder(holder: ProgressViewHolder, position: Int) {
         val currentItem = progressList[position]
 //        Log.d("fraglog", "Binding problem: ${currentItem.problemId}, status: ${currentItem.status}")
-        holder.problemNumberTextView.text = currentItem.problemId.toString()
+        holder.problemNumberTextView.text = (position + 1).toString()
 
         // 문제 상태에 따른 배경 설정
-        when (currentItem.status) {
+        when (currentItem.second) {
             "맞은 문제" -> {
                 holder.problemStatusImageView.setImageResource(R.drawable.study_sm_correct)
             }
@@ -46,8 +46,8 @@ class StudyProgressAdapter(private var progressList: List<StudyProblem>) :
         val problemStatusImageView: ImageView = itemView.findViewById(R.id.iv_problem_status)
     }
 
-    fun updateProgressList(newList: List<StudyProblem>) {
-        progressList = newList
+    fun updateProgressList(newList: List<Pair<String, String>>) {
+        progressList = newList.sortedBy { it.first.toInt() }
         notifyDataSetChanged()
     }
 }

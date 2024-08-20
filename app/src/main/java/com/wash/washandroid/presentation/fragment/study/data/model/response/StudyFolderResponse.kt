@@ -4,12 +4,11 @@ data class StudyFolderResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val result: StudyFolderResult
+    val result: List<FolderInfo>
 )
 
-data class StudyFolderResult(
-    val message: String,
-    val folderName: String,
-    val problemIds: List<String>
+data class FolderInfo(
+    val folderId: Int,
+    val folderName: String
 )
 

@@ -1,7 +1,7 @@
 package com.wash.washandroid.presentation.fragment.study.data.model
 
 data class StudyProblem(
-    val problemId: Int,
+    val problemId: String,
     val problemText: String,
     val folderName: String,
     val answerText: String, // 정답

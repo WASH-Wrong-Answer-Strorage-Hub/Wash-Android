@@ -1,24 +1,31 @@
 package com.wash.washandroid.presentation.fragment.study.data.repository
 
+import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
+import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
+import com.wash.washandroid.presentation.fragment.study.data.model.response.FolderInfo
+import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyAnswerResponse
+import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyFolderIdResponse
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyFolderResponse
+import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProblemResponse
+import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProgressResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class StudyRepository(private val studyApiService: StudyApiService) {
 
-    // Get folder
-    fun getStudyFolder(folderId: String, callback: (StudyFolder?) -> Unit) {
-        studyApiService.getStudyFolder(folderId).enqueue(object : Callback<StudyFolderResponse> {
+    // Get all folders
+    fun getStudyFolders(callback: (List<FolderInfo>?) -> Unit) {
+        studyApiService.getStudyFolders().enqueue(object : Callback<StudyFolderResponse> {
             override fun onResponse(call: Call<StudyFolderResponse>, response: Response<StudyFolderResponse>) {
                 if (response.isSuccessful) {
                     val studyFolderResponse = response.body()
                     studyFolderResponse?.let {
-                        val studyFolder = mapToStudyFolder(it)
-                        callback(studyFolder)
+                        callback(it.result)
                     } ?: callback(null)
                 } else {
                     callback(null)
@@ -27,18 +34,127 @@ class StudyRepository(private val studyApiService: StudyApiService) {
 
             override fun onFailure(call: Call<StudyFolderResponse>, t: Throwable) {
                 callback(null)
-                Log.d("fraglog", "get Study Folder onfailure")
+                Log.d("fraglog", "get Study Folders onFailure: ${t.message}")
             }
         })
     }
 
-    // get problem
+    // Get specific folder by Id
+    fun getStudyFolderId(folderId: String, callback: (StudyFolder?) -> Unit) {
+        studyApiService.getStudyFolderId(folderId).enqueue(object : Callback<StudyFolderIdResponse> {
+            override fun onResponse(call: Call<StudyFolderIdResponse>, response: Response<StudyFolderIdResponse>) {
+                if (response.isSuccessful) {
+                    val studyFolderIdResponse = response.body()
+                    studyFolderIdResponse?.let {
+                        val studyFolder = mapToStudyFolder(it)
+                        callback(studyFolder)
+                    } ?: callback(null)
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<StudyFolderIdResponse>, t: Throwable) {
+                callback(null)
+                Log.d("fraglog", "get Study specific Folder by Id onfailure")
+            }
+        })
+    }
+
+    // Get problem
+    fun getStudyProblem(folderId: String, problemId: String, callback: (StudyProblemResponse?) -> Unit) {
+        val call = studyApiService.getStudyProblem(folderId, problemId)
+
+        // 요청 URL 로그 출력
+        Log.d("fraglog", "Request URL: ${call.request().url}")
+
+        studyApiService.getStudyProblem(folderId, problemId).enqueue(object : Callback<StudyProblemResponse> {
+            override fun onResponse(call: Call<StudyProblemResponse>, response: Response<StudyProblemResponse>) {
+                if (response.isSuccessful) {
+                    val studyProblemResponse = response.body()
+                    studyProblemResponse?.let {
+                        // null 값이 있을 경우 특정 문자열로 대체
+                        val modifiedResponse = it.copy(
+                            result = it.result.copy(
+                                problemImage = it.result.problemImage?.ifEmpty {
+                                    listOf("https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png")
+                                } ?: listOf("https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"), // 문제 이미지가 null 또는 빈 리스트면 기본 이미지 URL로 대체
+
+                                passageImage = it.result.passageImage?.ifEmpty {
+                                    listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg")
+                                } ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg") // 솔루션 이미지가 null 또는 빈 리스트면 기본 이미지 URL로 대체
+                            )
+                        )
+                        callback(modifiedResponse)
+                    } ?: callback(null)
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<StudyProblemResponse>, t: Throwable) {
+                callback(null)
+                Log.d("fraglog", "get Study Problem onFailure: ${t.message}")
+            }
+        })
+    }
+
 
     // Get progress
+    fun getStudyProgress(folderId: String, callback: (StudyProgressResponse?) -> Unit) {
+        studyApiService.getStudyProgress(folderId).enqueue(object : Callback<StudyProgressResponse> {
+            override fun onResponse(call: Call<StudyProgressResponse>, response: Response<StudyProgressResponse>) {
+                if (response.isSuccessful) {
+                    val studyProgressResponse = response.body()
+                    callback(studyProgressResponse)
+                } else {
+                    callback(null)  // 응답이 실패한 경우 null 전달
+                }
+            }
 
-    // post answer
+            override fun onFailure(call: Call<StudyProgressResponse>, t: Throwable) {
+                callback(null)  // 네트워크 요청이 실패한 경우 null 전달
+                Log.e("StudyRepository", "getStudyProgress onFailure: ${t.message}")
+            }
+        })
+    }
 
-    private fun mapToStudyFolder(response: StudyFolderResponse): StudyFolder {
+    // Post answer
+    fun sendAnswerRequest(folderId: String, problemId: String, answerRequest: AnswerRequest, callback: (Boolean) -> Unit) {
+        val call = studyApiService.addStudyAnswer(folderId, problemId, answerRequest)
+
+        call.enqueue(object : Callback<StudyAnswerResponse> {
+            override fun onResponse(call: Call<StudyAnswerResponse>, response: Response<StudyAnswerResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { studyAnswerResponse ->
+                        if (studyAnswerResponse.isSuccess) {
+                            Log.d("fraglog", "Answer submission successful")
+                            Log.d("fraglog", "Status: ${studyAnswerResponse.result.status}")
+                            callback(true)
+                        } else {
+                            Log.e("fraglog", "Response body indicates failure: ${studyAnswerResponse.message}")
+                            callback(false)
+                        }
+                    } ?: run {
+                        Log.e("fraglog", "Response body is null despite successful status")
+                        callback(false)
+                    }
+                } else {
+                    Log.e("fraglog", "Request failed with code: ${response.code()}, Error: ${response.errorBody()?.string() ?: "No error body"}")
+                    callback(false)
+                }
+            }
+
+            override fun onFailure(call: Call<StudyAnswerResponse>, t: Throwable) {
+                Log.e("fraglog", "Network or unexpected error: ${t.message ?: "Unknown error"}")
+                callback(false)
+            }
+        })
+
+    }
+
+
+    private fun mapToStudyFolder(response: StudyFolderIdResponse): StudyFolder {
         return StudyFolder(
             folderName = response.result.folderName,
             problemIds = response.result.problemIds
