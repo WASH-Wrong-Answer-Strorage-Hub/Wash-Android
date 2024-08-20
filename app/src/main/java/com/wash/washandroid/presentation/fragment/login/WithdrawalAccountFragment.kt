@@ -47,21 +47,35 @@ class WithdrawalAccountFragment : Fragment() {
         }
 
         binding.withdrawalBtn.setOnClickListener {
-            if (isKakaoLoggedIn()) {
-                kakaoWithdrawal()
-            } else if (isNaverLoggedIn()) {
-                naverWithdrawal()
-            } else {
-                Toast.makeText(requireContext(), "로그인 상태를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            isKakaoLoggedIn { isKakaoLoggedIn ->
+                if (isKakaoLoggedIn) {
+                    // ViewModel을 통해 로그아웃 요청
+                    mypageViewModel.deleteUserAccount()
+                    kakaoWithdrawal()
+                } else if (isNaverLoggedIn()) {
+                    // ViewModel을 통해 로그아웃 요청
+                    mypageViewModel.deleteUserAccount()
+                    naverWithdrawal()
+                } else {
+                    Toast.makeText(requireContext(), "로그인 상태를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+                navigateToLoginFragment()
             }
-            mypageViewModel.deleteUserAccount()
-            navigateToLoginFragment() // 탈퇴 후 로그인 화면으로 이동
         }
     }
 
-    private fun isKakaoLoggedIn(): Boolean {
-        return UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())
+    private fun isKakaoLoggedIn(callback: (Boolean) -> Unit) {
+        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+            if (error != null) {
+                Log.e("LogoutPopupFragment", "카카오 로그인 상태 확인 실패", error)
+                callback(false)
+            } else if (tokenInfo != null) {
+                Log.i("LogoutPopupFragment", "카카오 로그인 상태 확인 성공: $tokenInfo")
+                callback(true)
+            } else {
+                callback(false)
+            }
+        }
     }
 
     private fun isNaverLoggedIn(): Boolean {
