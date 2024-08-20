@@ -76,13 +76,9 @@ class StudyRepository(private val studyApiService: StudyApiService) {
                         // null 값이 있을 경우 특정 문자열로 대체
                         val modifiedResponse = it.copy(
                             result = it.result.copy(
-                                problemImage = it.result.problemImage?.ifEmpty {
-                                    listOf("https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png")
-                                } ?: listOf("https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"), // 문제 이미지가 null 또는 빈 리스트면 기본 이미지 URL로 대체
-
-                                passageImage = it.result.passageImage?.ifEmpty {
+                                passageImages = it.result.passageImages?.ifEmpty {
                                     listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg")
-                                } ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg") // 솔루션 이미지가 null 또는 빈 리스트면 기본 이미지 URL로 대체
+                                } ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"),
                             )
                         )
                         callback(modifiedResponse)

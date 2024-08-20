@@ -11,10 +11,10 @@ data class ProblemResult(
     val problemId: String,
     val folderName: String,
     val answer: String,
-    val problemImage: List<String>?, // 문제
-    val solutionImage: List<String>?, // 풀이 이미지
-    val passageImage: List<String>?, // 지문 이미지
-    val additionalProblemImage: List<String>?, // 문제 추가 이미지
+    val problemImage: String, // 문제
+    val solutionImages: List<String>?, // 풀이 이미지
+    val passageImages: List<String>?, // 지문 이미지
+    val additionalProblemImages: List<String>?, // 문제 추가 이미지
     val problemText: String,
     val gptSessionKey: String?, // nullable
     val problemType: ProblemType,

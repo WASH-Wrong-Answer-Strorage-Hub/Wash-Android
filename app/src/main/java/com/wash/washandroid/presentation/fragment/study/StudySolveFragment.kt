@@ -65,16 +65,17 @@ class StudySolveFragment : Fragment() {
         binding.rvDrawerProgress.adapter = progressAdapter
 
         // 문제 id 가져오기
-        viewModel.setDummyProblemIds() // 더미 데이터
-        viewModel.loadStudyProblem(folderId)
-//        viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
-//            if (!problemIds.isNullOrEmpty()) {
-//                Log.d("fraglog", "Problem IDs are ready, calling loadStudyProblem for folderId: $folderId")
-//                viewModel.loadStudyProblem(folderId)
-//            } else {
-//                Log.e("fraglog", "Problem IDs are null or empty")
-//            }
-//        })
+//        viewModel.setDummyProblemIds() // 더미 데이터
+//        viewModel.loadStudyProblem(folderId)
+
+        viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
+            if (!problemIds.isNullOrEmpty()) {
+                Log.d("fraglog", "Problem IDs are ready, calling loadStudyProblem for folderId: $folderId")
+                viewModel.loadStudyProblem(folderId)
+            } else {
+                Log.e("fraglog", "Problem IDs are null or empty")
+            }
+        })
 
         viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
             binding.tvStudySolveTitle.text = studyProblemResponse.result.folderName
@@ -136,7 +137,7 @@ class StudySolveFragment : Fragment() {
     // UI 업데이트 함수
     private fun updateUI(problem: StudyProblemResponse) {
         binding.tvStudySolveProblemId.text = "문제 " + (viewModel.currentProblemIndex + 1)
-        val imageUrl = problem.result.problemImage?.firstOrNull()
+        val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() }
             ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
 
         Glide.with(this)
@@ -146,11 +147,12 @@ class StudySolveFragment : Fragment() {
 
     private fun openPhotoPager() {
         val currentProblem = viewModel.getCurrentProblem()
-        val descriptionUrls = currentProblem.result.passageImage // 지문 list 가져오기
-        Log.d("fraglog", "passageImage: $descriptionUrls")
+        val passageUrls = currentProblem.result.passageImages // 지문 list 가져오기
 
-        // passageImage를 descriptionUrls로 설정
-        viewModel.setPhotoUris(descriptionUrls?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"))
+        Log.d("fraglog", "passageImage: $passageUrls")
+
+        // passageImage를 passageUrls 설정
+        viewModel.setPhotoUris(passageUrls ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"))
 
         // initialPosition: 0
         viewModel.setSelectedPhotoPosition(0)

@@ -9,6 +9,7 @@ data class StudyFolderResponse(
 
 data class FolderInfo(
     val folderId: Int,
-    val folderName: String
+    val folderName: String,
+    val orderValue: Int
 )
 

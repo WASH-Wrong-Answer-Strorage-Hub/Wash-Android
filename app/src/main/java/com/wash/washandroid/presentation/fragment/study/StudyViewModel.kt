@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
 import com.wash.washandroid.presentation.fragment.study.data.model.response.ProblemStatus
@@ -43,8 +44,8 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
     fun loadStudyFolders() {
         repository.getStudyFolders { folderList ->
             folderList?.let {
-                // folderId를 기준으로 오름차순 정렬
-                val sortedFolders = it.sortedBy { folder -> folder.folderId }
+                // orderValue 기준으로 오름차순 정렬
+                val sortedFolders = it.sortedBy { folder -> folder.orderValue }
 
                 // 폴더 이름 리스트를 생성하고 nameToIdMap을 업데이트
                 val folderNames = sortedFolders.map { folder ->
@@ -60,15 +61,16 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
 
     // folder 세부 불러오기
     fun loadStudyFolderById(folderId: String) {
-        Log.d("fraglog", "Loading folder with ID: $folderId")
-        repository.getStudyFolderId(folderId) { folder ->
-            folder?.let {
-                Thread.sleep(1000)
-                _problemIds.postValue(it.problemIds)
-                setCurrentFolderId(folderId)
-                Log.d("fraglog", "***Problem IDs loaded***: ${it.problemIds}")
-                Log.d("fraglog", "viewmodel problemids: ${_problemIds.value}")
-            } ?: Log.e("fraglog", "Failed to load folder for id: $folderId")
+        viewModelScope.launch {
+            Log.d("fraglog", "Loading folder with ID: $folderId")
+            repository.getStudyFolderId(folderId) { folder ->
+                folder?.let {
+                    _problemIds.postValue(it.problemIds)
+                    setCurrentFolderId(folderId)
+                    Log.d("fraglog", "***Problem IDs loaded***: ${it.problemIds}")
+                    Log.d("fraglog", "**viewModel problemIds**: ${_problemIds.value}")
+                } ?: Log.e("fraglog", "Failed to load folder for id: $folderId")
+            }
         }
     }
 
@@ -78,7 +80,6 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
     }
 
     fun setDummyProblemIds() {
-        // 값을 바로 설정할 때는 setValue() 사용
         _problemIds.value = listOf("16", "17", "20", "21")
     }
 
