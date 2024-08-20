@@ -15,7 +15,6 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.github.mikephil.charting.charts.PieChart
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentViewPieChartBinding
 
@@ -100,13 +99,21 @@ class ViewPieChartFragment : Fragment() {
 
     private fun updatePieChart(entries: List<PieEntry>) {
         val dataSet = PieDataSet(entries, "").apply {
-            this.colors = colors.take(entries.size) // 색상 리스트 확인
+            // 데이터 항목 수에 맞는 색상 리스트 가져오기
+            val colorList = colors.take(entries.size).toMutableList()
+            Log.d("PieChart", "Color List Used: $colorList") // 색상 리스트 확인
+
+            // 색상 리스트가 데이터 항목 수보다 적으면 반복하여 사용
+            while (colorList.size < entries.size) {
+                colorList.addAll(colors) // 색상을 반복하여 추가
+            }
+            this.colors = colorList
+
             this.sliceSpace = 3f
-            this.setDrawValues(false) // 퍼센트 제거
+            this.setDrawValues(false) // 퍼센트 표시 제거
         }
 
         binding.pieChart.apply {
-            // 차트 회전 비활성화
             this.isRotationEnabled = false
             this.rotationAngle = 0f // 초기 회전 각도 설정
 
@@ -117,6 +124,9 @@ class ViewPieChartFragment : Fragment() {
             this.invalidate() // 차트 갱신
         }
     }
+
+
+
 
     private fun updateRecyclerView(entries: List<PieEntry>) {
         binding.chartItemsRecyclerView.apply {
