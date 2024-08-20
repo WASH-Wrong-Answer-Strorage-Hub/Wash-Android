@@ -33,12 +33,12 @@ class SubscribeFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.terminateSubscribeBtn.setOnClickListener {
-            mypageViewModel.setSubscribed(false)
+            mypageViewModel.cancelSubscription()
             findNavController().navigate(R.id.navigation_subscribe_menu)
         }
 
         binding.subscribeBackBtn.setOnClickListener {
-            findNavController().navigate(R.id.navigation_subscribe_menu)
+            findNavController().navigate(R.id.navigation_mypage)
         }
 
     }

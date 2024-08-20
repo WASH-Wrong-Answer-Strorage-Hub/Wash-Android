@@ -54,23 +54,6 @@ class MypageFragment : Fragment() {
         mypageViewModel.getAccountInfo()
 
         // 갤러리에서 이미지 선택 후 처리
-//        galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == AppCompatActivity.RESULT_OK) {
-//                val selectedImageUri: Uri? = result.data?.data
-//                // 선택된 이미지 처리
-//                selectedImageUri?.let {
-//                    // Glide를 사용하여 이미지 로드
-//                    Glide.with(this)
-//                        .load(it)
-//                        .transform(CircleCrop())
-//                        .into(binding.mypageProfileIv)
-//                    // mypageEditBtn 숨기기
-//                    binding.mypageEditBtn.visibility = View.GONE
-//                    binding.mypageEclipseBtn.visibility = View.GONE
-//                }
-//            }
-//        }
-
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val selectedImageUri: Uri? = result.data?.data
@@ -117,6 +100,16 @@ class MypageFragment : Fragment() {
                 binding.normalVerExplainTv.text = "문제 풀기, 문제 유형 정리"
                 binding.upgradeBtn.visibility = View.VISIBLE
                 binding.upgradeTv.visibility = View.VISIBLE
+            }
+        }
+
+        // updrage button
+        binding.upgradeBtn.setOnClickListener {
+            if (mypageViewModel.checkSubscriptionStatus()) {
+                findNavController().navigate(R.id.navigation_subscribe)
+            } else {
+                mypageViewModel.approveSubscription()
+                findNavController().navigate(R.id.navigation_subscribe_menu)
             }
         }
 

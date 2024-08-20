@@ -7,6 +7,7 @@ import com.wash.washandroid.data.entity.response.DeleteUserResponse
 import com.wash.washandroid.data.entity.response.GetUserInfoResponse
 import com.wash.washandroid.data.entity.response.LoginResponse
 import com.wash.washandroid.data.entity.response.LogoutResponse
+import com.wash.washandroid.data.entity.response.SubscriptionResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -56,4 +57,14 @@ interface AuthService {
         @Header("Authorization") token: String,
         @Part imageFile: MultipartBody.Part
     ): Response<ChangeProfileImageResponse>
+
+    @PATCH("subscription/approve")
+    suspend fun approveSubscription (
+        @Header("Authorization") token: String
+    ): Response<SubscriptionResponse>
+
+    @PATCH("subscription/cancel")
+    suspend fun cancelSubscription (
+        @Header("Authorization") token: String
+    ): Response<SubscriptionResponse>
 }

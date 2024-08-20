@@ -40,7 +40,6 @@ class EditNicknameFragment : Fragment() {
         binding.editNicknameBtn.setOnClickListener {
             val newNickname = binding.editNicknameTv.text.toString()
             mypageViewModel.setNickname(newNickname) // ViewModel에 닉네임 설정
-            Toast.makeText(requireContext(), "Nickname saved!", Toast.LENGTH_SHORT).show()
         }
 
         // Back button 클릭 시 이동

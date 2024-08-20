@@ -67,6 +67,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
 
     fun setSubscribed(isSubscribed: Boolean) {
         _isSubscribed.value = isSubscribed
+        saveSubscriptionStatus(isSubscribed)
     }
 
     // 닉네임 저장
@@ -317,7 +318,69 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun createImagePart(filePath: String, partName: String = "imageFile"): MultipartBody.Part {
+    fun approveSubscription() {
+        val token = _refreshToken.value
+        if (token.isNullOrEmpty()) {
+            Log.e(TAG, "토큰이 존재하지 않습니다. 구독 승인 요청을 할 수 없습니다.")
+            return
+        }
+
+        val bearerToken = "Bearer $token"
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.approveSubscription(bearerToken)
+                if (response.isSuccessful) {
+                    val approveResponse = response.body()
+                    if (approveResponse?.isSuccess == true) {
+                        _isSubscribed.value = true
+                        Log.i(TAG, "구독 승인 성공: ${approveResponse.message}")
+                    } else {
+                        Log.e(TAG, "구독 승인 실패: ${approveResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "구독 승인 요청 실패: ${response.errorBody()?.string()}")
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "구독 승인 중 서버 오류 발생", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "구독 승인 중 예기치 않은 오류 발생", e)
+            }
+        }
+    }
+
+    fun cancelSubscription() {
+        val token = _refreshToken.value
+        if (token.isNullOrEmpty()) {
+            Log.e(TAG, "토큰이 존재하지 않습니다. 구독 취소 요청을 할 수 없습니다.")
+            return
+        }
+
+        val bearerToken = "Bearer $token"
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.cancelSubscription(bearerToken)
+                if (response.isSuccessful) {
+                    val cancelResponse = response.body()
+                    if (cancelResponse?.isSuccess == true) {
+                        _isSubscribed.value = false
+                        Log.i(TAG, "구독 취소 성공: ${cancelResponse.message}")
+                    } else {
+                        Log.e(TAG, "구독 취소 실패: ${cancelResponse?.message}")
+                    }
+                } else {
+                    Log.e(TAG, "구독 취소 요청 실패: ${response.errorBody()?.string()}")
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "구독 취소 중 서버 오류 발생", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "구독 취소 중 예기치 않은 오류 발생", e)
+            }
+        }
+    }
+
+    private fun createImagePart(filePath: String, partName: String = "file"): MultipartBody.Part {
         // 파일 경로를 사용하여 파일 객체 생성
         val file = File(filePath)
 
