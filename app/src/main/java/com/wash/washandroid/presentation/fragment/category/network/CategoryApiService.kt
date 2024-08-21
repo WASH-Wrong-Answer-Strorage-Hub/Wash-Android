@@ -4,6 +4,8 @@ import com.wash.washandroid.model.CategorySubjectAddRequest
 import com.wash.washandroid.model.CategoryAddResponse
 import com.wash.washandroid.model.CategoryResponse
 import com.wash.washandroid.model.FolderResponse
+import com.wash.washandroid.model.PostFolderRequest
+import com.wash.washandroid.model.PostFolderResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -22,6 +24,9 @@ interface CategoryApiService {
 
     @GET("/folders")
     suspend fun getCategoryFolderTypes(): Response<FolderResponse>
+
+    @POST("/folders")
+    suspend fun postCategoryFolderType(@Body request: PostFolderRequest): Response<PostFolderResponse>
 
     @POST("/problems/types")
     suspend fun postCategoryTypes(@Body request: CategorySubjectAddRequest): Response<CategoryAddResponse>
