@@ -16,6 +16,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +35,7 @@ class ProblemAnswerFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemAnswerBinding -> null"}
 
     private val problemInfoViewModel: ProblemInfoViewModel by activityViewModels()
+    private val problemAnswerViewModel: ProblemAnswerViewModel by viewModels()
 
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var printAdapter: PhotoAdapter
@@ -87,6 +89,14 @@ class ProblemAnswerFragment : Fragment() {
 
         (requireActivity() as MainActivity).hideBottomNavigation(true)
         navController = Navigation.findNavController(view)
+
+        problemAnswerViewModel.recognizedText.observe(viewLifecycleOwner) { text ->
+            binding.ocrEt.setText(text)
+        }
+
+        // 예시로 이미지 URL을 넘겨서 텍스트 인식을 시작
+        val imageUrl = "https://i.postimg.cc/Qd8M8hRR/20240707-210207.jpg"
+        problemAnswerViewModel.recognizeTextFromImage(imageUrl)
 
         binding.photoDeleteLayout.setOnClickListener {
             binding.problemInfoPhoto.setImageURI(null)
