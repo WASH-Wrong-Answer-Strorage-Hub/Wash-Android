@@ -1,6 +1,6 @@
 package com.wash.washandroid.presentation.fragment.category.network
 
-import com.wash.washandroid.model.CategoryAddRequest
+import com.wash.washandroid.model.CategorySubjectAddRequest
 import com.wash.washandroid.model.CategoryAddResponse
 import com.wash.washandroid.model.CategoryResponse
 import com.wash.washandroid.model.FolderResponse
@@ -24,7 +24,5 @@ interface CategoryApiService {
     suspend fun getCategoryFolderTypes(): Response<FolderResponse>
 
     @POST("/problems/types")
-    suspend fun postCategoryTypes(
-        @Body request : CategoryAddRequest
-    ): Response<CategoryAddResponse>
+    suspend fun postCategoryTypes(@Body request: CategorySubjectAddRequest): Response<CategoryAddResponse>
 }
