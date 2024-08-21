@@ -13,7 +13,7 @@ data class CategoryAddResponse(
     val message: String,
 
     @SerializedName("result")
-    val result: List<CategoryType>
+    val result: List<CategoryAddType>
 )
 
 data class CategoryAddType(
@@ -24,8 +24,19 @@ data class CategoryAddType(
     val typeName: String
 )
 
-data class CategoryAddRequest(
+data class CategorySubjectAddRequest(
     var typeName: String, // 국어
-    var parentTypeId: Int, // 1
+    var typeLevel: Int // 1
+)
+
+data class CategorySubfieldAddRequest(
+    var typeName: String, // 국어
+    var parentTypeId: Int,
     var typeLevel: Int // 2
+)
+
+data class CategoryChapterAddRequest(
+    var typeName: String, // 국어
+    var parentTypeId: Int,
+    var typeLevel: Int // 3
 )
