@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -26,7 +27,7 @@ class ProblemAddFragment : Fragment() {
     private lateinit var navController: NavController
     private var _binding: FragmentProblemAddBinding? = null
     private val binding: FragmentProblemAddBinding
-        get() = requireNotNull(_binding){"FragmentProblemAddBinding -> null"}
+        get() = requireNotNull(_binding) { "FragmentProblemAddBinding -> null" }
 
     private val problemInfoViewModel: ProblemInfoViewModel by activityViewModels()
 
@@ -71,7 +72,10 @@ class ProblemAddFragment : Fragment() {
         }
 
         binding.problemAddNextBtn.setOnClickListener {
-            navController.navigate(R.id.action_navigation_problem_add_to_answer_fragment)
+            val bundle = bundleOf(
+                "selectedPhotos" to ArrayList(photoList)
+            )
+            navController.navigate(R.id.action_navigation_problem_add_to_answer_fragment, bundle)
         }
 
         val horizontalSpaceHeight = resources.getDimensionPixelSize(R.dimen.item_space)
