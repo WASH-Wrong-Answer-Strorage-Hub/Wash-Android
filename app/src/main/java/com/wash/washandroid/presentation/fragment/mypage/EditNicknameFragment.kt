@@ -1,11 +1,13 @@
 package com.wash.washandroid.presentation.fragment.mypage
 
 import MypageViewModel
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -34,18 +36,26 @@ class EditNicknameFragment : Fragment() {
 
         // ViewModel에서 닉네임을 관찰하고 UI를 업데이트
         mypageViewModel.nickname.observe(viewLifecycleOwner) { nickname ->
-            binding.editNicknameTv.setText(nickname)
+            if (binding.editNicknameTv.text.toString() != nickname) {
+                binding.editNicknameTv.setText(nickname)
+            }
         }
 
         binding.editNicknameBtn.setOnClickListener {
             val newNickname = binding.editNicknameTv.text.toString()
             mypageViewModel.setNickname(newNickname) // ViewModel에 닉네임 설정
+            hideKeyboard()
         }
 
         // Back button 클릭 시 이동
         binding.editNicknameBackBtn.setOnClickListener {
             findNavController().navigate(R.id.navigation_edit_account)
         }
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
     override fun onDestroyView() {
