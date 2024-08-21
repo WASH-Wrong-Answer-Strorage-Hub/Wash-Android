@@ -58,14 +58,6 @@ class MypageFragment : Fragment() {
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val selectedImageUri: Uri? = result.data?.data
                 selectedImageUri?.let { uri ->
-//                    val filePath = requireContext().getRealPathFromURI(uri) // Uri를 파일 경로로 변환
-//
-//                    // filePath가 null이 아닌 경우에만 ViewModel의 uploadProfileImage 호출
-//                    filePath?.let {
-//                        mypageViewModel.uploadProfileImage(it)
-//                    } ?: run {
-//                        Toast.makeText(context, "파일 경로를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-//                    }
 
                     // 최대 파일 크기를 5MB로 설정 (5 * 1024 * 1024 바이트)
                     val maxFileSize = 5 * 1024 * 1024
@@ -187,8 +179,7 @@ class MypageFragment : Fragment() {
         if (fileSize > maxFileSize) {
             Toast.makeText(context, "파일 크기가 너무 큽니다. 최대 허용 크기는 ${maxFileSize / (1024 * 1024)}MB입니다.", Toast.LENGTH_SHORT).show()
         } else {
-            // 파일 크기가 허용 범위 내인 경우에만 업로드를 시도합니다.
-            // 여기에서 파일 업로드 로직을 호출합니다.
+            // 파일 크기가 허용 범위 내인 경우에만 업로드를 시도
             mypageViewModel.uploadProfileImage(context.getRealPathFromURI(uri)!!)
         }
     }
@@ -196,7 +187,13 @@ class MypageFragment : Fragment() {
     private fun selectGallery() {
         // 갤러리 호출 인텐트
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//        intent.type = "image/*"
+        intent.type = "image/*"
+        intent.putExtra("crop", "true")
+        intent.putExtra("aspectX", 1)
+        intent.putExtra("aspectY", 1)
+        intent.putExtra("outputX", 200)
+        intent.putExtra("outputY", 200)
+        intent.putExtra("return-data", true)
         galleryLauncher.launch(intent)
     }
 
