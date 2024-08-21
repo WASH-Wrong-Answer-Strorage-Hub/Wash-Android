@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.category.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,8 @@ class CategorySubjectAdapter(
         fun bind(categoryType: CategoryType) {
             binding.categoryBtn.text = categoryType.typeName
             binding.categoryBtn.setBackgroundResource(viewModel.getButtonBackground(categoryType.typeId))
+
+            Log.d("CategorySubjectAdapter", "Binding category: ${categoryType.typeName} at position $adapterPosition")
 
             binding.categoryBtn.setOnClickListener {
                 val previousSelectedPosition = selectedPosition
