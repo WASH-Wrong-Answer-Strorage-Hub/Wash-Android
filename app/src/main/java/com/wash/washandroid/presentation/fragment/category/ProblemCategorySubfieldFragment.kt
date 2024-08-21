@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategorySubfieldBinding
 import com.wash.washandroid.presentation.fragment.category.adapter.CategorySubfieldAdapter
+import com.wash.washandroid.presentation.fragment.category.dialog.CategorySubfieldDialog
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubfieldViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
@@ -29,6 +30,8 @@ class ProblemCategorySubfieldFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategorySubfieldBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categorySubfieldViewModel: CategorySubfieldViewModel by viewModels()
+
+    private var categorySubfieldDialog: CategorySubfieldDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +53,11 @@ class ProblemCategorySubfieldFragment : Fragment() {
         val selectedTypeId = arguments?.getInt("selectedTypeId") ?: -1
         if (selectedTypeId != -1) {
             categorySubfieldViewModel.fetchCategoryTypes(selectedTypeId)
+        }
+
+        binding.categoryAdd.setOnClickListener {
+            categorySubfieldDialog = CategorySubfieldDialog.newInstance(selectedTypeId)
+            categorySubfieldDialog?.show(parentFragmentManager, "CustomDialog")
         }
 
         val animation = ObjectAnimator.ofInt(binding.categoryProgressBar, "progress", 33, 66)

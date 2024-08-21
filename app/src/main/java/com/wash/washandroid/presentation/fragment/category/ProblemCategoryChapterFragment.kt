@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategoryChapterBinding
 import com.wash.washandroid.presentation.fragment.category.adapter.CategoryChapterAdapter
+import com.wash.washandroid.presentation.fragment.category.dialog.CategoryChapterDialog
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryChapterViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
@@ -29,6 +30,9 @@ class ProblemCategoryChapterFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategoryChapterBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categoryChapterViewModel: CategoryChapterViewModel by viewModels()
+
+    private var categoryChapterDialog: CategoryChapterDialog? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +54,11 @@ class ProblemCategoryChapterFragment : Fragment() {
         val selectedTypeId = arguments?.getInt("selectedTypeId") ?: -1
         if (selectedTypeId != -1) {
             categoryChapterViewModel.fetchCategoryTypes(selectedTypeId)
+        }
+
+        binding.categoryAdd.setOnClickListener {
+            categoryChapterDialog = CategoryChapterDialog.newInstance(selectedTypeId)
+            categoryChapterDialog?.show(parentFragmentManager, "CustomDialog")
         }
 
         val animation = ObjectAnimator.ofInt(binding.categoryProgressBar, "progress", 66, 100)

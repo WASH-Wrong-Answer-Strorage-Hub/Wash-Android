@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategoryFolderBinding
 import com.wash.washandroid.presentation.fragment.category.adapter.CategoryFolderAdapter
+import com.wash.washandroid.presentation.fragment.category.dialog.CategoryFolderDialog
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
@@ -27,6 +28,9 @@ class ProblemCategoryFolderFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategoryFolderBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categoryFolderViewModel: CategoryFolderViewModel by viewModels()
+
+    private var categoryFolderDialog: CategoryFolderDialog? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,6 +55,11 @@ class ProblemCategoryFolderFragment : Fragment() {
         Log.d("subjectType", "Received typeId: $selectedSubjectTypeId")
         Log.d("subfieldType", "Received typeId: $selectedSubfieldTypeId")
         Log.d("chapterType", "Received typeId: $selectedChapterTypeId")
+
+        binding.categoryAdd.setOnClickListener {
+            categoryFolderDialog = CategoryFolderDialog()
+            categoryFolderDialog?.show(parentFragmentManager, "CustomDialog")
+        }
 
         val verticalSpaceHeight = resources.getDimensionPixelSize(R.dimen.category_item_space)
         binding.categoryFolderRv.addItemDecoration(CategoryItemDecoration(verticalSpaceHeight))

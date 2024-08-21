@@ -18,6 +18,7 @@ import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategorySubjectBinding
 import com.wash.washandroid.presentation.base.MainActivity
 import com.wash.washandroid.presentation.fragment.category.adapter.CategorySubjectAdapter
+import com.wash.washandroid.presentation.fragment.category.dialog.CategorySubjectDialog
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubjectViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
@@ -30,6 +31,9 @@ class ProblemCategorySubjectFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategorySubjectBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categorySubjectViewModel: CategorySubjectViewModel by viewModels()
+
+    private lateinit var adapter: CategorySubjectAdapter
+    private var categorySubjectDialog: CategorySubjectDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,21 +53,26 @@ class ProblemCategorySubjectFragment : Fragment() {
 
         (requireActivity() as MainActivity).hideBottomNavigation(true)
 
-        val animation = ObjectAnimator.ofInt(binding.categoryProgressBar, "progress", 0, 33)
-        animation.duration = 500
-        animation.interpolator = AccelerateDecelerateInterpolator()
+        setupRecyclerView()  // 리사이클러뷰 설정 함수 호출
 
-        val adapter = CategorySubjectAdapter(emptyList(), categorySubjectViewModel)
+        setupListeners()  // 리스너 설정 함수 호출
+
+        observeCategoryTypes()  // 데이터 변경 관찰 함수 호출
+    }
+
+    private fun setupRecyclerView() {
+        adapter = CategorySubjectAdapter(emptyList(), categorySubjectViewModel)
         binding.categorySubjectRv.layoutManager = LinearLayoutManager(requireContext())
         binding.categorySubjectRv.adapter = adapter
 
         val verticalSpaceHeight = resources.getDimensionPixelSize(R.dimen.category_item_space)
         binding.categorySubjectRv.addItemDecoration(CategoryItemDecoration(verticalSpaceHeight))
+    }
 
-        categorySubjectViewModel.categoryTypes.observe(viewLifecycleOwner) { types ->
-            adapter.categoryTypes = types
-            adapter.notifyDataSetChanged() // 모든 아이템을 업데이트하는 대신 notifyItemChanged()로 최적화 가능
-            animation.start()
+    private fun setupListeners() {
+        binding.categoryAddBtn.setOnClickListener {
+            categorySubjectDialog = CategorySubjectDialog()
+            categorySubjectDialog?.show(parentFragmentManager, "CustomDialog")
         }
 
         binding.categoryNextBtn.setOnClickListener {
@@ -88,6 +97,22 @@ class ProblemCategorySubjectFragment : Fragment() {
         binding.categoryBackBtn.setOnClickListener {
             navController.navigateUp()
         }
+    }
+
+    private fun observeCategoryTypes() {
+        categorySubjectViewModel.categoryTypes.observe(viewLifecycleOwner) { types ->
+            Log.d("ProblemCategorySubjectFragment", "Category types updated: $types")
+            adapter.categoryTypes = types
+            adapter.notifyDataSetChanged()
+            startProgressBarAnimation()  // ProgressBar 애니메이션 함수 호출
+        }
+    }
+
+    private fun startProgressBarAnimation() {
+        val animation = ObjectAnimator.ofInt(binding.categoryProgressBar, "progress", 0, 33)
+        animation.duration = 500
+        animation.interpolator = AccelerateDecelerateInterpolator()
+        animation.start()
     }
 
     override fun onDestroyView() {
