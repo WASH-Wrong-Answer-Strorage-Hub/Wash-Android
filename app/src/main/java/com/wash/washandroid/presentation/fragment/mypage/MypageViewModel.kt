@@ -47,47 +47,22 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
 
     // 닉네임 설정
     fun setNickname(newNickname: String) {
-        _nickname.value = newNickname
-        saveNickname(newNickname)
-        // 서버로 닉네임 변경 요청
-        changeNicknameOnServer(newNickname)
-    }
+        // 기존의 닉네임을 nullable로 처리
+        val oldNickname = _nickname.value
 
-    // 이름 설정
-    fun setName(newName: String) {
-        _name.value = newName
-        saveName(newName)
-    }
-
-    // 이메일 설정
-    fun setEmail(newEmail: String) {
-        _email.value = newEmail
-        saveEmail(newEmail)
-    }
-
-    fun setSubscribed(isSubscribed: Boolean) {
-        _isSubscribed.value = isSubscribed
-        saveSubscriptionStatus(isSubscribed)
-    }
-
-    // 닉네임 저장
-    private fun saveNickname(nickname: String) {
-        sharedPreferences.edit().putString("nickname", nickname).apply()
-    }
-
-    // 이름 저장
-    private fun saveName(name: String) {
-        sharedPreferences.edit().putString("name", name).apply()
-    }
-
-    // 이메일 저장
-    private fun saveEmail(email: String) {
-        sharedPreferences.edit().putString("email", email).apply()
-    }
-
-    // 구독 상태 저장
-    private fun saveSubscriptionStatus(isSubscribed: Boolean) {
-        sharedPreferences.edit().putBoolean("isSubscribed", isSubscribed).apply()
+        // ViewModel의 LiveData를 즉시 업데이트하지 않음
+        viewModelScope.launch {
+            try {
+                // 서버에 닉네임 변경 요청
+                changeNicknameOnServer(newNickname)
+            } catch (e: Exception) {
+                // 예외가 발생하면 이전 닉네임으로 복원 (nullable 체크)
+                oldNickname?.let {
+                    _nickname.postValue(it)
+                }
+                Log.e(TAG, "Failed to change nickname on server", e)
+            }
+        }
     }
 
     // 닉네임 로드
@@ -273,7 +248,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     val changeNicknameResponse = response.body()
                     if (changeNicknameResponse?.isSuccess == true) {
-                        _nickname.value = changeNicknameResponse.result.nickname
+                        _nickname.postValue(newNickname)
                         Log.i(TAG, "닉네임 변경 성공: ${changeNicknameResponse.message}")
                     } else {
                         Log.e(TAG, "닉네임 변경 실패: ${changeNicknameResponse?.message}")
@@ -316,6 +291,17 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "프로필 이미지 업로드 중 오류 발생", e)
             }
         }
+    }
+
+    private fun createImagePart(filePath: String, partName: String = "file"): MultipartBody.Part {
+        // 파일 경로를 사용하여 파일 객체 생성
+        val file = File(filePath)
+
+        // 파일과 MIME 타입을 사용하여 요청 바디 생성
+        val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
+
+        // MultipartBody.Part 객체 생성
+        return MultipartBody.Part.createFormData(partName, file.name, requestFile)
     }
 
     fun approveSubscription() {
@@ -378,17 +364,6 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "구독 취소 중 예기치 않은 오류 발생", e)
             }
         }
-    }
-
-    private fun createImagePart(filePath: String, partName: String = "file"): MultipartBody.Part {
-        // 파일 경로를 사용하여 파일 객체 생성
-        val file = File(filePath)
-
-        // 파일과 MIME 타입을 사용하여 요청 바디 생성
-        val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-
-        // MultipartBody.Part 객체 생성
-        return MultipartBody.Part.createFormData(partName, file.name, requestFile)
     }
 
     // 토큰 초기화 함수

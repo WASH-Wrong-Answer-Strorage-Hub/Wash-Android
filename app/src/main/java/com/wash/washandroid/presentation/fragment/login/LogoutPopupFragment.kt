@@ -67,7 +67,7 @@ class LogoutPopupFragment : DialogFragment() {
     private fun isKakaoLoggedIn(callback: (Boolean) -> Unit) {
         UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
             if (error != null) {
-                Log.e("LogoutPopupFragment", "카카오 로그인 상태 확인 실패", error)
+                Log.i("LogoutPopupFragment", "카카오 로그인 상태 확인 실패", error)
                 callback(false)
             } else if (tokenInfo != null) {
                 Log.i("LogoutPopupFragment", "카카오 로그인 상태 확인 성공: $tokenInfo")
@@ -77,7 +77,6 @@ class LogoutPopupFragment : DialogFragment() {
             }
         }
     }
-
 
     private fun kakaoLogout() {
         UserApiClient.instance.logout { error ->
