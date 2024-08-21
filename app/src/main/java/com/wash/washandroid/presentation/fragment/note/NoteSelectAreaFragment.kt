@@ -149,7 +149,7 @@ class NoteSelectAreaFragment : Fragment() {
         val offsetY = (imageViewHeight - (imageHeight * scaleY)) / 2
 
         // 추가적으로 위쪽으로 조정할 픽셀 오프셋 (예: 20 픽셀 정도 위로 이동)
-        val offset = 150f
+        val offset = 160f
         val yOffsetAdjustment = offset / scaleY // 화면 단위에서 위로 20픽셀 올리기
 
         // Loop through all rectangles and crop the bitmap
