@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.model.ChatItemModels
+import com.wash.washandroid.model.ChatMessage
 import com.wash.washandroid.model.ChatRequest
-import com.wash.washandroid.model.Message
 import kotlinx.coroutines.launch
 
 class ChatViewModel : ViewModel() {
@@ -26,8 +26,8 @@ class ChatViewModel : ViewModel() {
         _messages.value?.add(ChatItemModels(sender = "You", content = currentMessage))
         _messages.postValue(_messages.value)
 
-        val userMessage = Message(role = "user", content = currentMessage)
-        val systemMessage = Message(role = "system", content = "Say this is a test!")
+        val userMessage = ChatMessage(role = "user", content = currentMessage)
+        val systemMessage = ChatMessage(role = "system", content = "Say this is a test!")
         val request = ChatRequest(model = "gpt-4o-mini", messages = listOf(systemMessage, userMessage))
 
         viewModelScope.launch {
