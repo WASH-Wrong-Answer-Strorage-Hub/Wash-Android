@@ -1,5 +1,7 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.wash.washandroid.presentation.fragment.problem.PhotoSliderAdapter
 
 import android.os.Bundle
@@ -8,10 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.wash.washandroid.databinding.FragmentPhotoSliderBinding
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
+import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 
 class StudyPhotoSliderFragment : Fragment() {
 
@@ -20,7 +24,9 @@ class StudyPhotoSliderFragment : Fragment() {
     private val binding: FragmentPhotoSliderBinding
         get() = requireNotNull(_binding) { "FragmentPhotoSliderBinding -> null" }
 
-    private val studyViewModel: StudyViewModel by activityViewModels()
+    private lateinit var viewModel: StudyViewModel
+    private lateinit var repository: StudyRepository
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +34,18 @@ class StudyPhotoSliderFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPhotoSliderBinding.inflate(inflater, container, false)
+
+        // SharedPreferences 초기화
+        sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+
+        // Repository 초기화
+        val studyApiService = StudyRetrofitInstance.api
+        repository = StudyRepository(studyApiService)
+
+        // ViewModel 초기화
+        val factory = StudyViewModelFactory(repository, sharedPreferences)
+        viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
+
         return binding.root
     }
 
@@ -36,18 +54,23 @@ class StudyPhotoSliderFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-        val photoUris = studyViewModel.photoUris.value ?: emptyList()
-        val initialPosition = studyViewModel.selectedPhotoPosition.value ?: 0
+        val savedUris = viewModel.loadPhotoUrisFromPreferences()
 
-        val adapter = PhotoSliderAdapter(photoUris)
-        binding.viewPager.adapter = adapter
-        binding.dotsIndicator.attachTo(binding.viewPager)
+        Log.d("fraglog", "Loaded photo URIs from SharedPreferences in PhotoSliderFragment: $savedUris")
 
-        // 뷰페이저 어댑터 설정 후 초기 위치 설정
-        binding.viewPager.post {
-            binding.viewPager.currentItem = initialPosition
+        val initialPosition = viewModel.selectedPhotoPosition.value ?: 0
 
-            Log.d("initialPosition", "$initialPosition")
+        if (savedUris.isNotEmpty()) {
+            val adapter = PhotoSliderAdapter(savedUris)
+            binding.viewPager.adapter = adapter
+            binding.dotsIndicator.attachTo(binding.viewPager)
+
+            binding.viewPager.post {
+                binding.viewPager.currentItem = initialPosition
+                Log.d("initialPosition", "$initialPosition")
+            }
+        } else {
+            Log.e("fraglog", "No photo URIs found in SharedPreferences")
         }
 
         binding.closeButton.setOnClickListener {

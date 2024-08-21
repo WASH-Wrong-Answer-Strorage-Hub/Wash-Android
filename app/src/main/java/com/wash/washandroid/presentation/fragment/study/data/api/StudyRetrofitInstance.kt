@@ -9,7 +9,7 @@ object StudyRetrofitInstance {
     private const val BASE_URL = "https://dev.team-wash.store/"
 
     // Access token 설정
-    private var accessToken: String? = " "
+    private var accessToken: String? = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MjUzNTMxLCJleHAiOjE3MjQyNTcxMzF9.4qfscRcyU7U6hHFomXbmbipuvqWoLSjnUMnUF2vmKNg"
 
     // OkHttpClient에 Access token을 추가하는 Interceptor
     private val client: OkHttpClient by lazy {
