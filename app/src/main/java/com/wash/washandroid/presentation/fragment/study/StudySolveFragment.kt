@@ -99,6 +99,14 @@ class StudySolveFragment : Fragment() {
             setupObservers()
         }
 
+        binding.ivSolveCard.setOnClickListener {
+            val currentProblem = viewModel.getCurrentProblem()
+            val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+
+            val bundle = bundleOf("image_url" to imageUrl)
+            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle)
+        }
+
         // 오른쪽 화살표 클릭 시 다음 문제로 이동
         binding.ivRightArrow.setOnClickListener {
             viewModel.moveToNextProblem(folderId)
