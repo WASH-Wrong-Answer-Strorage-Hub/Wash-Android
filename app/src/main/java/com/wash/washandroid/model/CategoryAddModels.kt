@@ -26,6 +26,7 @@ data class CategoryAddType(
 
 data class CategorySubjectAddRequest(
     var typeName: String, // 국어
+    var parentTypeId: Int,
     var typeLevel: Int // 1
 )
 
