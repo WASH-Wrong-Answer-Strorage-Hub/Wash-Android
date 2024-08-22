@@ -1,5 +1,6 @@
 import com.wash.washandroid.presentation.fragment.home.ApiResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
+import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -29,4 +30,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("folderId") folderId: Int
     ): Call<ApiResponse>
+
+    //파일 속 문제 미리보기
+    @GET("folders/{folderId}/problems")
+    fun getImagesForFolder(
+        @Header("Authorization") authHeader: String,
+        @Path("folderId") folderId: Int
+    ): Call<ProblemsResponse>
+
 }

@@ -63,9 +63,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun onCategoryClick(note: Note) {
+        val bundle = Bundle().apply {
+            putInt("folderId", note.folderId) // 폴더 ID를 전달
+        }
         val navController = findNavController()
-        Log.d("HomeFragment", "Navigating to HomeDetailFragment")
-        navController.navigate(R.id.action_navigation_home_to_homeDetailFragment)
+        Log.d("HomeFragment", "Navigating to HomeDetailFragment with folderId: ${note.folderId}")
+        navController.navigate(R.id.action_navigation_home_to_homeDetailFragment, bundle)
     }
 
     private fun setupRecyclerView() {

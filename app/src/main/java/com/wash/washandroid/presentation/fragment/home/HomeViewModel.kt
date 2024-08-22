@@ -3,10 +3,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import com.wash.washandroid.R
 import com.wash.washandroid.presentation.fragment.home.ApiResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
+import com.wash.washandroid.presentation.fragment.home.Problem
+import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,7 +21,13 @@ class HomeViewModel : ViewModel() {
 
     // Retrofit 인스턴스 생성
     private val apiService = NetworkModule.getClient().create(ApiService::class.java)
-    val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MjU0OTY5LCJleHAiOjE3MjQyNTg1Njl9.4vERuBmA_c9D7KdB-ixbv9vv9yQwljd9NjgDnwN2PN0"
+    val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MzEyOTk4LCJleHAiOjE3MjQzMTY1OTh9.SK0EL5zssAg7YmlsgWP37AbKOsGfMPiQkEvHRQHp5NM"
+
+    //폴더 속 이미지(problem)
+    private val _images = MutableLiveData<List<Problem>>()
+    val images: LiveData<List<Problem>> get() = _images
+
+    //전체 폴더 조회
     fun fetchFolders() {
         viewModelScope.launch {
             // 액세스 토큰 가져오기 (NaverIdLoginSDK 사용)
@@ -118,5 +125,26 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
+    //폴더 속 문제 사진 미리보기
+    fun fetchImagesForFolder(folderId: Int, token: String) {
+        Log.d("HomeViewModel", "Fetching images for folderId: $folderId with token: $token")
+        apiService.getImagesForFolder("Bearer $token", folderId).enqueue(object : Callback<ProblemsResponse> {
+            override fun onResponse(call: Call<ProblemsResponse>, response: Response<ProblemsResponse>) {
+                if (response.isSuccessful) {
+                    val problems = response.body()?.result?.problems ?: emptyList()
+                    _images.value = problems
+                    Log.d("HomeViewModel", "Fetched images: $problems")
+                } else {
+                    Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ProblemsResponse>, t: Throwable) {
+                Log.e("HomeViewModel", "Network Error: ${t.message}")
+            }
+        })
+    }
+
+
 
 }

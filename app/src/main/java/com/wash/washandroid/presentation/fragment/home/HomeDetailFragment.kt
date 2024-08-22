@@ -1,13 +1,16 @@
 package com.wash.washandroid.presentation.fragment.home
 
+import HomeViewModel
 import ImageAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeDetailBinding
 
@@ -24,6 +27,7 @@ class HomeDetailFragment : Fragment() {
     private val COLUMN_COUNT_MINIMUM = 1
     private var currentColumnCount = COLUMN_COUNT_EXPANDED // 현재 열의 수(초기 5)
 
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var adapter: ImageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +43,15 @@ class HomeDetailFragment : Fragment() {
 
         Log.d("HomeDetail", "프레그먼트 실행")
 
-        // 초기 RecyclerView 설정
+        // Arguments에서 폴더 ID를 가져오고 API 호출
+        val folderId = requireArguments().getInt("folderId")
+        val token = accessToken // Authorization Token 가져오기 (예: SharedPreferences 등에서)
+
         setupRecyclerView(currentColumnCount)
+        observeViewModel()
+        if (token != null) {
+            homeViewModel.fetchImagesForFolder(folderId, token)
+        }
 
         // back_btn 클릭 이벤트 설정
         binding.backBtn.setOnClickListener {
@@ -70,14 +81,27 @@ class HomeDetailFragment : Fragment() {
         val itemWidth = screenWidth / columnCount
 
         adapter = ImageAdapter(
-            itemCount = 100, // 예시로 100개 아이템
+            items = listOf(), // 초기에는 비어있는 리스트
             onItemClick = { position -> onImageClick(position) },
             itemWidth = itemWidth,
             isEditing = isEditing,
-            onDeleteIconClick = { position -> showDeleteConfirmationDialog(position) } // deleteIcon 클릭 이벤트
+            onDeleteIconClick = { position -> showDeleteConfirmationDialog(position) }
         )
         binding.recyclerView.adapter = adapter
     }
+
+    private fun observeViewModel() {
+        Log.d("HomeDetail", "Observing ViewModel")
+        homeViewModel.images.observe(viewLifecycleOwner, { images ->
+            // 로그로 이미지 리스트 출력
+            Log.d("HomeDetail", "이미지 리스트: ${images.joinToString(separator = ", ") { it.toString() }}")
+
+            // Update adapter with new data
+            adapter.items = images
+            adapter.notifyDataSetChanged()
+        })
+    }
+
 
     private fun onImageClick(position: Int) {
         findNavController().navigate(R.id.action_homeDetailFragment_to_homeClickQuizFragment)
@@ -85,10 +109,10 @@ class HomeDetailFragment : Fragment() {
 
     private fun showDeleteConfirmationDialog(position: Int) {
         AlertDialog.Builder(requireContext())
-            .setMessage("폴더를 삭제하시겠습니까?\n삭제하면 해당 폴더는 복구하기 어렵습니다.")
+            .setMessage("이미지를 삭제하시겠습니까?\n삭제하면 해당 이미지가 복구할 수 없습니다.")
             .setPositiveButton("확인") { dialog, id ->
                 // 확인 버튼 클릭 시 동작
-                Log.d("HomeFragment", "폴더가 삭제되었습니다. 아이템 위치: $position")
+                Log.d("HomeDetail", "이미지가 삭제되었습니다. 아이템 위치: $position")
                 // TODO: 실제 삭제 로직 추가
             }
             .setNegativeButton("취소") { dialog, id ->
@@ -122,8 +146,6 @@ class HomeDetailFragment : Fragment() {
             return true
         }
     }
-
-
 
     private fun updateNotesState() {
         // 편집 모드에 따라 adapter에 상태를 업데이트

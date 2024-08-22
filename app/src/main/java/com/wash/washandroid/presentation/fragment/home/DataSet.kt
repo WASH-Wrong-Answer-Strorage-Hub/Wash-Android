@@ -25,3 +25,27 @@ data class EditFolder(
     val message: String,
     val result: String? // 폴더 이름 수정 시 결과 메시지
 )
+
+
+//문제 미리보기
+// 문제 응답
+data class ProblemsResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: ProblemsResult
+)
+
+// 문제 결과 데이터
+data class ProblemsResult(
+    @SerializedName("folderName") val folderName: String,
+    @SerializedName("problems") val problems: List<Problem>
+)
+
+// 문제 데이터
+data class Problem(
+    @SerializedName("problemId") val problemId: Int,
+    @SerializedName("problemText") val problemText: String,
+    @SerializedName("problemImage") val problemImage: String, // 이미지 URL
+    @SerializedName("orderValue") val orderValue: Int
+)
