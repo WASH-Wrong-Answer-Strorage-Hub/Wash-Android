@@ -98,7 +98,6 @@ class StudyCompleteFragment : Fragment() {
             }
         })
 
-        // 홈으로 이동하기
         binding.btnStudyBackHome.setOnClickListener {
             navController.navigate(
                 R.id.action_navigation_study_complete_to_navigation_home, null, NavOptions.Builder().setPopUpTo(R.id.navigation_home, false).build()

@@ -26,13 +26,10 @@ public class StudyFullScreenImageFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-        // 이미지 URI 받기
         val imageUrl = arguments?.getString("image_url")
 
-        // Glide로 이미지 로드
         Glide.with(this).load(imageUrl).into(binding.ivFullscreenImage)
 
-        // 닫기 버튼 클릭 시 현재 프래그먼트 닫기
         binding.btnCloseFullscreen.setOnClickListener {
             navController.popBackStack()
         }

@@ -39,7 +39,7 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
     val studyProgress: LiveData<List<Pair<String, String>>> get() = _studyProgress
 
     private val _currentFolderId = MutableLiveData<String>()
-    val currentFolderId: LiveData<String> get() = _currentFolderId
+    var isProblemAlreadyLoaded = false
 
     // all folders 불러오기
     fun loadStudyFolders() {
@@ -81,7 +81,7 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
         }
     }
 
-    // SharedPreferences에 problemIds 저장하기
+    // SharedPreferences에 problemIds 저장
     private fun saveProblemIdsToPreferences(problemIds: List<String>) {
         val editor = sharedPreferences.edit()
         editor.putStringSet("problem_ids", problemIds.toSet())
@@ -95,18 +95,7 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
         return nameToIdMap[name]
     }
 
-    // problem 불러오기
-    fun observeAndLoadProblem(folderId: String) {
-        _problemIds.observeForever { problemIds ->
-            if (!problemIds.isNullOrEmpty()) {
-                loadStudyProblem(folderId)
-            } else {
-                Log.e("fraglog", "Problem IDs are null or empty")
-            }
-        }
-    }
-
-    // SharedPreferences에서 문제 ID 불러오기
+    // SharedPreferences에서 problemIds 불러오기
     private fun loadProblemIdsFromPreferences(): List<String>? {
         val savedProblemIds = sharedPreferences.getStringSet("problem_ids", emptySet())
         return savedProblemIds?.toList()
@@ -165,12 +154,10 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
         }
     }
 
-    // 폴더 ID를 설정하는 함수
     fun setCurrentFolderId(folderId: String) {
         _currentFolderId.value = folderId
     }
 
-    // 폴더 ID를 가져오는 함수
     fun getCurrentFolderId(): String? {
         return _currentFolderId.value
     }
@@ -187,7 +174,6 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
         val urisString = uris.joinToString(",") // 쉼표로 구분된 문자열로 저장
         editor.putString("photo_uris", urisString)
 
-        // apply 대신 commit 사용
         val success = editor.commit()
 
         if (success) {
@@ -196,18 +182,15 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
             Log.e("fraglog", "Failed to save photo URIs to SharedPreferences")
         }
 
-        // 저장 후 바로 SharedPreferences에서 불러와서 로그로 출력
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
         Log.d("fraglog", "Immediately after saving, photo URIs in SharedPreferences: $savedUrisString")
     }
 
-    // SharedPreferences에서 URI 불러오기
     fun loadPhotoUrisFromPreferences(): List<String> {
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
 
         Log.d("fraglog", "Loaded photo URIs from SharedPreferences before split: $savedUrisString")
 
-        // 쉼표로 구분된 문자열을 다시 리스트로 변환
         val savedUris = savedUrisString?.split(",")?.filter { it.isNotBlank() } ?: emptyList()
 
         Log.d("fraglog", "Loaded photo URIs from SharedPreferences after split: $savedUris")
@@ -219,13 +202,9 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
         _selectedPhotoPosition.value = position
     }
 
-    // 현재 문제 인덱스를 초기화
+    // 현재 문제 인덱스 초기화
     fun resetCurrentProblemIndex() {
         currentProblemIndex = 0
-    }
-
-    fun getTotalProblems(): Int {
-        return _studyProgress.value?.size ?: 0
     }
 
     // 현재 문제 가져오기
@@ -243,10 +222,12 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
 
     // 다음 문제로 이동
     fun moveToNextProblem(folderId: String) {
-        val problemIds = loadProblemIdsFromPreferences()
-        if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
-            currentProblemIndex++
-            loadStudyProblem(folderId) // 다음 문제 로드
+        viewModelScope.launch {
+            val problemIds = loadProblemIdsFromPreferences()
+            if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
+                currentProblemIndex++
+                loadStudyProblem(folderId) // 다음 문제 로드
+            }
         }
     }
 

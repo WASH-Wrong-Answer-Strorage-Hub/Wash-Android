@@ -59,7 +59,6 @@ class StudySolveFragment : Fragment() {
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
 
-        // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
 
         // recycler view 설정
@@ -79,10 +78,10 @@ class StudySolveFragment : Fragment() {
             }
         })
 
-        // 진척도 로드
+        // studyProgress 로드
         viewModel.loadStudyProgress(folderId)
 
-        // 진척도 업데이트를 관찰하여 RecyclerView에 반영
+        // studyProgress 업데이트를 관찰하여 RecyclerView에 반영
         viewModel.studyProgress.observe(viewLifecycleOwner, Observer { progressList ->
             // 서버로부터 가져온 progressList를 어댑터에 업데이트
             progressAdapter.updateProgressList(progressList)
@@ -99,6 +98,13 @@ class StudySolveFragment : Fragment() {
             setupObservers()
         }
 
+        // 오른쪽 화살표 클릭 시 다음 문제로 이동
+        binding.ivRightArrow.setOnClickListener {
+            viewModel.moveToNextProblem(folderId)
+            setupObservers()
+        }
+
+        // 문제 이미지 클릭 리스너
         binding.ivSolveCard.setOnClickListener {
             val currentProblem = viewModel.getCurrentProblem()
             val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
@@ -107,17 +113,11 @@ class StudySolveFragment : Fragment() {
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle)
         }
 
-        // 오른쪽 화살표 클릭 시 다음 문제로 이동
-        binding.ivRightArrow.setOnClickListener {
-            viewModel.moveToNextProblem(folderId)
-            setupObservers()
-        }
-
         binding.studySolveBackBtn.setOnClickListener {
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study)
         }
 
-        // 정답 확인 버튼 클릭
+        // 정답 확인 버튼 클릭 리스너
         binding.studySolveBtnAnswer.setOnClickListener {
             val currentProblem = viewModel.studyProblem.value
             val bundle = bundleOf(
@@ -141,7 +141,6 @@ class StudySolveFragment : Fragment() {
         }
     }
 
-    // UI 업데이트 함수
     private fun updateUI(problem: StudyProblemResponse) {
         binding.tvStudySolveProblemId.text = "문제 " + (viewModel.currentProblemIndex + 1)
         val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
@@ -158,7 +157,6 @@ class StudySolveFragment : Fragment() {
         // passageImage를 SharedPreferences에 저장
         viewModel.setPhotoUris(passageUrls)
 
-        // SharedPreferences에서 값을 불러오기
         val sharedPreferences = requireContext().getSharedPreferences("your_shared_prefs", Context.MODE_PRIVATE)
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
 
@@ -168,10 +166,8 @@ class StudySolveFragment : Fragment() {
 
         Log.d("fraglog", "Loaded photo URIs from SharedPreferences after split: $savedUris")
 
-        // initialPosition: 0
         viewModel.setSelectedPhotoPosition(0)
 
-        // 네비게이션으로 뷰페이저로 이동
         navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_photo_slider)
     }
 

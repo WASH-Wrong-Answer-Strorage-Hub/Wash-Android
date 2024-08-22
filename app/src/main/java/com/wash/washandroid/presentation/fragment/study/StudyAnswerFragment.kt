@@ -49,18 +49,16 @@ class StudyAnswerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
 
         navController = Navigation.findNavController(view)
 
-        // 데이터 수신
         val folderId = arguments?.getString("folderId") ?: "1"
         val problemId = arguments?.getString("problemId") ?: "1"
         val answer = arguments?.getString("answer") ?: "정답 불러오기 실패"
 //        Toast.makeText(requireContext(), "answer -- folderid: ${folderId}  id : ${problemId}, answer : ${answer}", Toast.LENGTH_SHORT).show()
 
-        // data 리스트에 정답을 추가
+        // data 리스트에 정답 추가
         data.add(answer)
 
         swipeView = binding.studyCardFrame

@@ -34,9 +34,7 @@ class StudyFragment : Fragment() {
     private lateinit var repository: StudyRepository
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStudyBinding.inflate(inflater, container, false)
         recyclerView = binding.studyRv
@@ -67,10 +65,9 @@ class StudyFragment : Fragment() {
         folderAdapter = FolderAdapter(emptyList()) { folderName ->
             val folderId = viewModel.getIdByName(folderName)
             folderId?.let {
-                // 폴더 내용을 로드
                 viewModel.loadStudyFolderById(it.toString())
 
-                // 문제 ID가 로드된 후에만 이동하도록 보장
+                // problemIds 가 로드된 후에만 이동하도록 보장
                 viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
                     if (!problemIds.isNullOrEmpty()) {
                         val bundle = Bundle().apply {
@@ -91,19 +88,13 @@ class StudyFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = folderAdapter
 
-        // LiveData 관찰하여 폴더 데이터가 로드될 때마다 RecyclerView 업데이트
+        // study folders 로드될 때마다 RecyclerView 업데이트
         viewModel.studyFolders.observe(viewLifecycleOwner, Observer { folderNames ->
             folderAdapter.updateFolders(folderNames)
         })
 
-        // 폴더 로드
+        // study folders 로드
         viewModel.loadStudyFolders()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-
     }
 
     override fun onDestroyView() {
