@@ -1,9 +1,10 @@
 package com.wash.washandroid.presentation.fragment.graph
 
 data class MistakeResponse(
-    val problemId: String,
-    val problemImage: String,
-    val mistakeCount: Int
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: SubCategory
 )
 
 data class TypeResponse(

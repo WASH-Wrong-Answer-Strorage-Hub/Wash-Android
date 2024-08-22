@@ -95,7 +95,7 @@ class ProblemAddFragment : Fragment() {
         croppedUris?.let {
             for (uri in it) {
                 addPhoto(photoList, photoAdapter, uri)
-                binding.problemAddBtn.setImageURI(uri.toUri())
+                binding.problemAddIv.setImageURI(uri.toUri())
             }
             binding.problemAddRv.smoothScrollToPosition(0)
         }
