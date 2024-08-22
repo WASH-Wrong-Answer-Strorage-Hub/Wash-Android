@@ -75,17 +75,16 @@ class StudyAnswerFragment : Fragment() {
 
             override fun onLeftCardExit(p0: Any?) {
                 viewModel.submitAnswer(folderId, problemId, "left")
-                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onRightCardExit(p0: Any?) {
                 viewModel.submitAnswer(folderId, problemId, "right")
-                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // 어댑터가 비어가고 있을 때 동작
                 if (itemsInAdapter == 0) {
+                    viewModel.moveToNextProblem(folderId)
                     navController.popBackStack()
                 }
             }
