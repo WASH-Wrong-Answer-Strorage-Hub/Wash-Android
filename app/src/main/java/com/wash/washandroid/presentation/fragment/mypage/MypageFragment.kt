@@ -2,13 +2,13 @@ package com.wash.washandroid.presentation.fragment.mypage
 
 import MypageViewModel
 import android.Manifest
-import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,12 +22,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.kakao.sdk.user.UserApiClient
-import com.navercorp.nid.NaverIdLoginSDK
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentMypageBinding
 import com.wash.washandroid.presentation.fragment.login.LogoutPopupFragment
-import com.wash.washandroid.presentation.fragment.login.WithdrawalAccountFragment
+import java.io.File
 
 class MypageFragment : Fragment() {
 
@@ -53,16 +51,20 @@ class MypageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mypageViewModel.getAccountInfo()
 
         // 갤러리에서 이미지 선택 후 처리
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val selectedImageUri: Uri? = result.data?.data
-                // 선택된 이미지 처리
-                selectedImageUri?.let {
-                    // Glide를 사용하여 이미지 로드
+                selectedImageUri?.let { uri ->
+
+                    // 최대 파일 크기를 5MB로 설정 (5 * 1024 * 1024 바이트)
+                    val maxFileSize = 5 * 1024 * 1024
+                    checkFileSizeAndUpload(requireContext(), uri, maxFileSize)
+
                     Glide.with(this)
-                        .load(it)
+                        .load(uri)
                         .transform(CircleCrop())
                         .into(binding.mypageProfileIv)
                 }
@@ -121,7 +123,6 @@ class MypageFragment : Fragment() {
         }
 
         // 프로필 이미지나 eidt 버튼을 누르면 모두 사진 설정이 가능하게끔 함
-        // 단 edit 버튼은 프로필 설정 후 사라짐
         binding.mypageEditBtn.setOnClickListener {
             checkGalleryPermission()
         }
@@ -150,11 +151,44 @@ class MypageFragment : Fragment() {
             }
         }
     }
+    private fun Context.getRealPathFromURI(uri: Uri): String? {
+        var filePath: String? = null
+        val cursor: Cursor? = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                filePath = it.getString(columnIndex)
+            }
+        }
+        return filePath
+    }
+
+    private fun Context.getFileSize(uri: Uri): Long {
+        val filePath = getRealPathFromURI(uri) // 파일의 실제 경로를 가져옵니다.
+        val file = File(filePath)
+        return file.length()
+    }
+
+    private fun checkFileSizeAndUpload(context: Context, uri: Uri, maxFileSize: Int) {
+        val fileSize = context.getFileSize(uri)
+        if (fileSize > maxFileSize) {
+            Toast.makeText(context, "파일 크기가 너무 큽니다. 최대 허용 크기는 ${maxFileSize / (1024 * 1024)}MB입니다.", Toast.LENGTH_SHORT).show()
+        } else {
+            // 파일 크기가 허용 범위 내인 경우에만 업로드를 시도
+            mypageViewModel.uploadProfileImage(context.getRealPathFromURI(uri)!!)
+        }
+    }
 
     private fun selectGallery() {
         // 갤러리 호출 인텐트
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//        intent.type = "image/*"
+        intent.type = "image/*"
+        intent.putExtra("crop", "true")
+        intent.putExtra("aspectX", 1)
+        intent.putExtra("aspectY", 1)
+        intent.putExtra("outputX", 200)
+        intent.putExtra("outputY", 200)
+        intent.putExtra("return-data", true)
         galleryLauncher.launch(intent)
     }
 

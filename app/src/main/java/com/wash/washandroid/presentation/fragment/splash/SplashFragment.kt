@@ -87,8 +87,8 @@ class SplashFragment : Fragment() {
         // Kakao 로그인 상태 확인
         UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
             if (tokenInfo != null) {
-                isLoggedIn = true
                 callback(isLoggedIn)
+                isLoggedIn = true
             } else {
                 // Naver 로그인 상태 확인
                 isLoggedIn = !NaverIdLoginSDK.getAccessToken().isNullOrEmpty()

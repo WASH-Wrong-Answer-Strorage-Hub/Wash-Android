@@ -58,10 +58,9 @@ class SocialLoginFragment : Fragment() {
         }
         binding.socialLoginKakaoLayout.setOnClickListener {
             Log.d(TAG, "Kakao login button clicked")
-//            kakaoLogin()
+            kakaoLogin()
             // Bottom Navigation 보이기
             (activity as? MainActivity)?.hideBottomNavigation(false)
-            navigateToHomeFragment() // kakao login 완성 전까지 임시로
         }
     }
 
@@ -72,7 +71,7 @@ class SocialLoginFragment : Fragment() {
                 Log.e(TAG, "카카오 계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오 계정으로 로그인 성공 ${token.accessToken}")
-                getKakaoUserInfo() // 로그인 성공 후 사용자 정보 가져오기
+                mypageViewModel.sendSocialTokenToServer("kakao", token.accessToken)
                 navigateToHomeFragment()  // HomeFragment로 이동
             } else {
                 Log.w(TAG, "Kakao login callback invoked with no error and no token")
@@ -92,49 +91,14 @@ class SocialLoginFragment : Fragment() {
                     UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
                 } else if (token != null) {
                     Log.i(TAG, "카카오로 로그인 성공 ${token.accessToken}")
-                    getKakaoUserInfo()
+                    // 서버로 토큰 전송
+                    mypageViewModel.sendSocialTokenToServer("kakao", token.accessToken)
                     navigateToHomeFragment()
                 }
             }
         } else {
             Log.d(TAG, "KakaoTalk is not available, attempting login with Kakao Account")
             UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
-        }
-    }
-
-    private fun getKakaoUserInfo() {
-        Log.d(TAG, "Requesting Kakao user info")
-            UserApiClient.instance.me { user, error ->
-            if (error != null) {
-                Log.e(TAG, "Login failed: ${error.message}")
-            } else if (user != null) {
-                Log.i(TAG, "Kakao user info retrieved: $user")
-
-                var scopes = mutableListOf<String>()
-                if (user.kakaoAccount?.emailNeedsAgreement == true) {
-                    scopes.add("account_email")
-                }
-
-                if (user.kakaoAccount?.ciNeedsAgreement == true) {
-                    scopes.add("account_ci")
-                }
-
-                // 카카오는 닉네임이 이름
-                val nickname = user.kakaoAccount?.profile?.nickname ?: "Unknown"
-//                val name = user.kakaoAccount?.profile?.name ?: "No Name" // 카카오 계정에 이름이 있을 경우 사용
-                val email = user.kakaoAccount?.email ?: "No Email"
-
-                updateUserInfo(nickname, null, email)
-
-                Log.i(TAG, "사용자 정보 요청 성공: $nickname, $email")
-
-                requireActivity().runOnUiThread {
-                    Log.d(TAG, "Navigating to HomeFragment after fetching user info") // 로그 추가
-                    navigateToHomeFragment()
-                }
-            } else {
-                Log.w(TAG, "User 정보가 null로 반환되었습니다.")
-            }
         }
     }
 
@@ -149,7 +113,21 @@ class SocialLoginFragment : Fragment() {
                 Log.d(TAG, "TokenType : " + NaverIdLoginSDK.getTokenType())
                 Log.d(TAG, "State : " + NaverIdLoginSDK.getState().toString())
 
-                getNaverUserInfo() // 로그인 성공 후 사용자 정보 가져오기
+                val accessToken = NaverIdLoginSDK.getAccessToken()
+
+                // Check if the access token is expired
+                val expiresAt = NaverIdLoginSDK.getExpiresAt() * 1000  // 초 단위를 밀리초로 변환
+                if (accessToken != null && expiresAt < System.currentTimeMillis()) {
+                    Log.d(TAG, "Access token is expired, refreshing token")
+                    NaverIdLoginSDK.getRefreshToken()
+                }
+
+                val newAccessToken = NaverIdLoginSDK.getAccessToken()
+                if (newAccessToken != null) {
+                    mypageViewModel.sendSocialTokenToServer("naver", newAccessToken)
+                } else {
+                    Log.e(TAG, "Failed to refresh Naver token")
+                }
                 navigateToHomeFragment()
             }
 
@@ -166,39 +144,6 @@ class SocialLoginFragment : Fragment() {
 
         NaverIdLoginSDK.authenticate(requireContext(), oauthLoginCallback)
     }
-
-    private fun getNaverUserInfo() {
-
-        NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
-            override fun onSuccess(response: NidProfileResponse) {
-                val nickname = response.profile?.nickname ?: "Unknown"
-                val name = response.profile?.name ?: "No Name"
-                val email = response.profile?.email ?: "No Email"
-
-                updateUserInfo(nickname, name, email)
-            }
-
-            override fun onFailure(httpStatus: Int, message: String) {
-                Log.e(TAG, "네이버 사용자 정보 요청 실패: $message")
-            }
-
-            override fun onError(errorCode: Int, message: String) {
-                Log.e(TAG, "네이버 사용자 정보 요청 중 오류 발생: $message")
-            }
-        })
-    }
-
-    private fun updateUserInfo(nickname: String, name: String?, email: String) {
-        // ViewModel에 사용자 정보 저장
-        mypageViewModel.setNickname(nickname)
-        mypageViewModel.setName(name ?: nickname)  // name이 null일 경우 nickname 사용
-        mypageViewModel.setEmail(email)
-
-        Log.i(TAG, "사용자 정보 요청 성공: $nickname, ${name ?: nickname}, $email")
-
-        navigateToHomeFragment()
-    }
-
 
     private fun navigateToHomeFragment() {
         findNavController().navigate(R.id.navigation_home)

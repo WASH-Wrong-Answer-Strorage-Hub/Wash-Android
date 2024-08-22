@@ -40,7 +40,7 @@ class SubscribeMenuFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.subscribeBtn.setOnClickListener {
-            mypageViewModel.setSubscribed(true)
+            mypageViewModel.approveSubscription()
             findNavController().navigate(R.id.navigation_subscribe)
         }
 
