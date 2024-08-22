@@ -1,13 +1,12 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import MypageViewModel
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -16,7 +15,6 @@ import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyAnswerBinding
 import com.wash.washandroid.presentation.base.MainActivity
-import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 
@@ -27,6 +25,7 @@ class StudyAnswerFragment : Fragment() {
     private lateinit var swipeView: SwipeFlingAdapterView
     private lateinit var adapter: CardAdapter
     private lateinit var viewModel: StudyViewModel
+    private lateinit var myPageViewModel: MypageViewModel
     private lateinit var repository: StudyRepository
     private val data: MutableList<String> = mutableListOf()
 
@@ -40,7 +39,8 @@ class StudyAnswerFragment : Fragment() {
 
         val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
 
-        val factory = StudyViewModelFactory(repository, sharedPreferences)
+        myPageViewModel = ViewModelProvider(requireActivity()).get(MypageViewModel::class.java)
+        val factory = StudyViewModelFactory(repository, sharedPreferences, myPageViewModel)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         return binding.root

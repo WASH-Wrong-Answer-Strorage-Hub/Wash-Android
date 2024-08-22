@@ -9,7 +9,7 @@ object StudyRetrofitInstance {
     private const val BASE_URL = "https://dev.team-wash.store/"
 
     // Access token 설정
-    private var accessToken: String? = " "
+    private var accessToken: String? = null
 
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
@@ -35,5 +35,10 @@ object StudyRetrofitInstance {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(StudyApiService::class.java)
+    }
+
+    // 토큰을 외부에서 설정할 수 있게 메서드 추가
+    fun setAccessToken(token: String) {
+        accessToken = token
     }
 }

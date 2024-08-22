@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import MypageViewModel
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
@@ -15,7 +16,11 @@ import com.wash.washandroid.presentation.fragment.study.data.model.response.Stud
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 import kotlinx.coroutines.*
 
-class StudyViewModel(private val repository: StudyRepository, private val sharedPreferences: SharedPreferences) : ViewModel() {
+class StudyViewModel(
+    private val repository: StudyRepository,
+    private val sharedPreferences: SharedPreferences,
+    private val myPageViewModel: MypageViewModel
+) : ViewModel() {
     private val _studyProblem = MutableLiveData<StudyProblemResponse>()
     val studyProblem: LiveData<StudyProblemResponse> get() = _studyProblem
     var currentProblemIndex: Int = 0
@@ -43,22 +48,30 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
 
     // all folders 불러오기
     fun loadStudyFolders() {
-        repository.getStudyFolders { folderList ->
-            folderList?.let {
-                // orderValue 기준으로 오름차순 정렬
-                val sortedFolders = it.sortedBy { folder -> folder.orderValue }
+        // MypageViewModel에서 Refresh Token을 가져옴
+        val token = myPageViewModel.getRefreshToken()
+        Log.d("fraglog", "load study folders -- received token : $token")
 
-                // 폴더 이름 리스트를 생성하고 nameToIdMap을 업데이트
-                val folderNames = sortedFolders.map { folder ->
-                    nameToIdMap[folder.folderName] = folder.folderId
-                    folder.folderName
-                }
+        if (token != null) {
+            repository.getStudyFolders(token) { folderList ->
+                folderList?.let {
+                    Log.d("fraglog", "Folders fetched successfully: $folderList")
+                    // orderValue 기준으로 오름차순 정렬
+                    val sortedFolders = it.sortedBy { folder -> folder.orderValue }
 
-                _studyFolders.postValue(folderNames)
-            } ?: Log.e("fraglog", "Failed to load folders")
+                    // 폴더 이름 리스트를 생성하고 nameToIdMap을 업데이트
+                    val folderNames = sortedFolders.map { folder ->
+                        nameToIdMap[folder.folderName] = folder.folderId
+                        folder.folderName
+                    }
+
+                    _studyFolders.postValue(folderNames)
+                } ?: Log.e("fraglog", "load study folders -- Failed to load folders")
+            }
+        } else {
+            Log.e("fraglog", "load study folders -- Failed to retrieve refresh token")
         }
     }
-
 
     // folder 세부 불러오기
     fun loadStudyFolderById(folderId: String) {
@@ -237,11 +250,11 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
 }
 
 class StudyViewModelFactory(
-    private val repository: StudyRepository, private val sharedPreferences: SharedPreferences // 추가
+    private val repository: StudyRepository, private val sharedPreferences: SharedPreferences, private val myPageViewModel: MypageViewModel// 추가
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StudyViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST") return StudyViewModel(repository, sharedPreferences) as T
+            @Suppress("UNCHECKED_CAST") return StudyViewModel(repository, sharedPreferences, myPageViewModel) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

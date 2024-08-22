@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import MypageViewModel
 import android.content.Context
 import android.content.SharedPreferences
 import com.wash.washandroid.presentation.fragment.problem.PhotoSliderAdapter
@@ -25,6 +26,7 @@ class StudyPhotoSliderFragment : Fragment() {
         get() = requireNotNull(_binding) { "FragmentPhotoSliderBinding -> null" }
 
     private lateinit var viewModel: StudyViewModel
+    private lateinit var myPageViewModel: MypageViewModel
     private lateinit var repository: StudyRepository
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -43,7 +45,8 @@ class StudyPhotoSliderFragment : Fragment() {
         repository = StudyRepository(studyApiService)
 
         // ViewModel 초기화
-        val factory = StudyViewModelFactory(repository, sharedPreferences)
+        myPageViewModel = ViewModelProvider(requireActivity()).get(MypageViewModel::class.java)
+        val factory = StudyViewModelFactory(repository, sharedPreferences, myPageViewModel)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         return binding.root

@@ -1,7 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study.data.repository
 
 import android.util.Log
-import android.widget.Toast
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.dummyStudyFolderIdResponse
 import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
@@ -22,8 +21,8 @@ import retrofit2.Response
 class StudyRepository(private val studyApiService: StudyApiService) {
 
     // Get all folders
-    fun getStudyFolders(callback: (List<FolderInfo>?) -> Unit) {
-        studyApiService.getStudyFolders().enqueue(object : Callback<StudyFolderResponse> {
+    fun getStudyFolders(token: String, callback: (List<FolderInfo>?) -> Unit) {
+        studyApiService.getStudyFolders("Bearer $token").enqueue(object : Callback<StudyFolderResponse> {
             override fun onResponse(call: Call<StudyFolderResponse>, response: Response<StudyFolderResponse>) {
                 if (response.isSuccessful) {
                     val studyFolderResponse = response.body()

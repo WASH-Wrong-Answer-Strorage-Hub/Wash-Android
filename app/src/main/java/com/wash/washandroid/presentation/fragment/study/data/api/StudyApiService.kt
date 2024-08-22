@@ -9,14 +9,16 @@ import com.wash.washandroid.presentation.fragment.study.data.model.response.Stud
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface StudyApiService {
     // 전체 폴더 조회
     @GET("/folders")
-    fun getStudyFolders(): Call<StudyFolderResponse>
+    fun getStudyFolders(
+        @Header("Authorization") token: String
+    ): Call<StudyFolderResponse>
 
     // 폴더 조회
     @GET("/studies/folders/{folderId}")

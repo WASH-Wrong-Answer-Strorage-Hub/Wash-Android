@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import MypageViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -16,10 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyBinding
 import com.wash.washandroid.presentation.base.MainActivity
-import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 //import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance.retrofit
-import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 
 class StudyFragment : Fragment() {
@@ -31,6 +30,7 @@ class StudyFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var viewModel: StudyViewModel
+    private lateinit var myPageViewModel: MypageViewModel
     private lateinit var repository: StudyRepository
 
     override fun onCreateView(
@@ -44,7 +44,8 @@ class StudyFragment : Fragment() {
 
         val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
 
-        val factory = StudyViewModelFactory(repository, sharedPreferences)
+        myPageViewModel = ViewModelProvider(requireActivity()).get(MypageViewModel::class.java)
+        val factory = StudyViewModelFactory(repository, sharedPreferences, myPageViewModel)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         // 현재 문제 인덱스 리셋
