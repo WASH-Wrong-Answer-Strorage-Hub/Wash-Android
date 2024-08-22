@@ -36,7 +36,17 @@ class GraphFragment : Fragment() {
 
         val refreshToken = mypageViewModel.getRefreshToken() // MypageViewModel에서 refreshToken을 가져옴
         val bearerToken = "Bearer $refreshToken"
+
         viewModel.fetchMistakeData(bearerToken)
+        viewModel.fetchTypeData(bearerToken)
+
+        // ViewModel의 mistakeResponse를 관찰하여 RecyclerView에 반영
+        viewModel.mistakeResponse.observe(viewLifecycleOwner) { mistakes ->
+            setupProblemRecyclerView(mistakes)
+        }
+        viewModel.typeResponse.observe(viewLifecycleOwner) { types ->
+            setupTypeRecyclerView(types)
+        }
 
         return binding.root
     }
@@ -67,6 +77,28 @@ class GraphFragment : Fragment() {
         // ProblemsRecyclerView 설정
         val PBadapter = ProblemImageAdapter(problems)
         binding.problemsRecyclerView.adapter = PBadapter
+    }
+
+    private fun setupProblemRecyclerView(mistakes: List<MistakeResponse>) {
+        val problems = mistakes.map { mistake ->
+            // 서버에서 받은 데이터로 Problem 객체를 생성
+            Problem(mistake.result.subCategory.hashCode(), mistake.result.subCategory, R.drawable.temporary_img_test)
+        }
+
+        // ProblemsRecyclerView 설정
+        val PBadapter = ProblemImageAdapter(problems)
+        binding.problemsRecyclerView.adapter = PBadapter
+    }
+
+    private fun setupTypeRecyclerView(types: List<TypeResponse>) {
+        val subjects = types.map { type ->
+            Subject(type.result.subCategory.hashCode(), type.result.subCategory, "${type.result.totalIncorrect} mistakes")
+        }
+
+        val SJadapter = SubjectsAdapter(subjects) { subject ->
+            findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment)
+        }
+        binding.subjectsRecyclerView.adapter = SJadapter
     }
 
     override fun onDestroyView() {
