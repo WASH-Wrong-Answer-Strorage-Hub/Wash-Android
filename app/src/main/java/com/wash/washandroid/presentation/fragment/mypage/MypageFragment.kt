@@ -65,9 +65,6 @@ class MypageFragment : Fragment() {
                         .load(it)
                         .transform(CircleCrop())
                         .into(binding.mypageProfileIv)
-                    // mypageEditBtn 숨기기
-                    binding.mypageEditBtn.visibility = View.GONE
-                    binding.mypageEclipseBtn.visibility = View.GONE
                 }
             }
         }
@@ -76,8 +73,6 @@ class MypageFragment : Fragment() {
         mypageViewModel.nickname.observe(viewLifecycleOwner) { nickname ->
             binding.mypageNameTv.text = nickname
         }
-
-//        mypageViewModel.setSubscribed(true)  // 구독 상태를 true로 설정하여 테스트
 
         // 구독 유무에 따른 UI 업데이트
         mypageViewModel.isSubscribed.observe(viewLifecycleOwner) { isSubscribed ->
@@ -95,8 +90,16 @@ class MypageFragment : Fragment() {
             }
         }
 
-        binding.mypageSubscribeLayout.setOnClickListener {
+        // updrage button
+        binding.upgradeBtn.setOnClickListener {
+            if (mypageViewModel.checkSubscriptionStatus()) {
+                findNavController().navigate(R.id.navigation_subscribe)
+            } else {
+                findNavController().navigate(R.id.navigation_subscribe_menu)
+            }
+        }
 
+        binding.mypageSubscribeLayout.setOnClickListener {
             if (mypageViewModel.checkSubscriptionStatus()) {
                 findNavController().navigate(R.id.navigation_subscribe)
             } else {

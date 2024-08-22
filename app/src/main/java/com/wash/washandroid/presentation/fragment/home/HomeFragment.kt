@@ -1,5 +1,7 @@
 package com.wash.washandroid.presentation.fragment.home
 
+import Note
+import NoteAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,8 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeBinding
-import com.wash.washandroid.presentation.adapter.Note
-import com.wash.washandroid.presentation.adapter.NoteAdapter
 import com.wash.washandroid.presentation.base.MainActivity
 
 class HomeFragment : Fragment() {

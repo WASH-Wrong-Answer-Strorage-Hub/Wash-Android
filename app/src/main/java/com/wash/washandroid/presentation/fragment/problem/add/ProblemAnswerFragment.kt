@@ -2,6 +2,7 @@ package com.wash.washandroid.presentation.fragment.problem.add
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import com.wash.washandroid.databinding.FragmentProblemAnswerBinding
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +36,7 @@ class ProblemAnswerFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemAnswerBinding -> null"}
 
     private val problemInfoViewModel: ProblemInfoViewModel by activityViewModels()
+    private val problemAnswerViewModel: ProblemAnswerViewModel by viewModels()
 
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var printAdapter: PhotoAdapter
@@ -59,6 +62,26 @@ class ProblemAnswerFragment : Fragment() {
 
         _binding = FragmentProblemAnswerBinding.inflate(inflater, container, false)
 
+        // 첫 번째 사진 설정
+        problemInfoViewModel.firstPhotoUri.observe(viewLifecycleOwner) { uri ->
+            uri?.let {
+                binding.problemInfoPhoto.setImageURI(Uri.parse(it))
+                binding.problemInfoPhoto.clipToOutline = true
+            }
+        }
+
+        // 나머지 사진들로 리사이클러뷰 설정
+        problemInfoViewModel.remainingPhotoUris.observe(viewLifecycleOwner) { photoList ->
+            addAdapter = PhotoAdapter(
+                requireContext(),
+                photoList.toMutableList(),
+                {},
+                {}
+            )
+            binding.problemInfoAddRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.problemInfoAddRv.adapter = addAdapter
+        }
+
         return binding.root
     }
 
@@ -68,9 +91,21 @@ class ProblemAnswerFragment : Fragment() {
         (requireActivity() as MainActivity).hideBottomNavigation(true)
         navController = Navigation.findNavController(view)
 
+        problemAnswerViewModel.recognizedText.observe(viewLifecycleOwner) { text ->
+            binding.ocrEt.setText(text)
+        }
+
+        // 예시로 이미지 URL을 넘겨서 텍스트 인식을 시작
+        val imageUrl = "https://i.postimg.cc/Qd8M8hRR/20240707-210207.jpg"
+        problemAnswerViewModel.recognizeTextFromImage(imageUrl)
+
         binding.photoDeleteLayout.setOnClickListener {
             binding.problemInfoPhoto.setImageURI(null)
             binding.photoDeleteLayout.visibility = View.INVISIBLE // 이미지 삭제하면서 삭제버튼 비활성화
+        }
+
+        binding.problemInfoBackBtn.setOnClickListener {
+            navController.navigateUp()
         }
 
         binding.problemInfoPhotoAdd.setOnClickListener {
@@ -112,7 +147,7 @@ class ProblemAnswerFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(solutionPhotoList, photoAdapter, photoPath)
-                    binding.problemInfoSolutionRv.smoothScrollToPosition(0)
+                    binding.problemInfoSolutionRv.smoothScrollToPosition(solutionPhotoList.size)
                 }
             }
         }
@@ -122,7 +157,7 @@ class ProblemAnswerFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(printPhotoList, printAdapter, photoPath)
-                    binding.problemInfoPrintRv.smoothScrollToPosition(0)
+                    binding.problemInfoPrintRv.smoothScrollToPosition(printPhotoList.size)
                 }
             }
         }
@@ -132,7 +167,7 @@ class ProblemAnswerFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(addPhotoList, addAdapter, photoPath)
-                    binding.problemInfoAddRv.smoothScrollToPosition(0)
+                    binding.problemInfoAddRv.smoothScrollToPosition(addPhotoList.size)
                 }
             }
         }
@@ -237,7 +272,7 @@ class ProblemAnswerFragment : Fragment() {
     }
 
     private fun isInputValid(): Boolean {
-        val hasPhoto = problemInfoViewModel.problemPhotoUri.value != null
+        val hasPhoto = problemInfoViewModel.firstPhotoUri.value != null || problemInfoViewModel.problemPhotoUri.value != null
         val hasText = binding.problemInfoAnswer.text?.isNotBlank() == true
         return hasPhoto && hasText
     }
