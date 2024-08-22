@@ -1,4 +1,5 @@
 import com.wash.washandroid.presentation.fragment.home.ApiResponse
+import com.wash.washandroid.presentation.fragment.home.DeleteProblemResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
 import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
 import retrofit2.Call
@@ -38,4 +39,10 @@ interface ApiService {
         @Path("folderId") folderId: Int
     ): Call<ProblemsResponse>
 
+
+    @DELETE("problems/{problemId}")
+    fun deleteProblem(
+        @Header("Authorization") token: String,
+        @Path("problemId") problemId: Int
+    ): Call<DeleteProblemResponse>
 }

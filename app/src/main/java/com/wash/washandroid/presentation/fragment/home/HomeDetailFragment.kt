@@ -43,13 +43,13 @@ class HomeDetailFragment : Fragment() {
 
         Log.d("HomeDetail", "프레그먼트 실행")
 
-        //폴더 정보 요청
+        // 폴더 정보 요청
         val folderId = requireArguments().getInt("folderId")
         val folderName = requireArguments().getString("folderName", "폴더명")
 
         val token = accessToken // Authorization Token 가져오기 (예: SharedPreferences 등에서)
 
-        binding.categoryTag.text = folderName //폴더명 변경
+        binding.categoryTag.text = folderName // 폴더명 변경
 
         setupRecyclerView(currentColumnCount)
         observeViewModel()
@@ -106,7 +106,6 @@ class HomeDetailFragment : Fragment() {
         })
     }
 
-
     private fun onImageClick(position: Int) {
         findNavController().navigate(R.id.action_homeDetailFragment_to_homeClickQuizFragment)
     }
@@ -115,12 +114,11 @@ class HomeDetailFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setMessage("이미지를 삭제하시겠습니까?\n삭제하면 해당 이미지가 복구할 수 없습니다.")
             .setPositiveButton("확인") { dialog, id ->
-                // 확인 버튼 클릭 시 동작
-                Log.d("HomeDetail", "이미지가 삭제되었습니다. 아이템 위치: $position")
-                // TODO: 실제 삭제 로직 추가
+                val problemId = adapter.items[position].problemId
+                val folderId = requireArguments().getInt("folderId")
+                homeViewModel.deleteProblem(problemId, folderId)
             }
             .setNegativeButton("취소") { dialog, id ->
-                // 취소 버튼 클릭 시 동작
                 dialog.dismiss()
             }
             .create()

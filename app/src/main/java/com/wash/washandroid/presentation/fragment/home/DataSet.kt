@@ -48,3 +48,11 @@ data class Problem(
     @SerializedName("problemImage") val problemImage: String, // 이미지 URL
     @SerializedName("orderValue") val orderValue: Int
 )
+
+// 문제 삭제
+data class DeleteProblemResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: String // 삭제 성공
+)

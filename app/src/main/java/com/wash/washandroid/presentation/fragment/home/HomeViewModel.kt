@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.R
 import com.wash.washandroid.presentation.fragment.home.ApiResponse
+import com.wash.washandroid.presentation.fragment.home.DeleteProblemResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
 import com.wash.washandroid.presentation.fragment.home.Problem
 import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
@@ -21,12 +22,18 @@ class HomeViewModel : ViewModel() {
 
     // Retrofit 인스턴스 생성
     private val apiService = NetworkModule.getClient().create(ApiService::class.java)
-    val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MzEyOTk4LCJleHAiOjE3MjQzMTY1OTh9.SK0EL5zssAg7YmlsgWP37AbKOsGfMPiQkEvHRQHp5NM"
+    val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MzE3MTMyLCJleHAiOjE3MjQzMjA3MzJ9.gTfbGQL_1vW9Pkae0L91jAku2pWDJWQssQhuimhk4aQ"
 
 
     //폴더 속 이미지(problem)
     private val _images = MutableLiveData<List<Problem>>()
     val images: LiveData<List<Problem>> get() = _images
+
+    private var _currentFolderId: Int? = null //현재 폴더의 id
+    // 현재 폴더 ID를 설정하는 메소드
+    fun setCurrentFolderId(folderId: Int) {
+        _currentFolderId = folderId
+    }
 
     //전체 폴더 조회
     fun fetchFolders() {
@@ -127,6 +134,7 @@ class HomeViewModel : ViewModel() {
         }
     }
     //폴더 속 문제 사진 미리보기
+    /*
     fun fetchImagesForFolder(folderId: Int, token: String) {
         Log.d("HomeViewModel", "Fetching images for folderId: $folderId with token: $token")
         apiService.getImagesForFolder("Bearer $token", folderId).enqueue(object : Callback<ProblemsResponse> {
@@ -145,6 +153,61 @@ class HomeViewModel : ViewModel() {
             }
         })
     }
+
+     */
+
+    // 폴더 속 문제 사진 미리보기
+    fun fetchImagesForFolder(folderId: Int, token: String) {
+        Log.d("HomeViewModel", "Fetching images for folderId: $folderId with token: $token")
+        apiService.getImagesForFolder("Bearer $token", folderId).enqueue(object : Callback<ProblemsResponse> {
+            override fun onResponse(call: Call<ProblemsResponse>, response: Response<ProblemsResponse>) {
+                if (response.isSuccessful) {
+                    val problems = response.body()?.result?.problems ?: emptyList()
+                    _images.value = problems
+                    Log.d("HomeViewModel", "Fetched images: $problems")
+                } else {
+                    Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ProblemsResponse>, t: Throwable) {
+                Log.e("HomeViewModel", "Network Error: ${t.message}")
+            }
+        })
+    }
+    //문제 삭제하기
+    // HomeViewModel.kt
+
+    fun deleteProblem(problemId: Int, folderId: Int) {
+        viewModelScope.launch {
+            if (!accessToken.isNullOrEmpty()) {
+                apiService.deleteProblem("Bearer $accessToken", problemId)
+                    .enqueue(object : Callback<DeleteProblemResponse> {
+                        override fun onResponse(call: Call<DeleteProblemResponse>, response: Response<DeleteProblemResponse>) {
+                            if (response.isSuccessful) {
+                                val apiResponse = response.body()
+                                if (apiResponse?.isSuccess == true) {
+                                    Log.d("HomeViewModel", "Problem deleted successfully: ${apiResponse.result}")
+                                    // 폴더의 문제 리스트를 새로 고침
+                                    fetchImagesForFolder(folderId, accessToken) //갱신
+                                } else {
+                                    Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
+                                }
+                            } else {
+                                Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
+                            }
+                        }
+
+                        override fun onFailure(call: Call<DeleteProblemResponse>, t: Throwable) {
+                            Log.e("HomeViewModel", "Network Error: ${t.message}")
+                        }
+                    })
+            } else {
+                Log.e("HomeViewModel", "Failed to delete problem: Access token is null or empty")
+            }
+        }
+    }
+
 
 
 

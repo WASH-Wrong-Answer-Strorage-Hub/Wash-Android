@@ -37,7 +37,6 @@ class ImageAdapter(
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val problem = items[position]
-        // Load image using a library like Glide or Picasso
         Glide.with(holder.itemView.context)
             .load(problem.problemImage)
             .into(holder.binding.imageView)
