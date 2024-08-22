@@ -16,8 +16,8 @@
         />
 
     <View
-        android:layout_width="26sp"
-        android:layout_height="26sp"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
         android:background="@drawable/ic_caution"
         app:layout_constraintStart_toStartOf="@id/mypage_logout_background"
         app:layout_constraintTop_toTopOf="@id/mypage_logout_background"
@@ -52,7 +52,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:textColor="@color/black"
         android:fontFamily="@font/mangoddobak_r"
         android:text="취소"
@@ -76,7 +76,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:textColor="@color/white"
         android:fontFamily="@font/mangoddobak_r"
         android:text="확인"

@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
     <ImageView
         android:id="@+id/withdrawal_account_background_iv"
         android:layout_width="match_parent"
@@ -22,9 +23,9 @@
         android:background="@drawable/ic_arrow_left"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="37sp"
-        android:layout_marginStart="24sp"
-        android:layout_marginEnd="312sp"
+        android:layout_marginTop="37dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="312dp"
         />
 
     <TextView
@@ -50,7 +51,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="75sp"
+        android:layout_marginTop="75dp"
         />
 
     <TextView
@@ -107,13 +108,13 @@
     <View
         android:id="@+id/withdrawal_account_view_1"
         android:layout_width="match_parent"
-        android:layout_height="5sp"
+        android:layout_height="5dp"
         android:background="@color/lighter_gray"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/withdrawal_information_sub_tv"
-        android:layout_marginTop="152sp"
+        android:layout_marginTop="152dp"
         />
 
     <TextView
@@ -140,7 +141,6 @@
         android:textColor="@color/middle_gray"
         android:background="@drawable/bt_password_input"
         app:layout_constraintStart_toStartOf="@id/input_problem_tv"
-
         app:layout_constraintTop_toBottomOf="@id/input_problem_tv"
         android:layout_marginTop="6sp"
         android:paddingLeft="10sp"
@@ -149,14 +149,14 @@
         android:singleLine="true"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/withdrawal_btn"
         android:layout_width="312sp"
         android:layout_height="wrap_content"
         android:background="@drawable/ic_withdrawal_button"
         app:layout_constraintTop_toBottomOf="@id/withdrawal_account_problem_et"
         app:layout_constraintStart_toStartOf="@id/withdrawal_account_problem_et"
-        android:layout_marginTop="45sp"
+        android:layout_marginTop="45dp"
         />
 
     <TextView

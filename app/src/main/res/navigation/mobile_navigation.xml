@@ -49,9 +49,6 @@
             android:id="@+id/action_navigation_study_to_navigation_study_solve"
             app:destination="@id/navigation_study_solve" />
         <argument
-            android:name="folderId"
-            app:argType="integer" />
-        <argument
             android:name="folderName"
             app:argType="string" />
     </fragment>
@@ -306,20 +303,15 @@
             android:defaultValue="0"
             app:argType="string"
             app:nullable="false" />
-
         <action
-            android:id="@+id/action_navigation_note_select_area_to_problem_add_fragment"
-            app:destination="@id/navigation_problem_add"
-            app:popUpTo="@id/navigation_problem_add" />
+            android:id="@+id/action_navigation_note_select_area_to_navigation_problem_add"
+            app:destination="@id/navigation_problem_add" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_study_solve"
         android:name="com.wash.washandroid.presentation.fragment.study.StudySolveFragment"
         tools:layout="@layout/fragment_study_solve">
-        <argument
-            android:name="folderId"
-            app:argType="integer" />
         <argument
             android:name="folderName"
             app:argType="string" />
@@ -329,6 +321,12 @@
         <action
             android:id="@+id/action_navigation_study_solve_to_navigation_study_answer"
             app:destination="@id/navigation_study_answer" />
+        <action
+            android:id="@+id/action_navigation_study_solve_to_navigation_study_complete"
+            app:destination="@id/navigation_study_complete" />
+        <action
+            android:id="@+id/action_navigation_study_solve_to_navigation_study_photo_slider"
+            app:destination="@id/navigation_study_photo_slider" />
     </fragment>
 
     <fragment
@@ -338,9 +336,6 @@
         <action
             android:id="@+id/action_navigation_study_answer_to_navigation_study_solve"
             app:destination="@id/navigation_study_solve" />
-        <action
-            android:id="@+id/action_navigation_study_answer_to_navigation_study_complete"
-            app:destination="@id/navigation_study_complete" />
     </fragment>
 
     <dialog
@@ -360,5 +355,11 @@
         <action
             android:id="@+id/action_navigation_study_complete_to_navigation_home"
             app:destination="@id/navigation_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_study_photo_slider"
+        android:name="com.wash.washandroid.presentation.fragment.study.StudyPhotoSliderFragment"
+        tools:layout="@layout/fragment_photo_slider">
     </fragment>
 </navigation>
