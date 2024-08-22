@@ -26,13 +26,13 @@ class StudyRepository(private val studyApiService: StudyApiService) {
         studyApiService.getStudyFolders("Bearer $token").enqueue(object : Callback<StudyFolderResponse> {
             override fun onResponse(call: Call<StudyFolderResponse>, response: Response<StudyFolderResponse>) {
                 if (response.isSuccessful) {
-                    Log.d("fraglog", "[getStudyFolders]Study folders response successful: ${response.body()}")
+                    Log.d("fraglog", "[getStudyFolders] Study folders response successful: ${response.body()}")
                     val studyFolderResponse = response.body()
                     studyFolderResponse?.let {
                         callback(it.result)
                     } ?: callback(null)
                 } else {
-                    Log.e("fraglog", "[getStudyFolders]Study folders response failed: ${response.errorBody()?.string()}")
+                    Log.e("fraglog", "[getStudyFolders] Study folders response failed: ${response.errorBody()?.string()}")
                     callback(dummyStudyFolderResponse.result)
                 }
             }
