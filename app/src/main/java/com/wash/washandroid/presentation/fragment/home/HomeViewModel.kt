@@ -3,10 +3,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.refreshToken
 import com.wash.washandroid.R
 import com.wash.washandroid.presentation.fragment.home.ApiResponse
 import com.wash.washandroid.presentation.fragment.home.DeleteProblemResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
+import com.wash.washandroid.presentation.fragment.home.HomeFragment
 import com.wash.washandroid.presentation.fragment.home.Problem
 import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
 import kotlinx.coroutines.launch
@@ -22,8 +24,13 @@ class HomeViewModel : ViewModel() {
 
     // Retrofit 인스턴스 생성
     private val apiService = NetworkModule.getClient().create(ApiService::class.java)
-    val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MzE3MTMyLCJleHAiOjE3MjQzMjA3MzJ9.gTfbGQL_1vW9Pkae0L91jAku2pWDJWQssQhuimhk4aQ"
 
+    //토큰 연결
+    //val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MzI4NTA1LCJleHAiOjE3MjQzMzIxMDV9.Xa19i3e6JkqHAKy6NgO1d13e4IQc5HqBj0pm_x3Ekbs"
+    private var accessToken: String? = null
+    fun setAccessToken(token: String?) {
+        accessToken = token
+    }
 
     //폴더 속 이미지(problem)
     private val _images = MutableLiveData<List<Problem>>()
@@ -40,7 +47,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             // 액세스 토큰 가져오기 (NaverIdLoginSDK 사용)
             if (!accessToken.isNullOrEmpty()) {
-                NetworkModule.setAccessToken(accessToken) // NetworkModule에 토큰 설정
+                NetworkModule.setAccessToken(accessToken!!) // NetworkModule에 토큰 설정
                 apiService.getFolders("Bearer $accessToken").enqueue(object : Callback<ApiResponse> {
                     override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                         if (response.isSuccessful) {
@@ -50,7 +57,7 @@ class HomeViewModel : ViewModel() {
                                     Note(
                                         folderId = folder.folderId,
                                         title = folder.folderName,
-                                        imageResId = R.drawable.ic_listitem_frame
+                                        imageResId = R.drawable.ic_list_frame
                                     )
                                 }
                                 _notes.value = folders
@@ -107,7 +114,7 @@ class HomeViewModel : ViewModel() {
     fun deleteFolder(folderId: Int) {
         viewModelScope.launch {
             if (!accessToken.isNullOrEmpty()) {
-                apiService.deleteFolder(accessToken, folderId)
+                apiService.deleteFolder(accessToken!!, folderId)
                     .enqueue(object : Callback<ApiResponse> {
                         override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                             if (response.isSuccessful) {
@@ -189,7 +196,7 @@ class HomeViewModel : ViewModel() {
                                 if (apiResponse?.isSuccess == true) {
                                     Log.d("HomeViewModel", "Problem deleted successfully: ${apiResponse.result}")
                                     // 폴더의 문제 리스트를 새로 고침
-                                    fetchImagesForFolder(folderId, accessToken) //갱신
+                                    fetchImagesForFolder(folderId, accessToken!!) //갱신
                                 } else {
                                     Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
                                 }

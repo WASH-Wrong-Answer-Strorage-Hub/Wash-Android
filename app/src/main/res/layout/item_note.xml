@@ -9,7 +9,7 @@
         android:id="@+id/item_image_view"
         android:layout_width="74dp"
         android:layout_height="97dp"
-        android:src="@drawable/ic_listitem_frame"
+        android:src="@drawable/ic_list_frame"
         android:layout_gravity="center" />
 
     <!-- EditText로 변경 -->
