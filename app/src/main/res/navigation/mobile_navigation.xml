@@ -117,7 +117,9 @@
         <action
             android:id="@+id/action_navigation_problem_answer_to_category_subject_fragment"
             app:destination="@id/navigation_problem_category_subject"
-            app:popUpTo="@id/navigation_problem_category_subject" />
+            app:popUpTo="@id/navigation_problem_category_subject"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_in_left"/>
     </fragment>
 
     <fragment
@@ -127,7 +129,9 @@
         <action
             android:id="@+id/action_navigation_problem_add_to_answer_fragment"
             app:destination="@id/navigation_problem_answer"
-            app:popUpTo="@id/navigation_problem_answer" />
+            app:popUpTo="@id/navigation_problem_answer"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_in_left"/>
     </fragment>
 
     <fragment

@@ -63,10 +63,11 @@
             app:layout_constraintTop_toBottomOf="@+id/problem_add_title" />
 
         <ImageView
-            android:id="@+id/problem_add_btn"
-            android:layout_width="265dp"
-            android:layout_height="157dp"
-            android:background="@drawable/problem_add_btn"
+            android:id="@+id/problem_add_iv"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/photo_add_btn_background"
             android:layout_marginTop="27dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,12 +75,13 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/problem_add_rv"
-            android:layout_width="260dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/problem_add_btn" />
+            app:layout_constraintTop_toBottomOf="@+id/problem_add_iv" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/problem_add_next_btn"

@@ -64,14 +64,27 @@ class ProblemAddFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(photoList, photoAdapter, photoPath)
-                    binding.problemAddBtn.setImageURI(uri)
-                    binding.problemAddRv.smoothScrollToPosition(0)
+                    binding.problemAddIv.setImageURI(uri)
+                    binding.problemAddIv.clipToOutline = true
+                    binding.problemAddRv.smoothScrollToPosition(photoList.size)
                 }
             }
         }
 
         binding.problemAddNextBtn.setOnClickListener {
+
+            // 첫 번째 사진을 ViewModel에 저장
+            problemInfoViewModel.setFirstPhoto(photoList.firstOrNull())
+
+            // 나머지 사진을 ViewModel에 저장
+            val remainingPhotos = if (photoList.size > 1) photoList.subList(1, photoList.size) else emptyList()
+            problemInfoViewModel.setRemainingPhotos(remainingPhotos)
+
             navController.navigate(R.id.action_navigation_problem_add_to_answer_fragment)
+        }
+
+        binding.problemAddBackBtn.setOnClickListener {
+            navController.navigateUp()
         }
 
         val horizontalSpaceHeight = resources.getDimensionPixelSize(R.dimen.item_space)
