@@ -1,5 +1,6 @@
 package com.wash.washandroid.data.service
 
+import com.wash.washandroid.presentation.fragment.graph.GraphApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.OkHttpClient
@@ -24,4 +25,12 @@ object RetrofitClient {
         .build()
 
     val apiService: AuthService = retrofit.create(AuthService::class.java)
+
+    // 새로운 GraphApiService 추가
+    val graphApiService: GraphApiService = retrofit.create(GraphApiService::class.java)
+
+    // 추가적인 서비스가 필요하다면 이렇게 생성할 수 있습니다.
+    fun <T> createService(serviceClass: Class<T>): T {
+        return retrofit.create(serviceClass)
+    }
 }

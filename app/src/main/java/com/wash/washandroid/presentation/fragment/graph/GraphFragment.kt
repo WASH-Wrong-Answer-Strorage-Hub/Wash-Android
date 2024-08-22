@@ -1,11 +1,13 @@
 package com.wash.washandroid.presentation.fragment.graph
 
+import MypageViewModel
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentGraphBinding
@@ -18,6 +20,10 @@ class GraphFragment : Fragment() {
 
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: GraphViewModel
+
+    // MypageViewModel을 가져와서 refreshToken을 사용
+    private val mypageViewModel: MypageViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,8 +33,23 @@ class GraphFragment : Fragment() {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
         setupRecyclerViews()
+        observeViewModel()
+
+        val refreshToken = mypageViewModel.getRefreshToken() // MypageViewModel에서 refreshToken을 가져옴
+        val bearerToken = "Bearer $refreshToken"
+        viewModel.fetchMistakeData(bearerToken)
 
         return binding.root
+    }
+
+    private fun observeViewModel() {
+        viewModel.mistakeResponse.observe(viewLifecycleOwner) { mistakes ->
+            val problems = mistakes.map { mistake ->
+                Problem(mistake.problemId.toInt(), "문제 ${mistake.problemId}", R.drawable.temporary_img_test)
+            }
+            val PBadapter = ProblemImageAdapter(problems)
+            binding.problemsRecyclerView.adapter = PBadapter
+        }
     }
 
     fun setupRecyclerViews() {
