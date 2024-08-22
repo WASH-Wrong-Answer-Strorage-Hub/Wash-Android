@@ -5,6 +5,7 @@ import ImageAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -74,7 +75,22 @@ class HomeDetailFragment : Fragment() {
             updateNotesState()
         }
 
+        //검색창
+        binding.searchEditText.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                performSearch()
+                true
+            } else {
+                false
+            }
+        }
+
         return view
+    }
+        //검색창
+    private fun performSearch() {
+        val query = binding.searchEditText.text.toString()
+        Log.d("HomeFragment", "Search performed with query: $query")
     }
 
     private fun setupRecyclerView(columnCount: Int) {

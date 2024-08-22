@@ -10,6 +10,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -46,12 +48,33 @@ class HomeFragment : Fragment() {
             adapter.setEditing(isEditing)
             binding.editButton.text = if (isEditing) "완료" else "편집"
         }
+
         // MypageViewModel에서 토큰 가져와서 HomeViewModel에 전달
         val refreshToken = mypageViewModel.getRefreshToken()
         homeViewModel.setAccessToken(refreshToken)
 
+        // Search icon click listener
+        binding.searchIcon.setOnClickListener {
+            performSearch()
+        }
+
+        //검색창
+        binding.searchEditText.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                performSearch()
+                true
+            } else {
+                false
+            }
+        }
 
         return binding.root
+    }
+
+    //검색창
+    private fun performSearch() {
+        val query = binding.searchEditText.text.toString()
+        Log.d("HomeFragment", "Search performed with query: $query")
     }
 
     private fun observeViewModel() {
@@ -114,7 +137,6 @@ class HomeFragment : Fragment() {
             .create()
             .show()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
