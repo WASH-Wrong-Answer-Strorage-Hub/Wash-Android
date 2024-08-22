@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
     private fun onCategoryClick(note: Note) {
         val bundle = Bundle().apply {
             putInt("folderId", note.folderId) // 폴더 ID를 전달
+            putString("folderName", note.title)
         }
         val navController = findNavController()
         Log.d("HomeFragment", "Navigating to HomeDetailFragment with folderId: ${note.folderId}")

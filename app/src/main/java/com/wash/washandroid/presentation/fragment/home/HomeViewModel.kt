@@ -23,6 +23,7 @@ class HomeViewModel : ViewModel() {
     private val apiService = NetworkModule.getClient().create(ApiService::class.java)
     val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImVtYWlsIjoiZGhyd29kbXNAbmF2ZXIuY29tIiwiaWF0IjoxNzI0MzEyOTk4LCJleHAiOjE3MjQzMTY1OTh9.SK0EL5zssAg7YmlsgWP37AbKOsGfMPiQkEvHRQHp5NM"
 
+
     //폴더 속 이미지(problem)
     private val _images = MutableLiveData<List<Problem>>()
     val images: LiveData<List<Problem>> get() = _images

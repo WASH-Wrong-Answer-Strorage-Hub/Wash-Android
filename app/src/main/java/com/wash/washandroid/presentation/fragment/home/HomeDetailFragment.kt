@@ -43,9 +43,13 @@ class HomeDetailFragment : Fragment() {
 
         Log.d("HomeDetail", "프레그먼트 실행")
 
-        // Arguments에서 폴더 ID를 가져오고 API 호출
+        //폴더 정보 요청
         val folderId = requireArguments().getInt("folderId")
+        val folderName = requireArguments().getString("folderName", "폴더명")
+
         val token = accessToken // Authorization Token 가져오기 (예: SharedPreferences 등에서)
+
+        binding.categoryTag.text = folderName //폴더명 변경
 
         setupRecyclerView(currentColumnCount)
         observeViewModel()
@@ -58,7 +62,7 @@ class HomeDetailFragment : Fragment() {
             findNavController().navigate(R.id.action_homeDetailFragment_to_navigation_home)
         }
 
-        // 터치 이벤트를 처리할 뷰에 OnTouchListener 설정
+        // 터치 이벤트 : 사진 비율 조정
         binding.recyclerView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
             true
@@ -81,7 +85,7 @@ class HomeDetailFragment : Fragment() {
         val itemWidth = screenWidth / columnCount
 
         adapter = ImageAdapter(
-            items = listOf(), // 초기에는 비어있는 리스트
+            items = listOf(), // 초기 빈 리스트
             onItemClick = { position -> onImageClick(position) },
             itemWidth = itemWidth,
             isEditing = isEditing,

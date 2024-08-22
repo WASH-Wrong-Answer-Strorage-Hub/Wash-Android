@@ -26,7 +26,6 @@ data class EditFolder(
     val result: String? // 폴더 이름 수정 시 결과 메시지
 )
 
-
 //문제 미리보기
 // 문제 응답
 data class ProblemsResponse(
