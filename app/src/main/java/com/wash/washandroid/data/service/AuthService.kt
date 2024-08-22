@@ -1,13 +1,12 @@
 package com.wash.washandroid.data.service
 
 import com.wash.washandroid.data.entity.request.NicknameRequest
+import com.wash.washandroid.data.entity.request.RefreshTokenRequest
 import com.wash.washandroid.data.entity.response.ChangeNicknameResponse
 import com.wash.washandroid.data.entity.response.ChangeProfileImageResponse
-import com.wash.washandroid.data.entity.response.DeleteUserResponse
 import com.wash.washandroid.data.entity.response.GetUserInfoResponse
-import com.wash.washandroid.data.entity.response.LoginResponse
-import com.wash.washandroid.data.entity.response.LogoutResponse
 import com.wash.washandroid.data.entity.response.SubscriptionResponse
+import com.wash.washandroid.data.entity.response.UserResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -23,22 +22,28 @@ interface AuthService {
     @POST("auth/naver")
     suspend fun postNaverLogin(
         @Header("Authorization") token: String
-    ): Response<LoginResponse>
+    ): Response<UserResponse>
 
     @POST("auth/kakao")
     suspend fun postKakaoLogin(
         @Header("Authorization") token: String
-    ): Response<LoginResponse>
+    ): Response<UserResponse>
+
+    @POST("auth/refresh")
+    suspend fun postRefreshToken(
+        @Header("Authorization") token: String,
+        @Body refreshToken: RefreshTokenRequest
+    ): Response<UserResponse>
 
     @PATCH("users/delete")
     suspend fun deleteUser(
         @Header("Authorization") token: String
-    ): Response<DeleteUserResponse>
+    ): Response<UserResponse>
 
     @PATCH("users/logout")
     suspend fun logoutUser(
         @Header("Authorization") token: String
-    ): Response<LogoutResponse>
+    ): Response<UserResponse>
 
     @GET("users/info")
     suspend fun getUserInfo(

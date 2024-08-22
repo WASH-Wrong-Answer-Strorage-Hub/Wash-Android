@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.data.entity.request.NicknameRequest
+import com.wash.washandroid.data.entity.request.RefreshTokenRequest
 import com.wash.washandroid.data.service.RetrofitClient
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -155,6 +156,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         Log.e(TAG, "로그아웃 실패: ${logoutResponse?.message}")
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "로그아웃 요청 실패: Refresh Token 만료")
+                    refreshAccessToken() // 토큰 재발급 시도
                 } else {
                     Log.e(TAG, "로그아웃 요청 실패: ${response.errorBody()?.string()}")
                 }
@@ -166,7 +170,6 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // 탈퇴 요청 시 새로운 액세스 토큰 사용
     fun deleteUserAccount() {
         val token = _refreshToken.value
         if (token.isNullOrEmpty()) {
@@ -187,6 +190,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         Log.e(TAG, "회원탈퇴 실패: ${deleteResponse?.message}")
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "회원탈퇴 요청 실패: Refresh Token 만료")
+                    refreshAccessToken() // 토큰 재발급 시도
                 } else {
                     Log.e(TAG, "회원탈퇴 요청 실패: ${response.errorBody()?.string()}")
                 }
@@ -221,6 +227,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         Log.e(TAG, "유저조회 실패: ${getUserInfoResponse?.message}")
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "유저조회 요청 실패: Refresh Token 만료")
+                    refreshAccessToken() // 토큰 재발급 시도
                 } else {
                     Log.e(TAG, "유저조회 요청 실패: ${response.errorBody()?.string()}")
                 }
@@ -253,6 +262,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         Log.e(TAG, "닉네임 변경 실패: ${changeNicknameResponse?.message}")
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "닉네임 변경 요청 실패: Refresh Token 만료")
+                    refreshAccessToken() // 토큰 재발급 시도
                 } else {
                     Log.e(TAG, "닉네임 변경 요청 실패: ${response.errorBody()?.string()}")
                 }
@@ -284,6 +296,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         Log.e(TAG, "프로필 이미지 업로드 실패: ${uploadResponse?.message}")
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "프로필 이미지 업로드 요청 실패: Refresh Token 만료")
+                    refreshAccessToken() // 토큰 재발급 시도
                 } else {
                     Log.e(TAG, "프로필 이미지 업로드 요청 실패: ${response.errorBody()?.string()}")
                 }
@@ -324,6 +339,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         Log.e(TAG, "구독 승인 실패: ${approveResponse?.message}")
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "구독 승인 요청 실패: Refresh Token 만료")
+                    refreshAccessToken() // 토큰 재발급 시도
                 } else {
                     Log.e(TAG, "구독 승인 요청 실패: ${response.errorBody()?.string()}")
                 }
@@ -355,6 +373,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         Log.e(TAG, "구독 취소 실패: ${cancelResponse?.message}")
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "구독 취소 요청 실패: Refresh Token 만료")
+                    refreshAccessToken() // 토큰 재발급 시도
                 } else {
                     Log.e(TAG, "구독 취소 요청 실패: ${response.errorBody()?.string()}")
                 }
@@ -365,6 +386,49 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
+    fun refreshAccessToken() {
+        val refreshToken = _refreshToken.value
+
+        if (refreshToken.isNullOrEmpty()) {
+            Log.e(TAG, "Refresh Token이 존재하지 않습니다. 재발급 요청을 할 수 없습니다.")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val request = RefreshTokenRequest(refreshToken)
+                val response = RetrofitClient.apiService.postRefreshToken("Bearer $refreshToken", request)
+
+                if (response.isSuccessful) {
+                    val newAccessToken = response.headers()["authorization"]?.replace("Bearer ", "")
+                    if (!newAccessToken.isNullOrEmpty()) {
+                        setAccessToken(newAccessToken)
+                        Log.i(TAG, "새로운 Access Token이 성공적으로 재발급되었습니다: $newAccessToken")
+                    } else {
+                        Log.e(TAG, "서버 응답에서 새로운 Access Token을 가져오지 못했습니다.")
+                    }
+                } else {
+                    Log.e(TAG, "Refresh Token 재발급 요청 실패: ${response.errorBody()?.string()}")
+                    // 실패한 경우 로그아웃 처리 또는 재인증 요구
+                    handleTokenRefreshFailure()
+                }
+            } catch (e: HttpException) {
+                Log.e(TAG, "Refresh Token 재발급 중 서버 오류 발생", e)
+                handleTokenRefreshFailure()
+            } catch (e: Exception) {
+                Log.e(TAG, "Refresh Token 재발급 중 예기치 않은 오류 발생", e)
+                handleTokenRefreshFailure()
+            }
+        }
+    }
+
+    private fun handleTokenRefreshFailure() {
+        // 토큰 재발급 실패 시 처리: 로그아웃 처리 또는 재로그인 요구
+        clearToken()
+        // 추가로 로그아웃 처리, 사용자에게 로그인 화면을 보여주거나 토큰 갱신 실패를 알리는 로직을 구현
+    }
+
 
     // 토큰 초기화 함수
     fun clearToken() {
