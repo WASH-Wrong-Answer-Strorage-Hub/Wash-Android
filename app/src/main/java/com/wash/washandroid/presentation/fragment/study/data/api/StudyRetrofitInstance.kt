@@ -11,7 +11,6 @@ object StudyRetrofitInstance {
     // Access token 설정
     private var accessToken: String? = " "
 
-    // OkHttpClient에 Access token을 추가하는 Interceptor
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor { chain ->
@@ -29,7 +28,6 @@ object StudyRetrofitInstance {
             .build()
     }
 
-    // Retrofit 인스턴스 생성
     val api: StudyApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)

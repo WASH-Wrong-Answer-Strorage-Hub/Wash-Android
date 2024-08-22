@@ -38,10 +38,6 @@ interface StudyApiService {
     ): Call<StudyProgressResponse>
 
     // 정답 기록
-    @POST("/studies/folders/{folderId}/problems/{problemId}/check-answer")
-    fun addStudyAnswer(
-        @Path("folderId") folderId: String,
-        @Path("problemId") problemId: String,
-        @Body answerRequest: AnswerRequest
-    ): Call<StudyAnswerResponse>
+    @POST("/studies/folders/check-answer")
+    fun addStudyAnswer(@Body answerRequest: AnswerRequest): Call<StudyAnswerResponse>
 }

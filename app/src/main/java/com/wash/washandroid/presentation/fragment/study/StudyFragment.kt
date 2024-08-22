@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,9 +34,7 @@ class StudyFragment : Fragment() {
     private lateinit var repository: StudyRepository
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStudyBinding.inflate(inflater, container, false)
         recyclerView = binding.studyRv
@@ -43,7 +42,9 @@ class StudyFragment : Fragment() {
         val studyApiService = StudyRetrofitInstance.api
         repository = StudyRepository(studyApiService)
 
-        val factory = StudyViewModelFactory(repository)
+        val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+
+        val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         // 현재 문제 인덱스 리셋
@@ -57,33 +58,42 @@ class StudyFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-        // RecyclerView 설정
-        folderAdapter = FolderAdapter(emptyList()) { folderName ->
-            // 아이템 클릭 시 해당 폴더 이름에 대한 ID를 가져오기
-            val folderId = viewModel.getIdByName(folderName)
-//            Log.d("fraglog", "solve -- Folder ID found for $folderName: $folderId")
-            folderId?.let {
-                viewModel.loadStudyFolderById(it.toString()) // 폴더 내용 불러오기
+        // Bottom navigation bar 보이게
+        (activity as MainActivity).hideBottomNavigation(false)
 
-                val bundle = Bundle().apply {
-                    putInt("folderId", it)
-                    putString("folderName", folderName)
-                }
-                navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
+        // recyclerview adapter 클릭 이벤트
+        folderAdapter = FolderAdapter(emptyList()) { folderName ->
+            val folderId = viewModel.getIdByName(folderName)
+            folderId?.let {
+                viewModel.loadStudyFolderById(it.toString())
+
+                // problemIds 가 로드된 후에만 이동하도록 보장
+                viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
+                    if (!problemIds.isNullOrEmpty()) {
+                        val bundle = Bundle().apply {
+                            putInt("folderId", it)
+                            putString("folderName", folderName)
+                        }
+                        navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
+                    } else {
+                        Log.e("fraglog", "Problem IDs are not yet loaded for folderId: $folderId")
+                    }
+                })
             } ?: run {
-//                Log.e("fraglog", "Folder ID not found for name: $folderName")
+                Log.e("fraglog", "Folder ID not found for name: $folderName")
             }
         }
+
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = folderAdapter
 
-        // LiveData 관찰하여 폴더 데이터가 로드될 때마다 RecyclerView 업데이트
+        // study folders 로드될 때마다 RecyclerView 업데이트
         viewModel.studyFolders.observe(viewLifecycleOwner, Observer { folderNames ->
             folderAdapter.updateFolders(folderNames)
         })
 
-        // 폴더 로드
+        // study folders 로드
         viewModel.loadStudyFolders()
     }
 

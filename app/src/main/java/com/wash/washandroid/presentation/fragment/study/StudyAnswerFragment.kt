@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.navigation.Navigation
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyAnswerBinding
+import com.wash.washandroid.presentation.base.MainActivity
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
@@ -29,15 +31,16 @@ class StudyAnswerFragment : Fragment() {
     private val data: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentStudyAnswerBinding.inflate(inflater, container, false)
 
         val studyApiService = StudyRetrofitInstance.api
         repository = StudyRepository(studyApiService)
 
-        val factory = StudyViewModelFactory(repository)
+        val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+
+        val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         return binding.root
@@ -46,15 +49,16 @@ class StudyAnswerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as MainActivity).hideBottomNavigation(true)
+
         navController = Navigation.findNavController(view)
 
-        // 데이터 수신
         val folderId = arguments?.getString("folderId") ?: "1"
         val problemId = arguments?.getString("problemId") ?: "1"
         val answer = arguments?.getString("answer") ?: "정답 불러오기 실패"
-//        Toast.makeText(requireContext(), "answer -- id : ${problemId}, answer : ${answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(), "answer -- folderid: ${folderId}  id : ${problemId}, answer : ${answer}", Toast.LENGTH_SHORT).show()
 
-        // data 리스트에 정답을 추가
+        // data 리스트에 정답 추가
         data.add(answer)
 
         swipeView = binding.studyCardFrame
@@ -68,20 +72,17 @@ class StudyAnswerFragment : Fragment() {
             }
 
             override fun onLeftCardExit(p0: Any?) {
-                viewModel.incrementLeftSwipe()
                 viewModel.submitAnswer(folderId, problemId, "left")
-                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onRightCardExit(p0: Any?) {
-                viewModel.incrementRightSwipe()
                 viewModel.submitAnswer(folderId, problemId, "right")
-                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // 어댑터가 비어가고 있을 때 동작
                 if (itemsInAdapter == 0) {
+                    viewModel.moveToNextProblem(folderId)
                     navController.popBackStack()
                 }
             }

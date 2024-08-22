@@ -327,6 +327,9 @@
         <action
             android:id="@+id/action_navigation_study_solve_to_navigation_study_photo_slider"
             app:destination="@id/navigation_study_photo_slider" />
+        <action
+            android:id="@+id/action_navigation_study_solve_to_navigation_study_full_screen_image"
+            app:destination="@id/navigation_study_full_screen_image" />
     </fragment>
 
     <fragment
@@ -362,4 +365,12 @@
         android:name="com.wash.washandroid.presentation.fragment.study.StudyPhotoSliderFragment"
         tools:layout="@layout/fragment_photo_slider">
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_study_full_screen_image"
+        android:name="com.wash.washandroid.presentation.fragment.study.StudyFullScreenImageFragment"
+        tools:layout="@layout/fragment_study_full_screen_image">
+
+    </fragment>
+
 </navigation>

@@ -1,9 +1,9 @@
 package com.wash.washandroid.presentation.fragment.study.data.repository
 
-import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
+import com.wash.washandroid.presentation.fragment.study.data.dummyStudyFolderIdResponse
 import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
 import com.wash.washandroid.presentation.fragment.study.data.model.response.FolderInfo
@@ -12,6 +12,9 @@ import com.wash.washandroid.presentation.fragment.study.data.model.response.Stud
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyFolderResponse
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProblemResponse
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProgressResponse
+import com.wash.washandroid.presentation.fragment.study.data.dummyStudyFolderResponse
+import com.wash.washandroid.presentation.fragment.study.data.dummyStudyProblemResponse
+import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyFolderResult
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,12 +31,12 @@ class StudyRepository(private val studyApiService: StudyApiService) {
                         callback(it.result)
                     } ?: callback(null)
                 } else {
-                    callback(null)
+                    callback(dummyStudyFolderResponse.result)
                 }
             }
 
             override fun onFailure(call: Call<StudyFolderResponse>, t: Throwable) {
-                callback(null)
+                callback(dummyStudyFolderResponse.result)
                 Log.d("fraglog", "get Study Folders onFailure: ${t.message}")
             }
         })
@@ -50,12 +53,15 @@ class StudyRepository(private val studyApiService: StudyApiService) {
                         callback(studyFolder)
                     } ?: callback(null)
                 } else {
-                    callback(null)
+                    val result = response.body()?.result?.let { mapToStudyFolder(it) }
+                    callback(result)
                 }
             }
 
             override fun onFailure(call: Call<StudyFolderIdResponse>, t: Throwable) {
-                callback(null)
+                // 실패 시 더미 데이터 사용
+                val dummyResult = dummyStudyFolderIdResponse.result.let { mapToStudyFolder(it) }
+                callback(dummyResult)
                 Log.d("fraglog", "get Study specific Folder by Id onfailure")
             }
         })
@@ -74,17 +80,15 @@ class StudyRepository(private val studyApiService: StudyApiService) {
                     val studyProblemResponse = response.body()
                     studyProblemResponse?.let {
                         // null 값이 있을 경우 특정 문자열로 대체
-                        val modifiedResponse = it.copy(
-                            result = it.result.copy(
-                                passageImages = it.result.passageImages?.ifEmpty {
-                                    listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg")
-                                } ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"),
-                            )
-                        )
+                        val modifiedResponse = it.copy(result = it.result.copy(
+                            passageImages = it.result.passageImages?.ifEmpty {
+                                listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg")
+                            } ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"),
+                        ))
                         callback(modifiedResponse)
                     } ?: callback(null)
                 } else {
-                    callback(null)
+                    callback(dummyStudyProblemResponse)
                 }
             }
 
@@ -116,8 +120,8 @@ class StudyRepository(private val studyApiService: StudyApiService) {
     }
 
     // Post answer
-    fun sendAnswerRequest(folderId: String, problemId: String, answerRequest: AnswerRequest, callback: (Boolean) -> Unit) {
-        val call = studyApiService.addStudyAnswer(folderId, problemId, answerRequest)
+    fun sendAnswerRequest(answerRequest: AnswerRequest, callback: (Boolean) -> Unit) {
+        val call = studyApiService.addStudyAnswer(answerRequest)
 
         call.enqueue(object : Callback<StudyAnswerResponse> {
             override fun onResponse(call: Call<StudyAnswerResponse>, response: Response<StudyAnswerResponse>) {
@@ -152,8 +156,14 @@ class StudyRepository(private val studyApiService: StudyApiService) {
 
     private fun mapToStudyFolder(response: StudyFolderIdResponse): StudyFolder {
         return StudyFolder(
-            folderName = response.result.folderName,
-            problemIds = response.result.problemIds
+            folderName = response.result.folderName, problemIds = response.result.problemIds
+        )
+    }
+
+    // StudyFolderResult를 StudyFolder로 변환
+    private fun mapToStudyFolder(result: StudyFolderResult): StudyFolder {
+        return StudyFolder(
+            folderName = result.folderName, problemIds = result.problemIds
         )
     }
 }
