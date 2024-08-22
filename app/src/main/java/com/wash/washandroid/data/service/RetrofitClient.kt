@@ -28,9 +28,4 @@ object RetrofitClient {
 
     // 새로운 GraphApiService 추가
     val graphApiService: GraphApiService = retrofit.create(GraphApiService::class.java)
-
-    // 추가적인 서비스가 필요하다면 이렇게 생성할 수 있습니다.
-    fun <T> createService(serviceClass: Class<T>): T {
-        return retrofit.create(serviceClass)
-    }
 }

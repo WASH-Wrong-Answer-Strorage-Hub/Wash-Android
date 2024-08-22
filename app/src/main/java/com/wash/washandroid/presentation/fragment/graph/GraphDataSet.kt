@@ -8,9 +8,10 @@ data class MistakeResponse(
 )
 
 data class TypeResponse(
-    val mainCategory: String,
-    val category: String,
-    val subCategories: List<SubCategory>
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: SubCategory
 )
 
 data class SubCategory(
