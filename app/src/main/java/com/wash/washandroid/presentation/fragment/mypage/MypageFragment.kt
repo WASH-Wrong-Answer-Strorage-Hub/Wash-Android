@@ -67,8 +67,6 @@ class MypageFragment : Fragment() {
                         .load(uri)
                         .transform(CircleCrop())
                         .into(binding.mypageProfileIv)
-                    binding.mypageEditBtn.visibility = View.GONE
-                    binding.mypageEclipseBtn.visibility = View.GONE
                 }
             }
         }
@@ -77,7 +75,6 @@ class MypageFragment : Fragment() {
         mypageViewModel.nickname.observe(viewLifecycleOwner) { nickname ->
             binding.mypageNameTv.text = nickname
         }
-
 
         // 구독 유무에 따른 UI 업데이트
         mypageViewModel.isSubscribed.observe(viewLifecycleOwner) { isSubscribed ->
@@ -100,13 +97,11 @@ class MypageFragment : Fragment() {
             if (mypageViewModel.checkSubscriptionStatus()) {
                 findNavController().navigate(R.id.navigation_subscribe)
             } else {
-                mypageViewModel.approveSubscription()
                 findNavController().navigate(R.id.navigation_subscribe_menu)
             }
         }
 
         binding.mypageSubscribeLayout.setOnClickListener {
-
             if (mypageViewModel.checkSubscriptionStatus()) {
                 findNavController().navigate(R.id.navigation_subscribe)
             } else {

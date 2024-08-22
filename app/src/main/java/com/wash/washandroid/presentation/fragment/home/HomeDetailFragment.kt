@@ -28,6 +28,7 @@ class HomeDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("HomeDetail", "프레그먼트 진입")
         // 확대/축소
         scaleGestureDetector = ScaleGestureDetector(requireContext(), ScaleListener())
     }
@@ -36,7 +37,7 @@ class HomeDetailFragment : Fragment() {
         _binding = FragmentHomeDetailBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        Log.d("HomeDetail", "프레그먼트 진입")
+        Log.d("HomeDetail", "프레그먼트 실행")
 
         // 초기 RecyclerView 설정
         setupRecyclerView(currentColumnCount)

@@ -6,29 +6,42 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
+import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
 
 class FolderAdapter(
-    private val folders: List<StudyFolder>,
-    private val onClick: (StudyFolder) -> Unit
+    private var folders: List<String>,
+    private val onItemClick: (String) -> Unit
 ) : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.study_folder_item, parent, false)
-        return FolderViewHolder(view)
+        return FolderViewHolder(view, onItemClick)
     }
 
     override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
-        holder.bind(folders[position])
+        val folderName = folders[position]
+        holder.bind(folderName)
     }
 
     override fun getItemCount() = folders.size
 
-    inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun updateFolders(newFolders: List<String>) {
+        this.folders = newFolders
+        notifyDataSetChanged()
+    }
+
+    class FolderViewHolder(itemView: View, private val onItemClick: (String) -> Unit) : RecyclerView.ViewHolder(itemView) {
         private val folderNameTextView: TextView = itemView.findViewById(R.id.tv_study_folder_name)
 
-        fun bind(folder: StudyFolder) {
-            folderNameTextView.text = folder.name
-            itemView.setOnClickListener { onClick(folder) }
+        fun bind(folderName: String) {
+            // TextView에 텍스트 설정
+            folderNameTextView.text = folderName
+
+            // 아이템 클릭 시 TextView의 텍스트 추출
+            itemView.setOnClickListener {
+                val clickedFolderName = folderNameTextView.text.toString()
+                onItemClick(clickedFolderName)  // 추출한 텍스트를 onItemClick 함수에 전달
+            }
         }
     }
 }

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,24 +12,23 @@
         android:src="@drawable/ic_listitem_frame"
         android:layout_gravity="center" />
 
-    <TextView
-        android:id="@+id/item_text_view"
+    <!-- EditText로 변경 -->
+    <EditText
+        android:id="@+id/item_edit_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Title"
         android:layout_marginLeft="6dp"
+        android:text="Title"
         android:fontFamily="@font/mangoddobak_b"
         android:textSize="15sp"
-        android:layout_gravity="center" />
-
-<!--    <ImageView-->
-<!--        android:id="@+id/item_delete_icon"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:src="@drawable/ic_delete"-->
-<!--        android:visibility="gone"-->
-<!--        android:layout_gravity="top|right" />-->
+        android:background="@android:color/transparent"
+    android:gravity="center"
+    android:focusable="false"
+    android:clickable="false"
+    android:cursorVisible="false"
+    android:focusableInTouchMode="false"
+    android:layout_gravity="center" />
 
     <ImageView
         android:id="@+id/item_delete_icon"

@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -41,6 +43,7 @@ class NoteCameraFragment : Fragment() {
     private var originalPaddingTop: Int = 0
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +62,8 @@ class NoteCameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navController = Navigation.findNavController(view)
+
         // 현재 패딩을 저장하고 0으로 설정
         originalPaddingTop = (activity as MainActivity).findViewById<View>(R.id.container).paddingTop
         (activity as MainActivity).setContainerPadding(0)
@@ -73,7 +78,8 @@ class NoteCameraFragment : Fragment() {
         }
 
         binding.btnClose.setOnClickListener {
-            requireActivity().onBackPressed()
+            navController = Navigation.findNavController(view)
+            navController.navigateUp()
         }
 
         binding.btnSwitchCamera.setOnClickListener {
