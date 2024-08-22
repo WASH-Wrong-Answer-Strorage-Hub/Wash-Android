@@ -116,7 +116,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                         val newAccessToken = response.headers()["authorization"]?.replace("Bearer ", "")
 
                         if (!newAccessToken.isNullOrEmpty()) {
-                            setAccessToken(newAccessToken)  // 새로운 액세스 토큰을 저장
+                            _refreshToken.value = newAccessToken
                             Log.i(TAG, "New access token stored: $newAccessToken")
                         } else {
                             Log.e(TAG, "Failed to retrieve new access token from server response")
@@ -137,7 +137,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
 
     // 로그아웃 요청 시 새로운 액세스 토큰 사용
     fun logoutUser() {
-        val token = _refreshToken.value
+        val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "토큰이 존재하지 않습니다. 로그아웃 요청을 할 수 없습니다.")
             return
@@ -171,7 +171,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun deleteUserAccount() {
-        val token = _refreshToken.value
+        val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "토큰이 존재하지 않습니다. 탈퇴 요청을 할 수 없습니다.")
             return
@@ -205,7 +205,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getAccountInfo() {
-        val token = _refreshToken.value
+        val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "토큰이 존재하지 않습니다. 유저조회를 할 수 없습니다.")
             return
@@ -242,7 +242,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun changeNicknameOnServer(newNickname: String) {
-        val token = _refreshToken.value
+        val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "토큰이 존재하지 않습니다. 닉네임 변경 요청을 할 수 없습니다.")
             return
@@ -277,7 +277,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun uploadProfileImage(imagePath: String) {
-        val token = _refreshToken.value
+        val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "토큰이 존재하지 않습니다. 프로필 이미지를 업로드할 수 없습니다.")
             return
@@ -320,7 +320,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun approveSubscription() {
-        val token = _refreshToken.value
+        val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "토큰이 존재하지 않습니다. 구독 승인 요청을 할 수 없습니다.")
             return
@@ -354,7 +354,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun cancelSubscription() {
-        val token = _refreshToken.value
+        val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
             Log.e(TAG, "토큰이 존재하지 않습니다. 구독 취소 요청을 할 수 없습니다.")
             return
@@ -388,7 +388,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun refreshAccessToken() {
-        val refreshToken = _refreshToken.value
+        val refreshToken = getRefreshToken()
 
         if (refreshToken.isNullOrEmpty()) {
             Log.e(TAG, "Refresh Token이 존재하지 않습니다. 재발급 요청을 할 수 없습니다.")
@@ -396,39 +396,22 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         }
 
         viewModelScope.launch {
-            try {
-                val request = RefreshTokenRequest(refreshToken)
-                val response = RetrofitClient.apiService.postRefreshToken("Bearer $refreshToken", request)
+            val request = RefreshTokenRequest(refreshToken)
+            val response = RetrofitClient.apiService.postRefreshToken("Bearer $refreshToken", request)
 
-                if (response.isSuccessful) {
-                    val newAccessToken = response.headers()["authorization"]?.replace("Bearer ", "")
-                    if (!newAccessToken.isNullOrEmpty()) {
-                        setAccessToken(newAccessToken)
-                        Log.i(TAG, "새로운 Access Token이 성공적으로 재발급되었습니다: $newAccessToken")
-                    } else {
-                        Log.e(TAG, "서버 응답에서 새로운 Access Token을 가져오지 못했습니다.")
-                    }
+            if (response.isSuccessful) {
+                val newAccessToken = response.headers()["authorization"]?.replace("Bearer ", "")
+                if (!newAccessToken.isNullOrEmpty()) {
+                    _refreshToken.value = newAccessToken
+                    Log.i(TAG, "새로운 Refresh Token이 성공적으로 재발급되었습니다: $newAccessToken")
                 } else {
-                    Log.e(TAG, "Refresh Token 재발급 요청 실패: ${response.errorBody()?.string()}")
-                    // 실패한 경우 로그아웃 처리 또는 재인증 요구
-                    handleTokenRefreshFailure()
+                    Log.e(TAG, "서버 응답에서 새로운 Refresh Token을 가져오지 못했습니다.")
                 }
-            } catch (e: HttpException) {
-                Log.e(TAG, "Refresh Token 재발급 중 서버 오류 발생", e)
-                handleTokenRefreshFailure()
-            } catch (e: Exception) {
-                Log.e(TAG, "Refresh Token 재발급 중 예기치 않은 오류 발생", e)
-                handleTokenRefreshFailure()
+            } else {
+                Log.e(TAG, "Refresh Token 재발급 요청 실패: ${response.errorBody()?.string()}")
             }
         }
     }
-
-    private fun handleTokenRefreshFailure() {
-        // 토큰 재발급 실패 시 처리: 로그아웃 처리 또는 재로그인 요구
-        clearToken()
-        // 추가로 로그아웃 처리, 사용자에게 로그인 화면을 보여주거나 토큰 갱신 실패를 알리는 로직을 구현
-    }
-
 
     // 토큰 초기화 함수
     fun clearToken() {
@@ -437,9 +420,9 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         Log.i(TAG, "Access token cleared from ViewModel and SharedPreferences")
     }
 
-    // 토큰 저장 함수 추가
-    fun setAccessToken(token: String?) {
-        _refreshToken.value = token
+    // refresh token (jwt token) 반환 함수
+    fun getRefreshToken(): String? {
+        return _refreshToken.value
     }
 
     companion object {
