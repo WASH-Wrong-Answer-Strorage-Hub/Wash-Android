@@ -56,6 +56,7 @@ class StudyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("StudyFragment", "onViewCreated called") // 로그 추가
 
         navController = Navigation.findNavController(view)
 
@@ -64,13 +65,16 @@ class StudyFragment : Fragment() {
 
         // recyclerview adapter 클릭 이벤트
         folderAdapter = FolderAdapter(emptyList()) { folderName ->
+            Log.d("StudyFragment", "Folder clicked: $folderName") // 로그 추가
             val folderId = viewModel.getIdByName(folderName)
             folderId?.let {
+                Log.d("StudyFragment", "Folder ID: $it") // 로그 추가
                 viewModel.loadStudyFolderById(it.toString())
 
                 // problemIds 가 로드된 후에만 이동하도록 보장
                 viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
                     if (!problemIds.isNullOrEmpty()) {
+                        Log.d("StudyFragment", "Problem IDs loaded: $problemIds")
                         val bundle = Bundle().apply {
                             putInt("folderId", it)
                             putString("folderName", folderName)
@@ -91,10 +95,12 @@ class StudyFragment : Fragment() {
 
         // study folders 로드될 때마다 RecyclerView 업데이트
         viewModel.studyFolders.observe(viewLifecycleOwner, Observer { folderNames ->
+            Log.d("StudyFragment", "Study folders loaded: $folderNames")
             folderAdapter.updateFolders(folderNames)
         })
 
         // study folders 로드
+        Log.d("StudyFragment", "Attempting to load study folders") // 로그 추가
         viewModel.loadStudyFolders()
     }
 

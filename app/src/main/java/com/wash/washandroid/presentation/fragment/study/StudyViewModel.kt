@@ -48,28 +48,29 @@ class StudyViewModel(
 
     // all folders 불러오기
     fun loadStudyFolders() {
-        // MypageViewModel에서 Refresh Token을 가져옴
-        val token = myPageViewModel.getRefreshToken()
-        Log.d("fraglog", "load study folders -- received token : $token")
+        viewModelScope.launch{
+            Log.d("fraglog", "Fetching access token for study folders")
 
-        if (token != null) {
-            repository.getStudyFolders(token) { folderList ->
-                folderList?.let {
-                    Log.d("fraglog", "Folders fetched successfully: $folderList")
-                    // orderValue 기준으로 오름차순 정렬
-                    val sortedFolders = it.sortedBy { folder -> folder.orderValue }
+            val token = myPageViewModel.getRefreshToken() ?:
+            "default_token"
+            Log.d("fraglog", "load study folders -- received token : $token")
 
-                    // 폴더 이름 리스트를 생성하고 nameToIdMap을 업데이트
-                    val folderNames = sortedFolders.map { folder ->
-                        nameToIdMap[folder.folderName] = folder.folderId
-                        folder.folderName
-                    }
+            if (token != null) {
+                repository.getStudyFolders(token) { folderList ->
+                    folderList?.let {
+                        Log.d("fraglog", "Folders fetched successfully: $folderList")
 
-                    _studyFolders.postValue(folderNames)
-                } ?: Log.e("fraglog", "load study folders -- Failed to load folders")
+                        val sortedFolders = it.sortedBy { folder -> folder.orderValue }
+                        val folderNames = sortedFolders.map { folder ->
+                            nameToIdMap[folder.folderName] = folder.folderId
+                            folder.folderName
+                        }
+                        _studyFolders.postValue(folderNames)
+                    } ?: Log.e("fraglog", "load study folders -- Failed to load folders")
+                }
+            } else {
+                Log.e("fraglog", "load study folders -- Failed to retrieve refresh token")
             }
-        } else {
-            Log.e("fraglog", "load study folders -- Failed to retrieve refresh token")
         }
     }
 
