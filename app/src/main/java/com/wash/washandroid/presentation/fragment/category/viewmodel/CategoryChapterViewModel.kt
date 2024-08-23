@@ -12,23 +12,29 @@ import kotlinx.coroutines.launch
 
 class CategoryChapterViewModel : ViewModel() {
 
-    private val _selectedButtonId = MutableLiveData<Int?>(null)
-    val selectedButtonId: LiveData<Int?> get() = _selectedButtonId
+    // 기존의 단일 선택 ID에서 리스트로 변경
+    private val _selectedButtonIds = MutableLiveData<List<Int>>(emptyList())
+    val selectedButtonIds: LiveData<List<Int>> get() = _selectedButtonIds
 
+    // 버튼 클릭 시 ID를 리스트에 추가하거나 제거하는 메서드
     fun onButtonClicked(buttonId: Int) {
-        if (_selectedButtonId.value == buttonId) return
-        _selectedButtonId.value = buttonId
+        val currentList = _selectedButtonIds.value ?: emptyList()
+        _selectedButtonIds.value = if (currentList.contains(buttonId)) {
+            currentList - buttonId  // 이미 선택된 경우 리스트에서 제거
+        } else {
+            currentList + buttonId  // 선택되지 않은 경우 리스트에 추가
+        }
     }
 
     fun getButtonBackground(buttonId: Int): Int {
         return when {
-            _selectedButtonId.value == buttonId && buttonId == R.id.category_add -> {
+            _selectedButtonIds.value?.contains(buttonId) == true && buttonId == R.id.category_add -> {
                 R.drawable.category_choice_add_clicked_btn
             }
             buttonId == R.id.category_add -> {
                 R.drawable.category_choice_add_btn
             }
-            _selectedButtonId.value == buttonId -> {
+            _selectedButtonIds.value?.contains(buttonId) == true -> {
                 R.drawable.category_choice_clicked_btn
             }
             else -> {

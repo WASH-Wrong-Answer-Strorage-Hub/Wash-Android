@@ -12,8 +12,6 @@ class CategoryChapterAdapter(
     private val viewModel: CategoryChapterViewModel
 ) : RecyclerView.Adapter<CategoryChapterAdapter.CategoryViewHolder>() {
 
-    private var selectedPosition: Int = RecyclerView.NO_POSITION
-
     inner class CategoryViewHolder(private val binding: ItemCategoryBtnBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -22,11 +20,8 @@ class CategoryChapterAdapter(
             binding.categoryBtn.setBackgroundResource(viewModel.getButtonBackground(categoryType.typeId))
 
             binding.categoryBtn.setOnClickListener {
-                val previousSelectedPosition = selectedPosition
-                selectedPosition = adapterPosition
                 viewModel.onButtonClicked(categoryType.typeId)
-                notifyItemChanged(previousSelectedPosition)  // 이전에 선택된 항목을 갱신
-                notifyItemChanged(selectedPosition)          // 현재 선택된 항목을 갱신
+                notifyItemChanged(adapterPosition)  // 이전에 선택된 항목을 갱신
             }
         }
     }
