@@ -2,6 +2,7 @@ package com.wash.washandroid.presentation.fragment.study
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,17 +71,21 @@ class StudyAnswerFragment : Fragment() {
 
             override fun onLeftCardExit(p0: Any?) {
                 viewModel.submitAnswer(folderId, problemId, "left")
+                viewModel.setProblemSolvedState(true)
+                Log.d("fraglog", "**answer -- is problem already solved**  :  ${viewModel.getProblemSolvedState()}")
+                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onRightCardExit(p0: Any?) {
                 viewModel.submitAnswer(folderId, problemId, "right")
+                viewModel.setProblemSolvedState(true)
+                Log.d("fraglog", "**answer -- is problem already solved**  :  ${viewModel.getProblemSolvedState()}")
+                viewModel.moveToNextProblem(folderId)
             }
 
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // 어댑터가 비어가고 있을 때 동작
                 if (itemsInAdapter == 0) {
-                    viewModel.isProblemAlreadySolved = true
-                    viewModel.moveToNextProblem(folderId)
                     navController.popBackStack()
                 }
             }
@@ -116,7 +121,6 @@ class StudyAnswerFragment : Fragment() {
             val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
             cardBg.setBackgroundResource(R.drawable.study_card_background_green)
             binding.ivStudySolve.setBackgroundResource(R.drawable.study_correct)
-            viewModel.submitAnswer(folderId, problemId, "right")
         }
 
         binding.btnStudyX.setOnClickListener {
@@ -125,7 +129,6 @@ class StudyAnswerFragment : Fragment() {
             val cardBg = view.findViewById<View>(R.id.study_answer_card_bg)
             cardBg.setBackgroundResource(R.drawable.study_card_background_red)
             binding.ivStudySolve.setBackgroundResource(R.drawable.study_incorrect)
-            viewModel.submitAnswer(folderId, problemId, "left")
         }
 
         // 뒤로가기 클릭 시 다이얼로그 띄우기

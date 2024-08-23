@@ -59,6 +59,8 @@ class StudySolveFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("fraglog", "solve -- on view created")
+        Log.d("fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()}")
 
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
@@ -71,14 +73,16 @@ class StudySolveFragment : Fragment() {
         val progressAdapter = StudyProgressAdapter(problemIds.map { it to "미완료" }, problemIds)
         binding.rvDrawerProgress.adapter = progressAdapter
 
-        // 문제 해결 여부를 확인하여 다음 문제로 이동
-        if (viewModel.isProblemAlreadySolved) {
-            Log.d("fraglog", "problem already solved, moving to next problem")
+        // 정답 확인 전송 여부 검사
+        if (viewModel.getProblemSolvedState()) {
+            Log.d("fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next")
+            viewModel.setProblemSolvedState(false)
+            viewModel.loadStudyProgress(folderId)
             viewModel.moveToNextProblem(folderId)
-            viewModel.isProblemAlreadySolved = false // 플래그를 초기화
         } else {
-            // 문제가 이미 해결되지 않은 경우에만 문제를 로드
+            // 정답 확인 전송 하지 않은 경우
             viewModel.loadStudyProblem(folderId)
+            Log.d("fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> 유지")
         }
 
         viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
@@ -89,12 +93,11 @@ class StudySolveFragment : Fragment() {
                 val passageUrls = it.result.passageImages
                 if (passageUrls.isNullOrEmpty()) {
                     binding.studySolveBtnDes.visibility = View.INVISIBLE
-                    Log.d("fraglog", "passageImages is null or empty, hiding button.")
+                    Log.d("fraglog", "passageImages : ${it.result.passageImages}.")
                 } else {
                     binding.studySolveBtnDes.visibility = View.VISIBLE
-                    Log.d("fraglog", "passageImages available, showing button.")
+                    Log.d("fraglog", "passageImages : ${it.result.passageImages}.")
                 }
-
                 updateUI(it)
             } ?: run {
                 Log.e("fraglog", "Study problem is null, cannot update UI")
@@ -103,11 +106,6 @@ class StudySolveFragment : Fragment() {
 
         // studyProgress 로드
         viewModel.loadStudyProgress(folderId)
-
-        if (viewModel.isProblemAlreadySolved) {
-            Log.d("fraglog", "problem already solved move to next problem")
-            viewModel.moveToNextProblem(folderId)
-        }
 
         // studyProgress 업데이트를 관찰하여 RecyclerView에 반영
         viewModel.studyProgress.observe(viewLifecycleOwner, Observer { progressList ->
@@ -157,6 +155,7 @@ class StudySolveFragment : Fragment() {
         }
 
         binding.ivDrawer.setOnClickListener {
+            viewModel.loadStudyProgress(folderId)
             binding.studyDrawerLayout.openDrawer(GravityCompat.END)
         }
 
@@ -175,8 +174,7 @@ class StudySolveFragment : Fragment() {
 
     private fun updateUI(problem: StudyProblemResponse) {
         binding.tvStudySolveProblemId.text = "문제 " + (viewModel.currentProblemIndex + 1)
-        val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() }
-            ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+        val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
         Glide.with(this).load(imageUrl).into(binding.ivSolveCard)
     }
 
