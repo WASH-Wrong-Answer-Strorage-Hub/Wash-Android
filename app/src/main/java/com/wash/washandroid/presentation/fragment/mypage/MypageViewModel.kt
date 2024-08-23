@@ -44,6 +44,11 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         loadName()
         loadEmail()
         loadSubscriptionStatus()
+
+        // SharedPreferences에서 refreshToken 불러오기 (확인)
+        val savedToken = sharedPreferences.getString("refreshToken", null)
+        _refreshToken.value = savedToken
+        Log.d("fraglog", "Saved token: ${_refreshToken.value}")
     }
 
     // 닉네임 설정
@@ -113,11 +118,12 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                         Log.i(TAG, "$socialType token sent to server successfully")
 
                         // 서버로부터 받은 새로운 액세스 토큰을 헤더에서 가져옴
-                        val newAccessToken = response.headers()["authorization"]?.replace("Bearer ", "")
+                        val newRefreshToken = response.headers()["authorization"]?.replace("Bearer ", "")
 
-                        if (!newAccessToken.isNullOrEmpty()) {
-                            _refreshToken.value = newAccessToken
-                            Log.i(TAG, "New access token stored: $newAccessToken")
+                        if (!newRefreshToken.isNullOrEmpty()) {
+                            _refreshToken.value = newRefreshToken
+                            Log.i(TAG, "New access token stored: $newRefreshToken")
+                            sharedPreferences.edit().putString("refreshToken", newRefreshToken).apply()
                         } else {
                             Log.e(TAG, "Failed to retrieve new access token from server response")
                         }

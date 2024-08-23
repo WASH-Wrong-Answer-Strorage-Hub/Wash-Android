@@ -1,6 +1,5 @@
 package com.wash.washandroid.presentation.fragment.study
 
-import MypageViewModel
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,7 +24,6 @@ class StudyAnswerFragment : Fragment() {
     private lateinit var swipeView: SwipeFlingAdapterView
     private lateinit var adapter: CardAdapter
     private lateinit var viewModel: StudyViewModel
-    private lateinit var myPageViewModel: MypageViewModel
     private lateinit var repository: StudyRepository
     private val data: MutableList<String> = mutableListOf()
 
@@ -39,8 +37,7 @@ class StudyAnswerFragment : Fragment() {
 
         val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
 
-        myPageViewModel = ViewModelProvider(requireActivity()).get(MypageViewModel::class.java)
-        val factory = StudyViewModelFactory(repository, sharedPreferences, myPageViewModel)
+        val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         return binding.root
@@ -82,6 +79,7 @@ class StudyAnswerFragment : Fragment() {
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // 어댑터가 비어가고 있을 때 동작
                 if (itemsInAdapter == 0) {
+                    viewModel.isProblemAlreadySolved = true
                     viewModel.moveToNextProblem(folderId)
                     navController.popBackStack()
                 }

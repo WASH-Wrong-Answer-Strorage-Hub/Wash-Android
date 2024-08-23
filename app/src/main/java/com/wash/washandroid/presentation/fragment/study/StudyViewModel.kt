@@ -1,6 +1,5 @@
 package com.wash.washandroid.presentation.fragment.study
 
-import MypageViewModel
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
@@ -9,17 +8,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
-import com.wash.washandroid.presentation.fragment.study.data.model.response.ProblemStatus
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProblemResponse
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 import kotlinx.coroutines.*
+import retrofit2.Retrofit
 
 class StudyViewModel(
     private val repository: StudyRepository,
     private val sharedPreferences: SharedPreferences,
-    private val myPageViewModel: MypageViewModel
 ) : ViewModel() {
     private val _studyProblem = MutableLiveData<StudyProblemResponse>()
     val studyProblem: LiveData<StudyProblemResponse> get() = _studyProblem
@@ -44,18 +43,22 @@ class StudyViewModel(
     val studyProgress: LiveData<List<Pair<String, String>>> get() = _studyProgress
 
     private val _currentFolderId = MutableLiveData<String>()
-    var isProblemAlreadyLoaded = false
+    private var apiService: StudyApiService? = null
+    val retrofit: Retrofit? = null
+    var isProblemAlreadySolved = false
+
+    fun setToken(token: String?) {
+        StudyRetrofitInstance.setAccessToken(token)
+    }
 
     // all folders 불러오기
-    fun loadStudyFolders() {
-        viewModelScope.launch{
-            Log.d("fraglog", "Fetching access token for study folders")
+    fun loadStudyFolders(token: String?) {
+        viewModelScope.launch {
 
-            val token = myPageViewModel.getRefreshToken() ?:
-            "default_token"
             Log.d("fraglog", "load study folders -- received token : $token")
 
             if (token != null) {
+                setToken(token)
                 repository.getStudyFolders(token) { folderList ->
                     folderList?.let {
                         Log.d("fraglog", "Folders fetched successfully: $folderList")
@@ -135,7 +138,6 @@ class StudyViewModel(
             }
         }
     }
-
 
     // progress 불러오기
     fun loadStudyProgress(folderId: String) {
@@ -241,6 +243,7 @@ class StudyViewModel(
             if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
                 currentProblemIndex++
                 loadStudyProblem(folderId) // 다음 문제 로드
+                isProblemAlreadySolved = false
             }
         }
     }
@@ -251,11 +254,11 @@ class StudyViewModel(
 }
 
 class StudyViewModelFactory(
-    private val repository: StudyRepository, private val sharedPreferences: SharedPreferences, private val myPageViewModel: MypageViewModel// 추가
+    private val repository: StudyRepository, private val sharedPreferences: SharedPreferences
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StudyViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST") return StudyViewModel(repository, sharedPreferences, myPageViewModel) as T
+            @Suppress("UNCHECKED_CAST") return StudyViewModel(repository, sharedPreferences) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -1,6 +1,5 @@
 package com.wash.washandroid.presentation.fragment.study
 
-import MypageViewModel
 import android.animation.Animator
 import android.content.Context
 import android.os.Bundle
@@ -26,7 +25,6 @@ class StudyCompleteFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var viewModel: StudyViewModel
-    private lateinit var myPageViewModel: MypageViewModel
     private lateinit var repository: StudyRepository
     private lateinit var lottieAnimationView: LottieAnimationView
     private lateinit var folderId: String
@@ -40,8 +38,7 @@ class StudyCompleteFragment : Fragment() {
         repository = StudyRepository(studyApiService)
         val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
 
-        myPageViewModel = ViewModelProvider(requireActivity()).get(MypageViewModel::class.java)
-        val factory = StudyViewModelFactory(repository, sharedPreferences, myPageViewModel)
+        val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         folderId = arguments?.getString("folderId").toString()

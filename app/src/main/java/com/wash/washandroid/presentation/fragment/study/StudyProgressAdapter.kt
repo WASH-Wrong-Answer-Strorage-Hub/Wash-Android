@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
-import com.wash.washandroid.presentation.fragment.study.data.model.StudyProblem
 
 class StudyProgressAdapter(private var progressList: List<Pair<String, String>>, private val problemIds: List<String>) :
     RecyclerView.Adapter<StudyProgressAdapter.ProgressViewHolder>() {

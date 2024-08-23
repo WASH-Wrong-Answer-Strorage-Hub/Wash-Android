@@ -2,12 +2,14 @@ package com.wash.washandroid.presentation.fragment.study
 
 import MypageViewModel
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -18,8 +20,8 @@ import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyBinding
 import com.wash.washandroid.presentation.base.MainActivity
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
-//import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance.retrofit
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
+import com.navercorp.nid.NaverIdLoginSDK.getRefreshToken
 
 class StudyFragment : Fragment() {
 
@@ -30,22 +32,26 @@ class StudyFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var viewModel: StudyViewModel
-    private lateinit var myPageViewModel: MypageViewModel
+    private val myPageViewModel: MypageViewModel by activityViewModels()
     private lateinit var repository: StudyRepository
+    private lateinit var token: String
+    private lateinit var myPageSharedPreferences: SharedPreferences
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStudyBinding.inflate(inflater, container, false)
+
         recyclerView = binding.studyRv
 
         val studyApiService = StudyRetrofitInstance.api
         repository = StudyRepository(studyApiService)
 
         val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+        myPageSharedPreferences = requireContext().getSharedPreferences("mypage_prefs", Context.MODE_PRIVATE)
 
-        myPageViewModel = ViewModelProvider(requireActivity()).get(MypageViewModel::class.java)
-        val factory = StudyViewModelFactory(repository, sharedPreferences, myPageViewModel)
+        val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         // 현재 문제 인덱스 리셋
@@ -56,7 +62,12 @@ class StudyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("StudyFragment", "onViewCreated called") // 로그 추가
+
+        // Get refresh token
+//        token = getRefreshToken() ?: ""
+        token = myPageSharedPreferences.getString("refreshToken", null) ?: " "
+//        Log.d("fraglog","refresh token 불러오기 : ${getRefreshToken()}")
+//        Log.d("fraglog","refresh token 불러오기 : ${token}")
 
         navController = Navigation.findNavController(view)
 
@@ -101,7 +112,7 @@ class StudyFragment : Fragment() {
 
         // study folders 로드
         Log.d("StudyFragment", "Attempting to load study folders") // 로그 추가
-        viewModel.loadStudyFolders()
+        viewModel.loadStudyFolders(token)
     }
 
     override fun onDestroyView() {
