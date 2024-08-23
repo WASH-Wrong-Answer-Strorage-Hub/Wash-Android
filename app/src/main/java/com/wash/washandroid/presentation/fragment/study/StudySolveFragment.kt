@@ -84,6 +84,17 @@ class StudySolveFragment : Fragment() {
         viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
             studyProblemResponse?.let {
                 binding.tvStudySolveTitle.text = it.result.folderName
+
+                // passageImages가 있는지 확인
+                val passageUrls = it.result.passageImages
+                if (passageUrls.isNullOrEmpty()) {
+                    binding.studySolveBtnDes.visibility = View.INVISIBLE
+                    Log.d("fraglog", "passageImages is null or empty, hiding button.")
+                } else {
+                    binding.studySolveBtnDes.visibility = View.VISIBLE
+                    Log.d("fraglog", "passageImages available, showing button.")
+                }
+
                 updateUI(it)
             } ?: run {
                 Log.e("fraglog", "Study problem is null, cannot update UI")
@@ -171,7 +182,7 @@ class StudySolveFragment : Fragment() {
 
     private fun openPhotoPager() {
         val currentProblem = viewModel.getCurrentProblem()
-        val passageUrls = currentProblem.result.passageImages ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg")
+        val passageUrls = currentProblem.result.passageImages ?: emptyList()
 
         Log.d("fraglog", "passageImages: $passageUrls")
 
