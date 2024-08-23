@@ -1,4 +1,4 @@
-package com.wash.washandroid.data.entity.request
+package com.wash.washandroid.presentation.fragment.mypage.data.entity.request
 
 data class RefreshTokenRequest(
     val refreshToken: String

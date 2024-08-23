@@ -1,4 +1,4 @@
-package com.wash.washandroid.data.entity.response
+package com.wash.washandroid.presentation.fragment.mypage.data.entity.response
 
 data class UserResponse (
     val isSuccess: Boolean,  // 요청 성공 여부

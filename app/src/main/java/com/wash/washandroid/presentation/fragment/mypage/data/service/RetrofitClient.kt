@@ -1,4 +1,4 @@
-package com.wash.washandroid.data.service
+package com.wash.washandroid.presentation.fragment.mypage.data.service
 
 import com.wash.washandroid.presentation.fragment.graph.GraphApiService
 import retrofit2.Retrofit
