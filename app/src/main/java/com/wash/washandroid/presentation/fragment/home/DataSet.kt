@@ -56,3 +56,20 @@ data class DeleteProblemResponse(
     @SerializedName("message") val message: String,
     @SerializedName("result") val result: String // 삭제 성공
 )
+
+//검색창
+
+// 문제 검색 응답
+data class ProblemSearchResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: List<ProblemSearch> // 문제 리스트
+)
+
+// 문제 데이터
+data class ProblemSearch(
+    @SerializedName("problemId") val problemId: String,
+    @SerializedName("problemText") val problemText: String,
+    @SerializedName("problemImage") val problemImage: String
+)

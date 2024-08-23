@@ -1,6 +1,7 @@
 import com.wash.washandroid.presentation.fragment.home.ApiResponse
 import com.wash.washandroid.presentation.fragment.home.DeleteProblemResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
+import com.wash.washandroid.presentation.fragment.home.ProblemSearchResponse
 import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -9,6 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     //전체 폴더 조회
@@ -45,4 +47,14 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("problemId") problemId: Int
     ): Call<DeleteProblemResponse>
+
+    // 문제 검색 (특정 폴더 또는 전체 문제)
+    /*    folderId == null : 전체 /    folderId != null : 특정    */
+    @GET("problems/search")
+    fun searchProblems(
+        @Header("Authorization") authHeader: String,
+        @Query("folderId") folderId: Int? = null,
+        @Query("query") query: String
+    ): Call<ProblemSearchResponse>
+
 }

@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeBinding
 import com.wash.washandroid.presentation.base.MainActivity
@@ -66,7 +67,8 @@ class HomeFragment : Fragment() {
         // 검색창
         binding.searchEditText.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSearch()
+                val query = binding.searchEditText.text.toString()
+                homeViewModel.searchProblems(query, null, refreshToken.toString()) // 전체 문제 검색
                 true
             } else {
                 false
@@ -77,8 +79,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun performSearch() {
-        val query = binding.searchEditText.text.toString()
-        Log.d("HomeFragment", "Search performed with query: $query")
+        val query = binding.searchEditText.text.toString().trim()
+
+        // 쿼리가 비어 있지 않을 때만 검색을 수행
+        if (query.isNotEmpty()) {
+            val token = mypageViewModel.getRefreshToken().toString() // 토큰 가져오기
+            homeViewModel.searchProblems(query, null, token) // 전체 문제 검색
+            Log.d("HomeFragment", "Search performed with query: $query")
+        } else {
+            Log.d("HomeFragment", "Search query is empty")
+        }
     }
 
     private fun observeViewModel() {

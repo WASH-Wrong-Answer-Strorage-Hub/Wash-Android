@@ -10,7 +10,10 @@ import com.wash.washandroid.presentation.fragment.home.DeleteProblemResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
 import com.wash.washandroid.presentation.fragment.home.HomeFragment
 import com.wash.washandroid.presentation.fragment.home.Problem
+import com.wash.washandroid.presentation.fragment.home.ProblemSearch
+import com.wash.washandroid.presentation.fragment.home.ProblemSearchResponse
 import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,6 +31,16 @@ class HomeViewModel : ViewModel() {
     val images: LiveData<List<Problem>> get() = _images
 
     private var _currentFolderId: Int? = null
+
+    // 문제 검색 결과를 위한 LiveData
+    private val _searchResults = MutableLiveData<List<ProblemSearch>>()
+    val searchResults: LiveData<List<ProblemSearch>> get() = _searchResults
+
+    // 특정 폴더 내 문제 데이터를 위한 LiveData
+    private val _folderProblems = MutableLiveData<List<Problem>>()
+    val folderProblems: LiveData<List<Problem>> get() = _folderProblems
+
+
     fun setCurrentFolderId(folderId: Int) {
         _currentFolderId = folderId
     }
@@ -159,4 +172,27 @@ class HomeViewModel : ViewModel() {
                 })
         }
     }
+
+    // 문제 검색 함수 (특정 폴더 또는 전체 문제)
+    fun searchProblems(query: String, folderId: Int?, token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val call = apiService.searchProblems(token, folderId, query)
+            call.enqueue(object : Callback<ProblemSearchResponse> {
+                override fun onResponse(call: Call<ProblemSearchResponse>, response: Response<ProblemSearchResponse>) {
+                    if (response.isSuccessful) {
+                        _searchResults.postValue(response.body()?.result)
+                    } else {
+                        // 오류 처리
+                        Log.d("HomeViewModel", "검색 오류")
+                    }
+                }
+                override fun onFailure(call: Call<ProblemSearchResponse>, t: Throwable) {
+                    // 실패 처리
+                    Log.d("HomeViewModel", "검색실패")
+                }
+            })
+        }
+    }
+
+
 }
