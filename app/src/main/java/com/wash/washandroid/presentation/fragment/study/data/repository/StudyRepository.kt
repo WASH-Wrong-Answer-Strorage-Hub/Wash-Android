@@ -81,13 +81,7 @@ class StudyRepository(private val studyApiService: StudyApiService) {
                 if (response.isSuccessful) {
                     val studyProblemResponse = response.body()
                     studyProblemResponse?.let {
-                        // null 값이 있을 경우 특정 문자열로 대체
-                        val modifiedResponse = it.copy(result = it.result.copy(
-                            passageImages = it.result.passageImages?.ifEmpty {
-                                listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg")
-                            } ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"),
-                        ))
-                        callback(modifiedResponse)
+                        callback(studyProblemResponse)
                     } ?: callback(null)
                 } else {
                     callback(dummyStudyProblemResponse)
