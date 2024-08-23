@@ -48,6 +48,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         loadName()
         loadEmail()
         loadSubscriptionStatus()
+        loadProfileImageUrl()
     }
 
     // 닉네임 설정
@@ -281,6 +282,13 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    private fun loadProfileImageUrl() {
+        val savedUrl = sharedPreferences.getString("profile_image_url", null)
+        if (savedUrl != null) {
+            _profileImageUrl.value = savedUrl
+        }
+    }
+
     fun uploadProfileImage(imagePath: String) {
         val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
@@ -297,7 +305,11 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     val uploadResponse = response.body()
                     if (uploadResponse?.isSuccess == true) {
-                        _profileImageUrl.postValue(uploadResponse.result.url)
+                        val imageUrl = uploadResponse.result.url
+                        _profileImageUrl.postValue(imageUrl)
+
+                        // URL을 SharedPreferences에 저장
+                        sharedPreferences.edit().putString("profile_image_url", imageUrl).apply()
                         Log.i(TAG, "프로필 이미지 업로드 성공: ${uploadResponse.message}")
                     } else {
                         Log.e(TAG, "프로필 이미지 업로드 실패: ${uploadResponse?.message}")

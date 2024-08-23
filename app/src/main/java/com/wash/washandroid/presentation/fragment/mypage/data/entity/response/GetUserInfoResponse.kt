@@ -11,6 +11,8 @@ data class GetUserInfoResponse(
         val nickname: String,
         val name: String,
         val provider: String,
-        val email: String
+        val email: String,
+        val profile_image_url: String,
+        val subscribe: Int
     )
 }
