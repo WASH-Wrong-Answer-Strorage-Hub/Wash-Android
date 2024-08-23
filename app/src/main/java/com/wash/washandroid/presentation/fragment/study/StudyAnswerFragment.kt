@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -16,7 +14,6 @@ import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudyAnswerBinding
 import com.wash.washandroid.presentation.base.MainActivity
-import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 
@@ -82,6 +79,7 @@ class StudyAnswerFragment : Fragment() {
             override fun onAdapterAboutToEmpty(itemsInAdapter: Int) {
                 // 어댑터가 비어가고 있을 때 동작
                 if (itemsInAdapter == 0) {
+                    viewModel.isProblemAlreadySolved = true
                     viewModel.moveToNextProblem(folderId)
                     navController.popBackStack()
                 }

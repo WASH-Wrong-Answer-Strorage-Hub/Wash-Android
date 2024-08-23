@@ -8,14 +8,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
-import com.wash.washandroid.presentation.fragment.study.data.model.response.ProblemStatus
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProblemResponse
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 import kotlinx.coroutines.*
+import retrofit2.Retrofit
 
-class StudyViewModel(private val repository: StudyRepository, private val sharedPreferences: SharedPreferences) : ViewModel() {
+class StudyViewModel(
+    private val repository: StudyRepository,
+    private val sharedPreferences: SharedPreferences,
+) : ViewModel() {
     private val _studyProblem = MutableLiveData<StudyProblemResponse>()
     val studyProblem: LiveData<StudyProblemResponse> get() = _studyProblem
     var currentProblemIndex: Int = 0
@@ -39,26 +43,39 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
     val studyProgress: LiveData<List<Pair<String, String>>> get() = _studyProgress
 
     private val _currentFolderId = MutableLiveData<String>()
-    var isProblemAlreadyLoaded = false
+    private var apiService: StudyApiService? = null
+    val retrofit: Retrofit? = null
+    var isProblemAlreadySolved = false
 
-    // all folders 불러오기
-    fun loadStudyFolders() {
-        repository.getStudyFolders { folderList ->
-            folderList?.let {
-                // orderValue 기준으로 오름차순 정렬
-                val sortedFolders = it.sortedBy { folder -> folder.orderValue }
-
-                // 폴더 이름 리스트를 생성하고 nameToIdMap을 업데이트
-                val folderNames = sortedFolders.map { folder ->
-                    nameToIdMap[folder.folderName] = folder.folderId
-                    folder.folderName
-                }
-
-                _studyFolders.postValue(folderNames)
-            } ?: Log.e("fraglog", "Failed to load folders")
-        }
+    fun setToken(token: String?) {
+        StudyRetrofitInstance.setAccessToken(token)
     }
 
+    // all folders 불러오기
+    fun loadStudyFolders(token: String?) {
+        viewModelScope.launch {
+
+            Log.d("fraglog", "load study folders -- received token : $token")
+
+            if (token != null) {
+                setToken(token)
+                repository.getStudyFolders(token) { folderList ->
+                    folderList?.let {
+                        Log.d("fraglog", "Folders fetched successfully: $folderList")
+
+                        val sortedFolders = it.sortedBy { folder -> folder.orderValue }
+                        val folderNames = sortedFolders.map { folder ->
+                            nameToIdMap[folder.folderName] = folder.folderId
+                            folder.folderName
+                        }
+                        _studyFolders.postValue(folderNames)
+                    } ?: Log.e("fraglog", "load study folders -- Failed to load folders")
+                }
+            } else {
+                Log.e("fraglog", "load study folders -- Failed to retrieve refresh token")
+            }
+        }
+    }
 
     // folder 세부 불러오기
     fun loadStudyFolderById(folderId: String) {
@@ -121,7 +138,6 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
             }
         }
     }
-
 
     // progress 불러오기
     fun loadStudyProgress(folderId: String) {
@@ -227,6 +243,7 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
             if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
                 currentProblemIndex++
                 loadStudyProblem(folderId) // 다음 문제 로드
+                isProblemAlreadySolved = false
             }
         }
     }
@@ -237,7 +254,7 @@ class StudyViewModel(private val repository: StudyRepository, private val shared
 }
 
 class StudyViewModelFactory(
-    private val repository: StudyRepository, private val sharedPreferences: SharedPreferences // 추가
+    private val repository: StudyRepository, private val sharedPreferences: SharedPreferences
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StudyViewModel::class.java)) {
