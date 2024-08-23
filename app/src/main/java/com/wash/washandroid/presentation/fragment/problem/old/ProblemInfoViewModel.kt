@@ -6,11 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wash.washandroid.presentation.fragment.category.network.CategoryApiService
 import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemApiService
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemResult
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemType
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
 class ProblemInfoViewModel : ViewModel() {
     private val _problemPhotoUri = MutableLiveData<Uri?>()
@@ -48,10 +50,10 @@ class ProblemInfoViewModel : ViewModel() {
         _remainingPhotoUris.value = uris
     }
 
-    private val retrofit = NetworkModule.getClient()
-
-    // API 인터페이스를 생성
-    private val apiService: ProblemApiService = retrofit.create(ProblemApiService::class.java)
+//    private val retrofit = NetworkModule.getClient()
+//
+//    // API 인터페이스를 생성
+//    private val apiService: ProblemApiService = retrofit.create(ProblemApiService::class.java)
 
     private val _problemInfo = MutableLiveData<ProblemResult?>()
     val problemInfo: MutableLiveData<ProblemResult?> get() = _problemInfo
@@ -65,20 +67,42 @@ class ProblemInfoViewModel : ViewModel() {
     private val _problemText = MutableLiveData<String>()
     val problemText: LiveData<String> get() = _problemText
 
+    private val _solutionPhotoList = MutableLiveData<List<String>>()
+    val solutionPhotoList: LiveData<List<String>> get() = _solutionPhotoList
+
+    private val _printPhotoList = MutableLiveData<List<String>>()
+    val printPhotoList: LiveData<List<String>> get() = _printPhotoList
+
+    private val _addPhotoList = MutableLiveData<List<String>>()
+    val addPhotoList: LiveData<List<String>> get() = _addPhotoList
+
+
+    private var retrofit: Retrofit? = null
+    private var apiService: ProblemApiService? = null
+
+    fun initialize(token: String) {
+        Log.d("ProblemInfoViewModel", "Initializing with token: $token")
+        NetworkModule.setAccessToken(token)
+        retrofit = NetworkModule.getClient()
+        apiService = retrofit?.create(ProblemApiService::class.java)
+        Log.d("ProblemInfoViewModel", "Retrofit and ApiService initialized")
+    }
+
     // 문제 정보를 API를 통해 가져오기
     fun fetchProblemInfo(problemId: String) {
         viewModelScope.launch {
             try {
-                val response = apiService.getProblemInfo(problemId)
-                if (response.isSuccess) { // 성공 여부를 직접 확인
+                val response = apiService?.getProblemInfo(problemId)
+                if (response?.isSuccess == true) { // 성공 여부를 직접 확인
                     _problemInfo.value = response.result
                     _answer.value = response.result.answer
                     _problemText.value = response.result.problemText
                     _problemType.value = response.result.problemType
                     processProblemData(response.result)
+                    processProblemListData(response.result)
                     Log.d("result", "$response.result")
                 } else {
-                    Log.e("ProblemInfoViewModel", "API Error: ${response.message}")
+                    Log.e("ProblemInfoViewModel", "API Error: ${response?.message}")
                 }
             } catch (e: Exception) {
                 Log.e("ProblemInfoViewModel", "Exception occurred: ${e.message}", e)
@@ -95,7 +119,11 @@ class ProblemInfoViewModel : ViewModel() {
             setFirstPhoto(result.solutionImages.first())
             setRemainingPhotos(result.solutionImages.drop(1))
         }
+    }
 
-        // 필요한 경우 다른 데이터 처리 로직 추가 가능
+    private fun processProblemListData(result: ProblemResult) {
+        _solutionPhotoList.value = result.solutionImages
+        _printPhotoList.value = result.passageImages
+        _addPhotoList.value = result.additionalProblemImages
     }
 }

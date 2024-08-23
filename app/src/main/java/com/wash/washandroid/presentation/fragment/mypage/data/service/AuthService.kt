@@ -1,12 +1,12 @@
-package com.wash.washandroid.data.service
+package com.wash.washandroid.presentation.fragment.mypage.data.service
 
-import com.wash.washandroid.data.entity.request.NicknameRequest
-import com.wash.washandroid.data.entity.request.RefreshTokenRequest
-import com.wash.washandroid.data.entity.response.ChangeNicknameResponse
-import com.wash.washandroid.data.entity.response.ChangeProfileImageResponse
-import com.wash.washandroid.data.entity.response.GetUserInfoResponse
-import com.wash.washandroid.data.entity.response.SubscriptionResponse
-import com.wash.washandroid.data.entity.response.UserResponse
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.NicknameRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.RefreshTokenRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.ChangeNicknameResponse
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.ChangeProfileImageResponse
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.GetUserInfoResponse
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.SubscriptionResponse
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.UserResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -60,7 +60,7 @@ interface AuthService {
     @PATCH("users/info/profileImage")
     suspend fun changeProfileImage(
         @Header("Authorization") token: String,
-        @Part imageFile: MultipartBody.Part
+        @Part file: MultipartBody.Part
     ): Response<ChangeProfileImageResponse>
 
     @PATCH("subscription/approve")

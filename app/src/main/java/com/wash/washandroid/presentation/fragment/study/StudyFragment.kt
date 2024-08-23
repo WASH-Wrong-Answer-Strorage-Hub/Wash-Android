@@ -32,7 +32,6 @@ class StudyFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var viewModel: StudyViewModel
-    private val myPageViewModel: MypageViewModel by activityViewModels()
     private lateinit var repository: StudyRepository
     private lateinit var token: String
     private lateinit var myPageSharedPreferences: SharedPreferences

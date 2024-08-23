@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.data.entity.request.NicknameRequest
-import com.wash.washandroid.data.entity.request.RefreshTokenRequest
-import com.wash.washandroid.data.service.RetrofitClient
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.NicknameRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.RefreshTokenRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.service.RetrofitClient
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -32,6 +32,10 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> get() = _email
 
+    // 프로필 이미지 URL LiveData
+    private val _profileImageUrl = MutableLiveData<String>()
+    val profileImageUrl: LiveData<String> get() = _profileImageUrl
+
     private val _isSubscribed = MutableLiveData<Boolean>()
     val isSubscribed: LiveData<Boolean> get() = _isSubscribed
 
@@ -44,11 +48,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         loadName()
         loadEmail()
         loadSubscriptionStatus()
-
-        // SharedPreferences에서 refreshToken 불러오기 (확인)
-        val savedToken = sharedPreferences.getString("refreshToken", null)
-        _refreshToken.value = savedToken
-        Log.d("fraglog", "Saved token: ${_refreshToken.value}")
+        loadProfileImageUrl()
     }
 
     // 닉네임 설정
@@ -282,6 +282,13 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    private fun loadProfileImageUrl() {
+        val savedUrl = sharedPreferences.getString("profile_image_url", null)
+        if (savedUrl != null) {
+            _profileImageUrl.value = savedUrl
+        }
+    }
+
     fun uploadProfileImage(imagePath: String) {
         val token = getRefreshToken()
         if (token.isNullOrEmpty()) {
@@ -298,6 +305,11 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     val uploadResponse = response.body()
                     if (uploadResponse?.isSuccess == true) {
+                        val imageUrl = uploadResponse.result.url
+                        _profileImageUrl.postValue(imageUrl)
+
+                        // URL을 SharedPreferences에 저장
+                        sharedPreferences.edit().putString("profile_image_url", imageUrl).apply()
                         Log.i(TAG, "프로필 이미지 업로드 성공: ${uploadResponse.message}")
                     } else {
                         Log.e(TAG, "프로필 이미지 업로드 실패: ${uploadResponse?.message}")
@@ -313,6 +325,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
 
     private fun createImagePart(filePath: String, partName: String = "file"): MultipartBody.Part {
         // 파일 경로를 사용하여 파일 객체 생성
@@ -428,7 +441,8 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
 
     // refresh token (jwt token) 반환 함수
     fun getRefreshToken(): String? {
-        return _refreshToken.value
+        val token = _refreshToken.value
+        return token ?: sharedPreferences.getString("refreshToken", null)
     }
 
     companion object {

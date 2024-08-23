@@ -38,7 +38,7 @@ data class PostFolderResponse(
     val message: String,
 
     @SerializedName("result")
-    val result: List<PostFolder>
+    val result: PostFolder
 )
 
 data class PostFolder(

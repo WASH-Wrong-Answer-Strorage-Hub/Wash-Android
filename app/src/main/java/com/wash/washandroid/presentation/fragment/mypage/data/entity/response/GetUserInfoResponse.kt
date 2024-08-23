@@ -1,4 +1,4 @@
-package com.wash.washandroid.data.entity.response
+package com.wash.washandroid.presentation.fragment.mypage.data.entity.response
 
 data class GetUserInfoResponse(
     val isSuccess: Boolean,
@@ -11,6 +11,8 @@ data class GetUserInfoResponse(
         val nickname: String,
         val name: String,
         val provider: String,
-        val email: String
+        val email: String,
+        val profile_image_url: String,
+        val subscribe: Int
     )
 }

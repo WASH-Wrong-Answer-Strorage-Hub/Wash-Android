@@ -1,4 +1,4 @@
-package com.wash.washandroid.data.entity.response
+package com.wash.washandroid.presentation.fragment.mypage.data.entity.response
 
 data class ChangeNicknameResponse(
     val isSuccess: Boolean,

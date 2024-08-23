@@ -15,6 +15,9 @@ class CategoryFolderDialogViewModel : ViewModel() {
     private val _folder = MutableLiveData<String>()
     val folder: LiveData<String> = _folder
 
+    private val _folderTypeId = MutableLiveData<Int?>()
+    val folderTypeId: MutableLiveData<Int?> = _folderTypeId
+
     private val retrofit = NetworkModule.getClient()
 
     // API 인터페이스를 생성
@@ -25,7 +28,8 @@ class CategoryFolderDialogViewModel : ViewModel() {
             try {
                 val response = apiService.postCategoryFolderType(PostFolderRequest(folder))
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val folderId = response.body()?.result?.firstOrNull()?.folderId
+                    val folderId = response.body()?.result?.folderId
+                    _folderTypeId.value = folderId
                     Log.d("folderId", "$folderId")
                 } else {
                     Log.e("CategoryFolderDialogViewModel", "Failed to add category type: ${response.errorBody()?.string()}")

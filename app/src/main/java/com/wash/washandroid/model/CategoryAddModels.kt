@@ -13,7 +13,7 @@ data class CategoryAddResponse(
     val message: String,
 
     @SerializedName("result")
-    val result: List<CategoryAddType>
+    val result: CategoryAddType
 )
 
 data class CategoryAddType(

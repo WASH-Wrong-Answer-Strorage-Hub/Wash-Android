@@ -79,14 +79,15 @@ class ProblemCategoryChapterFragment : Fragment() {
         }
 
         binding.categoryNextBtn.setOnClickListener {
-            categoryChapterViewModel.selectedButtonId.value?.let { typeId ->
-                Log.d("typeId", "$typeId")
+            val selectedTypeIds = categoryChapterViewModel.selectedButtonIds.value
+            selectedTypeIds?.let { ids ->
+                Log.d("selectedTypeIds", "$ids")
                 val bundle = Bundle().apply {
-                    putInt("selectedTypeId", typeId)
+                    putIntegerArrayList("selectedTypeIds", ArrayList(ids))
                 }
                 val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
-                with (sharedPref.edit()) {
-                    putInt("selectedChapterTypeId", typeId)
+                with(sharedPref.edit()) {
+                    putStringSet("selectedChapterTypeIds", ids.map { it.toString() }.toSet())
                     apply()
                 }
                 navController.navigate(R.id.action_navigation_problem_category_chapter_to_folder_fragment, bundle)

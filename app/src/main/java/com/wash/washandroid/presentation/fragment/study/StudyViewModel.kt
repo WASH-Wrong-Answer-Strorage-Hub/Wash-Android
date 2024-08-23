@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProblemResponse
@@ -43,9 +42,7 @@ class StudyViewModel(
     val studyProgress: LiveData<List<Pair<String, String>>> get() = _studyProgress
 
     private val _currentFolderId = MutableLiveData<String>()
-    private var apiService: StudyApiService? = null
     val retrofit: Retrofit? = null
-    var isProblemAlreadySolved = false
 
     fun setToken(token: String?) {
         StudyRetrofitInstance.setAccessToken(token)
@@ -130,6 +127,7 @@ class StudyViewModel(
                 repository.getStudyProblem(folderId, problemId) { studyProblem ->
                     studyProblem?.let {
                         _studyProblem.postValue(it)
+                        setProblemSolvedState(false)
                         Log.d("fraglog", "Problem loaded successfully for problem ID: $problemId")
                     } ?: Log.e("fraglog", "Failed to load problem for folderId: $folderId, problemId: $problemId")
                 }
@@ -162,9 +160,12 @@ class StudyViewModel(
 
             repository.sendAnswerRequest(answerRequest) { success ->
                 if (success) {
-                    Log.d("fraglog", "Answer submitted successfully with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} ")
+                    loadStudyProgress(folderId)
+                    Log.d(
+                        "fraglog", "----------- Answer submitted successfully with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} -----------"
+                    )
                 } else {
-                    Log.e("fraglog", "Failed to submit answer with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} ")
+                    Log.e("fraglog", "----------- Failed to submit answer with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} -----------")
                 }
             }
         }
@@ -243,13 +244,20 @@ class StudyViewModel(
             if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
                 currentProblemIndex++
                 loadStudyProblem(folderId) // 다음 문제 로드
-                isProblemAlreadySolved = false
             }
         }
     }
 
     fun getCorrectProblemCount(): Int {
         return _studyProgress.value?.count { it.second == "맞은 문제" } ?: 0
+    }
+
+    fun getProblemSolvedState(): Boolean {
+        return sharedPreferences.getBoolean("isProblemAlreadySolved", false)
+    }
+
+    fun setProblemSolvedState(isSolved: Boolean) {
+        sharedPreferences.edit().putBoolean("isProblemAlreadySolved", isSolved).apply()
     }
 }
 
