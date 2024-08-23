@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.data.entity.request.NicknameRequest
-import com.wash.washandroid.data.entity.request.RefreshTokenRequest
-import com.wash.washandroid.data.service.RetrofitClient
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.NicknameRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.RefreshTokenRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.service.RetrofitClient
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -31,6 +31,10 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     // 이메일 LiveData
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> get() = _email
+
+    // 프로필 이미지 URL LiveData
+    private val _profileImageUrl = MutableLiveData<String>()
+    val profileImageUrl: LiveData<String> get() = _profileImageUrl
 
     private val _isSubscribed = MutableLiveData<Boolean>()
     val isSubscribed: LiveData<Boolean> get() = _isSubscribed
@@ -113,11 +117,12 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                         Log.i(TAG, "$socialType token sent to server successfully")
 
                         // 서버로부터 받은 새로운 액세스 토큰을 헤더에서 가져옴
-                        val newAccessToken = response.headers()["authorization"]?.replace("Bearer ", "")
+                        val newRefreshToken = response.headers()["authorization"]?.replace("Bearer ", "")
 
-                        if (!newAccessToken.isNullOrEmpty()) {
-                            _refreshToken.value = newAccessToken
-                            Log.i(TAG, "New access token stored: $newAccessToken")
+                        if (!newRefreshToken.isNullOrEmpty()) {
+                            _refreshToken.value = newRefreshToken
+                            Log.i(TAG, "New access token stored: $newRefreshToken")
+                            sharedPreferences.edit().putString("refreshToken", newRefreshToken).apply()
                         } else {
                             Log.e(TAG, "Failed to retrieve new access token from server response")
                         }
@@ -292,6 +297,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     val uploadResponse = response.body()
                     if (uploadResponse?.isSuccess == true) {
+                        _profileImageUrl.postValue(uploadResponse.result.url)
                         Log.i(TAG, "프로필 이미지 업로드 성공: ${uploadResponse.message}")
                     } else {
                         Log.e(TAG, "프로필 이미지 업로드 실패: ${uploadResponse?.message}")
@@ -422,7 +428,8 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
 
     // refresh token (jwt token) 반환 함수
     fun getRefreshToken(): String? {
-        return _refreshToken.value
+        val token = _refreshToken.value
+        return token ?: sharedPreferences.getString("refreshToken", null)
     }
 
     companion object {

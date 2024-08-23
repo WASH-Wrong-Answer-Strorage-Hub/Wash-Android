@@ -183,12 +183,6 @@ class MypageFragment : Fragment() {
         // 갤러리 호출 인텐트
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
-        intent.putExtra("crop", "true")
-        intent.putExtra("aspectX", 1)
-        intent.putExtra("aspectY", 1)
-        intent.putExtra("outputX", 200)
-        intent.putExtra("outputY", 200)
-        intent.putExtra("return-data", true)
         galleryLauncher.launch(intent)
     }
 
