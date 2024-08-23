@@ -52,6 +52,7 @@ class HomeViewModel : ViewModel() {
             NetworkModule.setAccessToken(accessToken)
             apiService.getFolders("Bearer $accessToken").enqueue(object : Callback<ApiResponse> {
                 override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                    Log.d("homeviewmodel-folder", "$accessToken")
                     if (response.isSuccessful) {
                         val apiResponse = response.body()
                         if (apiResponse?.isSuccess == true) {
@@ -68,7 +69,7 @@ class HomeViewModel : ViewModel() {
                             Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
                         }
                     } else {
-                        Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
+                        Log.e("HomeViewModel-folder", "Response Error: ${response.code()} ${response.message()}")
                     }
                 }
 

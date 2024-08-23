@@ -2,12 +2,14 @@ package com.wash.washandroid.presentation.fragment.home
 
 import HomeViewModel
 import ImageAdapter
+import MypageViewModel
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,6 +28,9 @@ class HomeDetailFragment : Fragment() {
     private val COLUMN_COUNT_CONTRACTED = 3
     private val COLUMN_COUNT_MINIMUM = 1
     private var currentColumnCount = COLUMN_COUNT_EXPANDED // 초기 열의 수 설정
+
+    // 토큰 받아오기
+    private val mypageViewModel: MypageViewModel by activityViewModels()
 
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var adapter: ImageAdapter
@@ -49,7 +54,11 @@ class HomeDetailFragment : Fragment() {
         val folderName = requireArguments().getString("folderName", "폴더명")
 
         // 토큰 가져오기 (다른 ViewModel 또는 프레그먼트에서 전달된 토큰)
-        val token = requireArguments().getString("accessToken")
+        val refreshToken = mypageViewModel.getRefreshToken()
+        val bearerToken = "Bearer $refreshToken"
+        Log.d("homeFragment", "$refreshToken")
+        Log.d("homeFragment", "$bearerToken")
+
 
         // 폴더명 표시
         binding.categoryTag.text = folderName
@@ -61,8 +70,8 @@ class HomeDetailFragment : Fragment() {
         observeViewModel()
 
         // 이미지 데이터 로드
-        if (token != null) {
-            homeViewModel.fetchImagesForFolder(folderId, token)
+        if (refreshToken != null) {
+            homeViewModel.fetchImagesForFolder(folderId, refreshToken)
         }
 
         // 뒤로 가기 버튼 클릭 이벤트 설정
@@ -85,7 +94,7 @@ class HomeDetailFragment : Fragment() {
         // 검색창 동작 설정
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSearch(token, folderId) // 검색 수행 시 토큰과 폴더 ID 전달
+                performSearch(refreshToken, folderId) // 검색 수행 시 토큰과 폴더 ID 전달
                 true
             } else {
                 false

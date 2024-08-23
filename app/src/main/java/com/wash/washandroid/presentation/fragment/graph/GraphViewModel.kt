@@ -3,7 +3,7 @@ package com.wash.washandroid.presentation.fragment.graph
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.wash.washandroid.data.service.RetrofitClient
+import com.wash.washandroid.presentation.fragment.mypage.data.service.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

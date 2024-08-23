@@ -34,14 +34,6 @@ class HomeFragment : Fragment() {
     // 토큰 받아오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
 
-    // 더미 데이터 추가
-    private var dummyImages = listOf(
-        Problem(101, "이미지 1", "https://dummyimage.com/600x400/000/fff&text=Image+1", 1),
-        Problem(102, "이미지 2", "https://dummyimage.com/600x400/ff6347/fff&text=Image+2", 1),
-        Problem(103, "이미지 3", "https://dummyimage.com/600x400/4682b4/fff&text=Image+3", 2),
-        Problem(104, "이미지 4", "https://dummyimage.com/600x400/008000/fff&text=Image+4", 2)
-    )
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
