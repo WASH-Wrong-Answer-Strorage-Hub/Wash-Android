@@ -30,7 +30,7 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: NoteAdapter
     private val homeViewModel: HomeViewModel by viewModels()
 
-    //토큰 받아오기
+    // 토큰 받아오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -39,9 +39,18 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         (activity as MainActivity).hideBottomNavigation(false)
 
+        val refreshToken = mypageViewModel.getRefreshToken()
+        val bearerToken = "Bearer $refreshToken"
+        Log.d("homeFragment", "$refreshToken")
+        Log.d("homeFragment", "$bearerToken")
+
         setupRecyclerView()
         observeViewModel()
-        homeViewModel.fetchFolders()
+
+        // fetchFolders에 token을 전달
+        if (refreshToken != null) {
+            homeViewModel.fetchFolders(refreshToken)
+        }
 
         binding.editButton.setOnClickListener {
             isEditing = !isEditing
@@ -49,16 +58,12 @@ class HomeFragment : Fragment() {
             binding.editButton.text = if (isEditing) "완료" else "편집"
         }
 
-        // MypageViewModel에서 토큰 가져와서 HomeViewModel에 전달
-        val refreshToken = mypageViewModel.getRefreshToken()
-        homeViewModel.setAccessToken(refreshToken)
-
         // Search icon click listener
         binding.searchIcon.setOnClickListener {
             performSearch()
         }
 
-        //검색창
+        // 검색창
         binding.searchEditText.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch()
@@ -71,7 +76,6 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    //검색창
     private fun performSearch() {
         val query = binding.searchEditText.text.toString()
         Log.d("HomeFragment", "Search performed with query: $query")
@@ -96,7 +100,7 @@ class HomeFragment : Fragment() {
 
     private fun onCategoryClick(note: Note) {
         val bundle = Bundle().apply {
-            putInt("folderId", note.folderId) // 폴더 ID를 전달
+            putInt("folderId", note.folderId)
             putString("folderName", note.title)
         }
         val navController = findNavController()
@@ -115,7 +119,9 @@ class HomeFragment : Fragment() {
                 showDeleteConfirmationDialog(note)
             },
             onFolderNameChanged = { note ->
-                homeViewModel.updateFolderName(note.folderId, note.title)
+                homeViewModel.updateFolderName(note.folderId, note.title,
+                    mypageViewModel.getRefreshToken().toString()
+                )
             },
             isEditing = isEditing
         )
@@ -128,7 +134,9 @@ class HomeFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setMessage("폴더를 삭제하시겠습니까?\n삭제하면 해당 폴더는 복구하기 어렵습니다.")
             .setPositiveButton("확인") { dialog, _ ->
-                homeViewModel.deleteFolder(note.folderId)  // 폴더 삭제 요청
+                homeViewModel.deleteFolder(note.folderId,
+                    mypageViewModel.getRefreshToken().toString()
+                )
                 dialog.dismiss()
             }
             .setNegativeButton("취소") { dialog, _ ->

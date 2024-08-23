@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeDetailBinding
 
@@ -48,7 +47,8 @@ class HomeDetailFragment : Fragment() {
         val folderId = requireArguments().getInt("folderId")
         val folderName = requireArguments().getString("folderName", "폴더명")
 
-        val token = accessToken // Authorization Token 가져오기 (예: SharedPreferences 등에서)
+        // 액티비티 또는 다른 ViewModel에서 가져온 토큰을 전달
+        val token = requireArguments().getString("accessToken")
 
         binding.categoryTag.text = folderName // 폴더명 변경
 
@@ -87,7 +87,8 @@ class HomeDetailFragment : Fragment() {
 
         return view
     }
-        //검색창
+
+    // 검색창 기능
     private fun performSearch() {
         val query = binding.searchEditText.text.toString()
         Log.d("HomeFragment", "Search performed with query: $query")
@@ -128,13 +129,16 @@ class HomeDetailFragment : Fragment() {
 
     private fun showDeleteConfirmationDialog(position: Int) {
         AlertDialog.Builder(requireContext())
-            .setMessage("이미지를 삭제하시겠습니까?\n삭제하면 해당 이미지가 복구할 수 없습니다.")
-            .setPositiveButton("확인") { dialog, id ->
+            .setMessage("이미지를 삭제하시겠습니까?\n삭제하면 해당 이미지를 복구할 수 없습니다.")
+            .setPositiveButton("확인") { dialog, _ ->
                 val problemId = adapter.items[position].problemId
                 val folderId = requireArguments().getInt("folderId")
-                homeViewModel.deleteProblem(problemId, folderId)
+                val token = requireArguments().getString("accessToken")
+                if (token != null) {
+                    homeViewModel.deleteProblem(problemId, folderId, token)
+                }
             }
-            .setNegativeButton("취소") { dialog, id ->
+            .setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
@@ -146,18 +150,18 @@ class HomeDetailFragment : Fragment() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             if (detector.scaleFactor > 1) { // 축소
                 if (currentColumnCount > COLUMN_COUNT_CONTRACTED) { //3보다 클 때 (5개)
-                    currentColumnCount = currentColumnCount - 2
+                    currentColumnCount -= 2
                     setupRecyclerView(currentColumnCount)
                 } else if (currentColumnCount > COLUMN_COUNT_MINIMUM) { //1보다 클 때 (3개)
-                    currentColumnCount = currentColumnCount - 2
+                    currentColumnCount -= 2
                     setupRecyclerView(currentColumnCount)
                 }
             } else if (detector.scaleFactor < 1) { // 확대
                 if (currentColumnCount < COLUMN_COUNT_EXPANDED) { //현재 열이 5보다 작을 때 (3일때)
-                    currentColumnCount = currentColumnCount + 2
+                    currentColumnCount += 2
                     setupRecyclerView(currentColumnCount)
                 } else if (currentColumnCount < COLUMN_COUNT_CONTRACTED) { //현재 열이 3보다 작을 때 (1일때)
-                    currentColumnCount = currentColumnCount + 2
+                    currentColumnCount += 2
                     setupRecyclerView(currentColumnCount)
                 }
             }
