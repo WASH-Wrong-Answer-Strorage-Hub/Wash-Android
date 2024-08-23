@@ -60,7 +60,7 @@ interface AuthService {
     @PATCH("users/info/profileImage")
     suspend fun changeProfileImage(
         @Header("Authorization") token: String,
-        @Part imageFile: MultipartBody.Part
+        @Part file: MultipartBody.Part
     ): Response<ChangeProfileImageResponse>
 
     @PATCH("subscription/approve")
