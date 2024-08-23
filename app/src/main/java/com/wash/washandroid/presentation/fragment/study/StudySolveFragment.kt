@@ -1,5 +1,8 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import MypageViewModel
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -30,21 +33,22 @@ class StudySolveFragment : Fragment() {
     private lateinit var repository: StudyRepository
     private lateinit var folderId: String
     private lateinit var folderName: String
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStudySolveBinding.inflate(inflater, container, false)
 
-        folderId = arguments?.getString("folderId") ?: "1"
+        folderId = arguments?.getInt("folderId").toString()
         folderName = arguments?.getString("folderName") ?: "folderName"
 
         val studyApiService = StudyRetrofitInstance.api
         repository = StudyRepository(studyApiService)
 
-        val factory = StudyViewModelFactory(repository)
+        sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+
+        val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
 
         return binding.root
@@ -56,73 +60,31 @@ class StudySolveFragment : Fragment() {
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
 
-        // Bottom navigation bar 숨기기
         (activity as MainActivity).hideBottomNavigation(true)
 
-        // recycler view 설정
-        binding.rvDrawerProgress.layoutManager = LinearLayoutManager(requireContext())
-        val progressAdapter = StudyProgressAdapter(emptyList())
-        binding.rvDrawerProgress.adapter = progressAdapter
+        setupRecyclerView()
+        observeViewModel()
 
-        // 문제 id 가져오기
-//        viewModel.setDummyProblemIds() // 더미 데이터
-//        viewModel.loadStudyProblem(folderId)
-
-        viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
-            if (!problemIds.isNullOrEmpty()) {
-                Log.d("fraglog", "Problem IDs are ready, calling loadStudyProblem for folderId: $folderId")
-                viewModel.loadStudyProblem(folderId)
-            } else {
-                Log.e("fraglog", "Problem IDs are null or empty")
-            }
-        })
-
-        viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
-            binding.tvStudySolveTitle.text = studyProblemResponse.result.folderName
-            updateUI(studyProblemResponse)
-        })
-
-        // 진척도 로드
-        viewModel.loadStudyProgress(folderId = folderId)
-
-        // 진척도 업데이트를 관찰하여 RecyclerView에 반영
-        viewModel.studyProgress.observe(viewLifecycleOwner, Observer { progressList ->
-            // 서버로부터 가져온 progressList를 어댑터에 업데이트
-            progressAdapter.updateProgressList(progressList)
-        })
-
-        // 지문 보기
-        binding.studySolveBtnDes.setOnClickListener {
-            openPhotoPager()
+        // 문제 해결 여부에 따른 문제 이동
+        if (viewModel.isProblemAlreadySolved) {
+            Log.d("fraglog", "Problem already solved, moving to next problem")
+            viewModel.isProblemAlreadySolved = false // 플래그를 초기화
+            viewModel.moveToNextProblem(folderId)
+        } else {
+            // 문제가 해결되지 않은 경우 현재 문제 로드
+            viewModel.loadStudyProblem(folderId)
         }
 
-        // 왼쪽 화살표 클릭 시 이전 문제로 이동
         binding.ivLeftArrow.setOnClickListener {
             viewModel.moveToPreviousProblem(folderId)
-            setupObservers()
         }
 
-        // 오른쪽 화살표 클릭 시 다음 문제로 이동
         binding.ivRightArrow.setOnClickListener {
             viewModel.moveToNextProblem(folderId)
-            setupObservers()
         }
 
-        binding.studySolveBackBtn.setOnClickListener {
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study)
-        }
-
-        // 정답 확인 버튼 클릭
         binding.studySolveBtnAnswer.setOnClickListener {
-            val currentProblem = viewModel.studyProblem.value
-            val bundle = bundleOf(
-                "folderId" to folderId,
-                "problemId" to currentProblem?.result?.problemId,
-                "answer" to currentProblem?.result?.answer
-            )
-//                Toast.makeText(requireContext(), "solve -- id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
-
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
+            navigateToAnswerFragment()
         }
 
         binding.ivDrawer.setOnClickListener {
@@ -132,39 +94,46 @@ class StudySolveFragment : Fragment() {
         binding.btnRvDrawerFinish.setOnClickListener {
             navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_complete)
         }
+
+        binding.studySolveBackBtn.setOnClickListener {
+            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study)
+        }
     }
 
-    // UI 업데이트 함수
+    private fun setupRecyclerView() {
+        binding.rvDrawerProgress.layoutManager = LinearLayoutManager(requireContext())
+        val problemIds = viewModel.loadProblemIdsFromPreferences(sharedPreferences)
+        val progressAdapter = StudyProgressAdapter(problemIds.map { it to "미완료" }, problemIds)
+        binding.rvDrawerProgress.adapter = progressAdapter
+
+        viewModel.studyProgress.observe(viewLifecycleOwner, Observer { progressList ->
+            progressAdapter.updateProgressList(progressList)
+        })
+    }
+
+    private fun observeViewModel() {
+        viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
+            studyProblemResponse?.let {
+                updateUI(it)
+            } ?: Log.e("fraglog", "Study problem is null, cannot update UI")
+        })
+    }
+
     private fun updateUI(problem: StudyProblemResponse) {
         binding.tvStudySolveProblemId.text = "문제 " + (viewModel.currentProblemIndex + 1)
         val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() }
             ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
-
-        Glide.with(this)
-            .load(imageUrl)
-            .into(binding.ivSolveCard)
+        Glide.with(this).load(imageUrl).into(binding.ivSolveCard)
     }
 
-    private fun openPhotoPager() {
-        val currentProblem = viewModel.getCurrentProblem()
-        val passageUrls = currentProblem.result.passageImages // 지문 list 가져오기
-
-        Log.d("fraglog", "passageImage: $passageUrls")
-
-        // passageImage를 passageUrls 설정
-        viewModel.setPhotoUris(passageUrls ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"))
-
-        // initialPosition: 0
-        viewModel.setSelectedPhotoPosition(0)
-
-        // 네비게이션으로 뷰페이저로 이동
-        navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_photo_slider)
-    }
-
-    private fun setupObservers() {
-        viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
-            updateUI(studyProblemResponse)
-        })
+    private fun navigateToAnswerFragment() {
+        val currentProblem = viewModel.studyProblem.value
+        val bundle = bundleOf(
+            "folderId" to folderId,
+            "problemId" to currentProblem?.result?.problemId,
+            "answer" to currentProblem?.result?.answer
+        )
+        navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
     }
 
     override fun onDestroyView() {

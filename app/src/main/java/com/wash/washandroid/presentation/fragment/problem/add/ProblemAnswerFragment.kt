@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -196,6 +197,20 @@ class ProblemAnswerFragment : Fragment() {
 
         binding.root.setOnClickListener {
             hideKeyboard()
+        }
+
+        val selectedPhotos = arguments?.getStringArrayList("selectedPhotos")
+
+        if (!selectedPhotos.isNullOrEmpty()) {
+            // 첫 번째 사진을 problem_info_photo에 배치
+            val firstPhotoUri = selectedPhotos[0]
+            binding.problemInfoPhoto.setImageURI(firstPhotoUri.toUri())
+            binding.problemInfoPhoto.clipToOutline = true
+
+            // 나머지 사진들은 problemInfoAddRv에 배치
+            val remainingPhotos = selectedPhotos.subList(1, selectedPhotos.size)
+            addPhotoList.addAll(remainingPhotos)
+            addAdapter.notifyDataSetChanged()
         }
     }
 

@@ -158,25 +158,40 @@ class CropOverlayView(context: Context, attrs: AttributeSet) : View(context, att
 
     // 사각형 크기 조정 로직
     private fun updateRect(x: Float, y: Float, rect: RectF, corner: Corner) {
+        val minWidth = 100f  // 사각형의 최소 너비
+        val minHeight = 100f // 사각형의 최소 높이
+
         when (corner) {
             Corner.TOP_LEFT -> {
-                rect.left = x
-                rect.top = y
+                // 좌상단 모서리 이동 시
+                val newLeft = x.coerceAtMost(rect.right - minWidth)
+                val newTop = y.coerceAtMost(rect.bottom - minHeight)
+                rect.left = newLeft
+                rect.top = newTop
             }
 
             Corner.TOP_RIGHT -> {
-                rect.right = x
-                rect.top = y
+                // 우상단 모서리 이동 시
+                val newRight = x.coerceAtLeast(rect.left + minWidth)
+                val newTop = y.coerceAtMost(rect.bottom - minHeight)
+                rect.right = newRight
+                rect.top = newTop
             }
 
             Corner.BOTTOM_LEFT -> {
-                rect.left = x
-                rect.bottom = y
+                // 좌하단 모서리 이동 시
+                val newLeft = x.coerceAtMost(rect.right - minWidth)
+                val newBottom = y.coerceAtLeast(rect.top + minHeight)
+                rect.left = newLeft
+                rect.bottom = newBottom
             }
 
             Corner.BOTTOM_RIGHT -> {
-                rect.right = x
-                rect.bottom = y
+                // 우하단 모서리 이동 시
+                val newRight = x.coerceAtLeast(rect.left + minWidth)
+                val newBottom = y.coerceAtLeast(rect.top + minHeight)
+                rect.right = newRight
+                rect.bottom = newBottom
             }
         }
     }

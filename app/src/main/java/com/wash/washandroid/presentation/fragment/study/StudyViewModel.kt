@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.study
 
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -7,14 +8,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.presentation.fragment.study.data.model.StudyFolder
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyApiService
+import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
-import com.wash.washandroid.presentation.fragment.study.data.model.response.ProblemStatus
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProblemResponse
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 import kotlinx.coroutines.*
+import retrofit2.Retrofit
 
-class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
+class StudyViewModel(
+    private val repository: StudyRepository,
+    private val sharedPreferences: SharedPreferences,
+) : ViewModel() {
     private val _studyProblem = MutableLiveData<StudyProblemResponse>()
     val studyProblem: LiveData<StudyProblemResponse> get() = _studyProblem
     var currentProblemIndex: Int = 0
@@ -38,26 +43,39 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
     val studyProgress: LiveData<List<Pair<String, String>>> get() = _studyProgress
 
     private val _currentFolderId = MutableLiveData<String>()
-    val currentFolderId: LiveData<String> get() = _currentFolderId
+    private var apiService: StudyApiService? = null
+    val retrofit: Retrofit? = null
+    var isProblemAlreadySolved = false
 
-    // all folders 불러오기
-    fun loadStudyFolders() {
-        repository.getStudyFolders { folderList ->
-            folderList?.let {
-                // orderValue 기준으로 오름차순 정렬
-                val sortedFolders = it.sortedBy { folder -> folder.orderValue }
-
-                // 폴더 이름 리스트를 생성하고 nameToIdMap을 업데이트
-                val folderNames = sortedFolders.map { folder ->
-                    nameToIdMap[folder.folderName] = folder.folderId
-                    folder.folderName
-                }
-
-                _studyFolders.postValue(folderNames)
-            } ?: Log.e("fraglog", "Failed to load folders")
-        }
+    fun setToken(token: String?) {
+        StudyRetrofitInstance.setAccessToken(token)
     }
 
+    // all folders 불러오기
+    fun loadStudyFolders(token: String?) {
+        viewModelScope.launch {
+
+            Log.d("fraglog", "load study folders -- received token : $token")
+
+            if (token != null) {
+                setToken(token)
+                repository.getStudyFolders(token) { folderList ->
+                    folderList?.let {
+                        Log.d("fraglog", "Folders fetched successfully: $folderList")
+
+                        val sortedFolders = it.sortedBy { folder -> folder.orderValue }
+                        val folderNames = sortedFolders.map { folder ->
+                            nameToIdMap[folder.folderName] = folder.folderId
+                            folder.folderName
+                        }
+                        _studyFolders.postValue(folderNames)
+                    } ?: Log.e("fraglog", "load study folders -- Failed to load folders")
+                }
+            } else {
+                Log.e("fraglog", "load study folders -- Failed to retrieve refresh token")
+            }
+        }
+    }
 
     // folder 세부 불러오기
     fun loadStudyFolderById(folderId: String) {
@@ -65,13 +83,28 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
             Log.d("fraglog", "Loading folder with ID: $folderId")
             repository.getStudyFolderId(folderId) { folder ->
                 folder?.let {
-                    _problemIds.postValue(it.problemIds)
+                    _problemIds.value = it.problemIds
+                    saveProblemIdsToPreferences(it.problemIds) // SharedPreferences에 저장
                     setCurrentFolderId(folderId)
                     Log.d("fraglog", "***Problem IDs loaded***: ${it.problemIds}")
-                    Log.d("fraglog", "**viewModel problemIds**: ${_problemIds.value}")
+
+                    // problemIds가 null이면 재시도
+                    if (_problemIds.value.isNullOrEmpty()) {
+                        Log.e("fraglog", "Problem IDs are null, retrying...")
+                        _problemIds.value = it.problemIds
+                    }
                 } ?: Log.e("fraglog", "Failed to load folder for id: $folderId")
             }
         }
+    }
+
+    // SharedPreferences에 problemIds 저장
+    private fun saveProblemIdsToPreferences(problemIds: List<String>) {
+        val editor = sharedPreferences.edit()
+        editor.putStringSet("problem_ids", problemIds.toSet())
+        editor.apply()
+
+        Log.d("fraglog", "SharedPreferences -- problem IDs saved: $problemIds")
     }
 
     // name으로 id 찾기
@@ -79,114 +112,115 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
         return nameToIdMap[name]
     }
 
-    fun setDummyProblemIds() {
-        _problemIds.value = listOf("16", "17", "20", "21")
+    // SharedPreferences에서 problemIds 불러오기
+    private fun loadProblemIdsFromPreferences(): List<String>? {
+        val savedProblemIds = sharedPreferences.getStringSet("problem_ids", emptySet())
+        return savedProblemIds?.toList()
     }
 
-    // problem 불러오기
     fun loadStudyProblem(folderId: String) {
-        Log.d("fraglog", "loadstudyproblem -- problem IDs: ${_problemIds.value}, cur prob index: $currentProblemIndex")
-        val problemIds = _problemIds.value
-        if (problemIds != null && problemIds.isNotEmpty() && currentProblemIndex in problemIds.indices) {
-            val problemId = problemIds[currentProblemIndex]
-            Log.d("fraglog", "Attempting to load problem with ID: $problemId for folder ID: $folderId")
+        viewModelScope.launch {
+            val problemIds = loadProblemIdsFromPreferences()
+            Log.d("fraglog", "loadstudyproblem -- problem IDs: $problemIds, cur prob index: $currentProblemIndex")
 
-            repository.getStudyProblem(folderId, problemId) { studyProblem ->
-                studyProblem?.let {
-                    _studyProblem.postValue(it)
-                    Log.d("fraglog", "Problem loaded successfully for problem ID: $problemId")
-                } ?: Log.e("fraglog", "Failed to load problem for folderId: $folderId, problemId: $problemId")
-            }
-        } else {
-            Log.e("fraglog", "Problem IDs are not initialized or index out of bounds. Current index: $currentProblemIndex")
-        }
-    }
+            if (!problemIds.isNullOrEmpty() && currentProblemIndex in problemIds.indices) {
+                val problemId = problemIds[currentProblemIndex]
+                Log.d("fraglog", "Attempting to load problem with ID: $problemId for folder ID: $folderId")
 
-    fun loadStudyProblemWithRetryCoroutine(folderId: String) {
-        val retries = 5
-        val delayTime = 1100L // 0.1초
-
-        GlobalScope.launch(Dispatchers.Main) {
-            var attempt = 0
-            var success = false
-
-            while (attempt < retries) {
-                val problemIds = _problemIds.value
-                Log.d("fraglog", "problemIds:${_problemIds.value}")
-                if (!problemIds.isNullOrEmpty() && currentProblemIndex in problemIds.indices) {
-                    // 문제 ID가 로드되면 문제 로드 실행
-                    loadStudyProblem(folderId)
-                    success = true
-                    break
-                } else {
-                    // problemIds가 없으면 재시도
-                    Log.e("fraglog", "Problem IDs are null or empty. Retrying... ($attempt/$retries)")
-                    attempt++
-                    delay(delayTime) // 0.1초 대기
+                repository.getStudyProblem(folderId, problemId) { studyProblem ->
+                    studyProblem?.let {
+                        _studyProblem.postValue(it)
+                        Log.d("fraglog", "Problem loaded successfully for problem ID: $problemId")
+                    } ?: Log.e("fraglog", "Failed to load problem for folderId: $folderId, problemId: $problemId")
                 }
-            }
-
-            if (!success) {
-                Log.e("fraglog", "Failed to load problem IDs after $retries retries.")
-                // 예외 처리 로직 추가 (필요 시 UI 메시지 표시 등)
+            } else {
+                Log.e("fraglog", "Problem IDs are not initialized or index out of bounds. Current index: $currentProblemIndex")
             }
         }
     }
-
 
     // progress 불러오기
     fun loadStudyProgress(folderId: String) {
-        repository.getStudyProgress(folderId) { response ->
-            response?.let {
-                val sortedProgress = it.result.sortedBy { problemStatus -> problemStatus.problemId.toInt() }
-                val progressList = sortedProgress.map { progress ->
-                    Pair(progress.problemId, progress.status)
-                }
-                _studyProgress.postValue(progressList)
-                Log.d("fraglog", "progress : $sortedProgress")
-            } ?: Log.e("fraglog", "Failed to load study progress")
+        viewModelScope.launch {
+            repository.getStudyProgress(folderId) { response ->
+                response?.let {
+                    val sortedProgress = it.result.sortedBy { problemStatus -> problemStatus.problemId.toInt() }
+                    val progressList = sortedProgress.map { progress ->
+                        Pair(progress.problemId, progress.status)
+                    }
+                    _studyProgress.postValue(progressList)
+                    Log.d("fraglog", "folderId: $folderId  progress : $sortedProgress")
+                } ?: Log.e("fraglog", "Failed to load study progress")
+            }
         }
     }
 
     // answer 여부 보내기
     fun submitAnswer(folderId: String, problemId: String, swipeDirection: String) {
-        val answerRequest = AnswerRequest(folderId, problemId, swipeDirection)
+        viewModelScope.launch {
+            val answerRequest = AnswerRequest(folderId, problemId, swipeDirection)
 
-        repository.sendAnswerRequest(folderId, problemId, answerRequest) { success ->
-            if (success) {
-                Log.d("fraglog", "Answer submitted successfully {$answerRequest} ")
-            } else {
-                Log.e("fraglog", "Failed to submit answer {$answerRequest} ")
+            repository.sendAnswerRequest(answerRequest) { success ->
+                if (success) {
+                    Log.d("fraglog", "Answer submitted successfully with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} ")
+                } else {
+                    Log.e("fraglog", "Failed to submit answer with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} ")
+                }
             }
         }
     }
 
-    // 폴더 ID를 설정하는 함수
     fun setCurrentFolderId(folderId: String) {
         _currentFolderId.value = folderId
     }
 
-    // 폴더 ID를 가져오는 함수
     fun getCurrentFolderId(): String? {
         return _currentFolderId.value
     }
 
+    fun loadProblemIdsFromPreferences(sharedPreferences: SharedPreferences): List<String> {
+        val savedProblemIds = sharedPreferences.getStringSet("problem_ids", emptySet())
+        return savedProblemIds?.toList() ?: emptyList()
+    }
 
     fun setPhotoUris(uris: List<String>) {
-        _photoUris.value = uris
+        Log.d("fraglog", "viewModel -- Saving photo URIs to SharedPreferences: $uris")
+
+        val editor = sharedPreferences.edit()
+        val urisString = uris.joinToString(",") // 쉼표로 구분된 문자열로 저장
+        editor.putString("photo_uris", urisString)
+
+        val success = editor.commit()
+
+        if (success) {
+            Log.d("fraglog", "Successfully saved photo URIs to SharedPreferences")
+        } else {
+            Log.e("fraglog", "Failed to save photo URIs to SharedPreferences")
+        }
+
+        val savedUrisString = sharedPreferences.getString("photo_uris", "")
+        Log.d("fraglog", "Immediately after saving, photo URIs in SharedPreferences: $savedUrisString")
+    }
+
+    fun loadPhotoUrisFromPreferences(): List<String> {
+        val savedUrisString = sharedPreferences.getString("photo_uris", "")
+
+        Log.d("fraglog", "Loaded photo URIs from SharedPreferences before split: $savedUrisString")
+
+        val savedUris = savedUrisString?.split(",")?.filter { it.isNotBlank() } ?: emptyList()
+
+        Log.d("fraglog", "Loaded photo URIs from SharedPreferences after split: $savedUris")
+
+        return savedUris
     }
 
     fun setSelectedPhotoPosition(position: Int) {
         _selectedPhotoPosition.value = position
     }
 
-    // 현재 문제 인덱스를 초기화
+    // 현재 문제 인덱스 초기화
     fun resetCurrentProblemIndex() {
         currentProblemIndex = 0
-    }
-
-    fun getTotalProblems(): Int {
-        return _problemIds.value?.size ?: 0
     }
 
     // 현재 문제 가져오기
@@ -204,19 +238,14 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
 
     // 다음 문제로 이동
     fun moveToNextProblem(folderId: String) {
-        val problemIds = _problemIds.value
-        if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
-            currentProblemIndex++
-            loadStudyProblem(folderId) // 다음 문제 로드
+        viewModelScope.launch {
+            val problemIds = loadProblemIdsFromPreferences()
+            if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
+                currentProblemIndex++
+                loadStudyProblem(folderId) // 다음 문제 로드
+                isProblemAlreadySolved = false
+            }
         }
-    }
-
-    fun incrementRightSwipe() {
-//        rightSwipeCount++
-    }
-
-    fun incrementLeftSwipe() {
-//        leftSwipeCount++
     }
 
     fun getCorrectProblemCount(): Int {
@@ -224,11 +253,12 @@ class StudyViewModel(private val repository: StudyRepository) : ViewModel() {
     }
 }
 
-class StudyViewModelFactory(private val repository: StudyRepository) : ViewModelProvider.Factory {
+class StudyViewModelFactory(
+    private val repository: StudyRepository, private val sharedPreferences: SharedPreferences
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StudyViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return StudyViewModel(repository) as T
+            @Suppress("UNCHECKED_CAST") return StudyViewModel(repository, sharedPreferences) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

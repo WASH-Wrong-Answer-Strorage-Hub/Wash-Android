@@ -6,12 +6,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object StudyRetrofitInstance {
-    private const val BASE_URL = "https://dev.team-wash.store/"
+    private const val BASE_URL = "http://192.168.45.39:3000"
 
     // Access token 설정
-    private var accessToken: String? = " "
+    private var accessToken: String? = null
 
-    // OkHttpClient에 Access token을 추가하는 Interceptor
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor { chain ->
@@ -29,7 +28,6 @@ object StudyRetrofitInstance {
             .build()
     }
 
-    // Retrofit 인스턴스 생성
     val api: StudyApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -38,4 +36,9 @@ object StudyRetrofitInstance {
             .build()
             .create(StudyApiService::class.java)
     }
+
+    fun setAccessToken(token: String?) {
+        accessToken = token
+    }
+
 }

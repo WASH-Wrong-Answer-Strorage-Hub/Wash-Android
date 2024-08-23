@@ -36,6 +36,8 @@ class GraphFragment : Fragment() {
 
         val refreshToken = mypageViewModel.getRefreshToken() // MypageViewModel에서 refreshToken을 가져옴
         val bearerToken = "Bearer $refreshToken"
+        Log.d("graphFragment","$refreshToken")
+        Log.d("graphFragment","$bearerToken")
 
         viewModel.fetchMistakeData(bearerToken)
         viewModel.fetchTypeData(bearerToken)

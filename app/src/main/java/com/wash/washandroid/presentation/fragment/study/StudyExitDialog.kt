@@ -38,8 +38,7 @@ class StudyExitDialog : DialogFragment() {
 
         // 확인 버튼 클릭 리스너
         binding.btnDialogConfirm.setOnClickListener {
-            navController.navigate(R.id.action_navigation_study_answer_to_navigation_study_solve)
-//            NavOptions.Builder().setPopUpTo(R.id.navigation_study_answer, true).build()
+            navController.popBackStack(R.id.navigation_study_solve, false)
             dismiss()
         }
 

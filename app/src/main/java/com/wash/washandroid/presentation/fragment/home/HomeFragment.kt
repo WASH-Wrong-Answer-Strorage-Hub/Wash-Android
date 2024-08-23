@@ -1,14 +1,20 @@
 package com.wash.washandroid.presentation.fragment.home
 
+import HomeViewModel
+import MypageViewModel
 import Note
 import NoteAdapter
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.wash.washandroid.R
@@ -22,6 +28,10 @@ class HomeFragment : Fragment() {
     private var isEditing = false
 
     private lateinit var adapter: NoteAdapter
+    private val homeViewModel: HomeViewModel by viewModels()
+
+    // 토큰 받아오기
+    private val mypageViewModel: MypageViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -29,7 +39,18 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         (activity as MainActivity).hideBottomNavigation(false)
 
+        val refreshToken = mypageViewModel.getRefreshToken()
+        val bearerToken = "Bearer $refreshToken"
+        Log.d("homeFragment", "$refreshToken")
+        Log.d("homeFragment", "$bearerToken")
+
         setupRecyclerView()
+        observeViewModel()
+
+        // fetchFolders에 token을 전달
+        if (refreshToken != null) {
+            homeViewModel.fetchFolders(refreshToken)
+        }
 
         binding.editButton.setOnClickListener {
             isEditing = !isEditing
@@ -37,36 +58,70 @@ class HomeFragment : Fragment() {
             binding.editButton.text = if (isEditing) "완료" else "편집"
         }
 
+        // Search icon click listener
+        binding.searchIcon.setOnClickListener {
+            performSearch()
+        }
+
+        // 검색창
+        binding.searchEditText.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                performSearch()
+                true
+            } else {
+                false
+            }
+        }
+
         return binding.root
     }
 
-    private fun onCategoryClick(note: Note) {
-        val navController = findNavController()
-        val currentDestination = navController.currentDestination?.id
-        Log.d("HomeFragment", "Navigating to HomeDetailFragment")
-        Log.d("HomeFragment", "Current destination: $currentDestination")
-        navController.navigate(R.id.action_navigation_home_to_homeDetailFragment)
+    private fun performSearch() {
+        val query = binding.searchEditText.text.toString()
+        Log.d("HomeFragment", "Search performed with query: $query")
     }
 
+    private fun observeViewModel() {
+        homeViewModel.notes.observe(viewLifecycleOwner, { notes ->
+            adapter.updateNotes(notes)
+            updateEmptyViewVisibility(notes.isEmpty())
+        })
+    }
+
+    private fun updateEmptyViewVisibility(isEmpty: Boolean) {
+        if (isEmpty) {
+            binding.emptyView.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+        } else {
+            binding.emptyView.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun onCategoryClick(note: Note) {
+        val bundle = Bundle().apply {
+            putInt("folderId", note.folderId)
+            putString("folderName", note.title)
+        }
+        val navController = findNavController()
+        Log.d("HomeFragment", "Navigating to HomeDetailFragment with folderId: ${note.folderId}")
+        navController.navigate(R.id.action_navigation_home_to_homeDetailFragment, bundle)
+    }
 
     private fun setupRecyclerView() {
-        val notes = listOf(
-            Note("국어", R.drawable.ic_listitem_frame),
-            Note("수학", R.drawable.ic_listitem_frame),
-            Note("영어", R.drawable.ic_listitem_frame),
-            Note("untitled", R.drawable.ic_listitem_frame),
-            Note("2024 토플", R.drawable.ic_listitem_frame)
-        )
-
         adapter = NoteAdapter(
-            notes = notes,
+            notes = mutableListOf(),
             onItemClick = { note ->
                 Log.d("HomeFragment", "${note.title} 클릭됨")
                 onCategoryClick(note)
-                Log.d("HomeFragment", "${note.title} 네비게이션")
             },
             onDeleteClick = { note ->
-                showDeleteConfirmationDialog()
+                showDeleteConfirmationDialog(note)
+            },
+            onFolderNameChanged = { note ->
+                homeViewModel.updateFolderName(note.folderId, note.title,
+                    mypageViewModel.getRefreshToken().toString()
+                )
             },
             isEditing = isEditing
         )
@@ -75,13 +130,16 @@ class HomeFragment : Fragment() {
         binding.recyclerView.adapter = adapter
     }
 
-    private fun showDeleteConfirmationDialog() {
+    private fun showDeleteConfirmationDialog(note: Note) {
         AlertDialog.Builder(requireContext())
             .setMessage("폴더를 삭제하시겠습니까?\n삭제하면 해당 폴더는 복구하기 어렵습니다.")
-            .setPositiveButton("확인") { dialog, id ->
-                Log.d("HomeFragment", "폴더가 삭제되었습니다.")
+            .setPositiveButton("확인") { dialog, _ ->
+                homeViewModel.deleteFolder(note.folderId,
+                    mypageViewModel.getRefreshToken().toString()
+                )
+                dialog.dismiss()
             }
-            .setNegativeButton("취소") { dialog, id ->
+            .setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
