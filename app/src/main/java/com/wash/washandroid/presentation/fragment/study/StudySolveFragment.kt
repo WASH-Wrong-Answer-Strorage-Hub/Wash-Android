@@ -75,6 +75,11 @@ class StudySolveFragment : Fragment() {
             viewModel.loadStudyProblem(folderId)
         }
 
+        // 지문 보기
+        binding.studySolveBtnDes.setOnClickListener {
+            openPhotoPager()
+        }
+
         binding.ivLeftArrow.setOnClickListener {
             viewModel.moveToPreviousProblem(folderId)
         }
@@ -83,6 +88,16 @@ class StudySolveFragment : Fragment() {
             viewModel.moveToNextProblem(folderId)
         }
 
+        // 문제 이미지 클릭 리스너
+        binding.ivSolveCard.setOnClickListener {
+            val currentProblem = viewModel.getCurrentProblem()
+            val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+
+            val bundle = bundleOf("image_url" to imageUrl)
+            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle)
+        }
+
+        // 정답 확인 버튼 클릭 리스너
         binding.studySolveBtnAnswer.setOnClickListener {
             navigateToAnswerFragment()
         }
@@ -92,7 +107,8 @@ class StudySolveFragment : Fragment() {
         }
 
         binding.btnRvDrawerFinish.setOnClickListener {
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_complete)
+            val bundle = bundleOf("folderId" to folderId)
+            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_complete, bundle)
         }
 
         binding.studySolveBackBtn.setOnClickListener {
@@ -134,6 +150,29 @@ class StudySolveFragment : Fragment() {
             "answer" to currentProblem?.result?.answer
         )
         navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
+    }
+
+    private fun openPhotoPager() {
+        val currentProblem = viewModel.getCurrentProblem()
+        val passageUrls = currentProblem.result.passageImages ?: listOf("https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg")
+
+        Log.d("fraglog", "passageImages: $passageUrls")
+
+        // passageImage를 SharedPreferences에 저장
+        viewModel.setPhotoUris(passageUrls)
+
+        val sharedPreferences = requireContext().getSharedPreferences("your_shared_prefs", Context.MODE_PRIVATE)
+        val savedUrisString = sharedPreferences.getString("photo_uris", "")
+
+        Log.d("fraglog", "Loaded photo URIs from SharedPreferences before split: $savedUrisString")
+
+        val savedUris = savedUrisString?.split(",")?.filter { it.isNotBlank() } ?: emptyList()
+
+        Log.d("fraglog", "Loaded photo URIs from SharedPreferences after split: $savedUris")
+
+        viewModel.setSelectedPhotoPosition(0)
+
+        navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_photo_slider)
     }
 
     override fun onDestroyView() {

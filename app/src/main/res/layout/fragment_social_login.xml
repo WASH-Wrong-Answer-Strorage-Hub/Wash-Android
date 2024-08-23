@@ -29,25 +29,24 @@
         android:id="@+id/social_login_kakao_layout"
         android:layout_width="0dp"
         android:layout_height="47dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="350dp"
+        android:layout_marginEnd="24dp"
         android:background="@drawable/kakao_btn_background"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="550dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/kakao_btn_img"
             android:layout_width="19dp"
             android:layout_height="19dp"
-            android:src="@drawable/ic_kakao"
-            app:layout_constraintStart_toStartOf="@id/social_login_kakao_layout"
-            app:layout_constraintTop_toTopOf="@id/social_login_kakao_layout"
-            app:layout_constraintBottom_toBottomOf="@id/social_login_kakao_layout"
             android:layout_marginStart="24dp"
-            />
+            android:src="@drawable/ic_kakao"
+            app:layout_constraintBottom_toBottomOf="@id/social_login_kakao_layout"
+            app:layout_constraintStart_toStartOf="@id/social_login_kakao_layout"
+            app:layout_constraintTop_toTopOf="@id/social_login_kakao_layout" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -55,11 +54,10 @@
             android:text="카카오 로그인"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@id/social_login_kakao_layout"
-            app:layout_constraintEnd_toEndOf="@id/social_login_kakao_layout"
-            app:layout_constraintTop_toTopOf="@id/social_login_kakao_layout"
             app:layout_constraintBottom_toBottomOf="@id/social_login_kakao_layout"
-            />
+            app:layout_constraintEnd_toEndOf="@id/social_login_kakao_layout"
+            app:layout_constraintStart_toStartOf="@id/social_login_kakao_layout"
+            app:layout_constraintTop_toTopOf="@id/social_login_kakao_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
