@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeBinding
 import com.wash.washandroid.presentation.base.MainActivity
@@ -32,14 +33,6 @@ class HomeFragment : Fragment() {
 
     // 토큰 받아오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
-
-    // 더미 데이터 추가
-    private var dummyImages = listOf(
-        Problem(101, "이미지 1", "https://dummyimage.com/600x400/000/fff&text=Image+1", 1),
-        Problem(102, "이미지 2", "https://dummyimage.com/600x400/ff6347/fff&text=Image+2", 1),
-        Problem(103, "이미지 3", "https://dummyimage.com/600x400/4682b4/fff&text=Image+3", 2),
-        Problem(104, "이미지 4", "https://dummyimage.com/600x400/008000/fff&text=Image+4", 2)
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -74,7 +67,8 @@ class HomeFragment : Fragment() {
         // 검색창
         binding.searchEditText.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSearch()
+                val query = binding.searchEditText.text.toString()
+                homeViewModel.searchProblems(query, null, refreshToken.toString()) // 전체 문제 검색
                 true
             } else {
                 false
@@ -85,8 +79,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun performSearch() {
-        val query = binding.searchEditText.text.toString()
-        Log.d("HomeFragment", "Search performed with query: $query")
+        val query = binding.searchEditText.text.toString().trim()
+
+        // 쿼리가 비어 있지 않을 때만 검색을 수행
+        if (query.isNotEmpty()) {
+            val token = mypageViewModel.getRefreshToken().toString() // 토큰 가져오기
+            homeViewModel.searchProblems(query, null, token) // 전체 문제 검색
+            Log.d("HomeFragment", "Search performed with query: $query")
+        } else {
+            Log.d("HomeFragment", "Search query is empty")
+        }
     }
 
     private fun observeViewModel() {
