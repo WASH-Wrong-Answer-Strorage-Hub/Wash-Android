@@ -1,4 +1,4 @@
-package com.wash.washandroid.data.service
+package com.wash.washandroid.presentation.fragment.mypage.data.service
 
 import com.wash.washandroid.presentation.fragment.graph.GraphApiService
 import retrofit2.Retrofit
@@ -8,7 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 object RetrofitClient {
 
-    private const val BASE_URL = "https://dev.team-wash.store/"
+    private const val BASE_URL = "http://172.20.10.4:3000"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
