@@ -188,6 +188,10 @@
             android:id="@+id/action_navigation_problem_category_folder_to_chapter_fragment"
             app:destination="@id/navigation_problem_category_chapter"
             app:popUpTo="@id/navigation_problem_category_chapter" />
+        <action
+            android:id="@+id/action_navigation_problem_category_folder_to_home_fragment"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_home" />
     </fragment>
 
     <fragment
