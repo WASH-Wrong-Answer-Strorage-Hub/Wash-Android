@@ -50,6 +50,15 @@ class MypageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mypageViewModel.getAccountInfo()
+        loadProfileImage()
+
+        // 프로필 이미지 URL이 업데이트될 때마다 이미지 로드
+        mypageViewModel.profileImageUrl.observe(viewLifecycleOwner) { url ->
+            Glide.with(this)
+                .load(url)
+                .transform(CircleCrop())
+                .into(binding.mypageProfileIv)
+        }
 
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
@@ -58,14 +67,6 @@ class MypageFragment : Fragment() {
                     startCrop(uri)
                 }
             }
-        }
-
-        // 프로필 이미지 URL이 업데이트될 때마다 이미지 로드
-        mypageViewModel.profileImageUrl.observe(viewLifecycleOwner) { url ->
-            Glide.with(this)
-                .load(url)
-                .transform(CircleCrop())
-                .into(binding.mypageProfileIv)
         }
 
         cropLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -201,24 +202,15 @@ class MypageFragment : Fragment() {
 
     private fun loadProfileImage() {
         val sharedPreferences = requireContext().getSharedPreferences("mypage_prefs", Context.MODE_PRIVATE)
-        val profileImagePath = sharedPreferences.getString("profile_image_path", null)
+        val profileImageUrl = sharedPreferences.getString("profile_image_url", null)
 
-        if (!profileImagePath.isNullOrEmpty()) {
-            val file = File(profileImagePath)
-            if (file.exists()) {
-                // 로그 추가: 경로 및 파일 확인
-                Log.d("MypageFragment", "Loading profile image from path: $profileImagePath")
-
-                binding.mypageProfileIv.setImageDrawable(null)
-                Glide.with(this)
-                    .load(file)
-                    .transform(CircleCrop())
-                    .into(binding.mypageProfileIv)
-            } else {
-                Log.e("MypageFragment", "File does not exist at path: $profileImagePath")
-            }
+        if (!profileImageUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(profileImageUrl)
+                .transform(CircleCrop())
+                .into(binding.mypageProfileIv)
         } else {
-            Log.e("MypageFragment", "Profile image path is null or empty")
+            Log.e("MypageFragment", "Profile image URL is null or empty")
         }
     }
 

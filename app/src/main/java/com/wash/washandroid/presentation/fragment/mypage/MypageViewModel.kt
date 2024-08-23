@@ -326,6 +326,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+
     private fun createImagePart(filePath: String, partName: String = "file"): MultipartBody.Part {
         // 파일 경로를 사용하여 파일 객체 생성
         val file = File(filePath)
