@@ -10,6 +10,7 @@ import com.wash.washandroid.model.CategoryType
 import com.wash.washandroid.presentation.fragment.category.network.CategoryApiService
 import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
 open class CategorySubjectViewModel : ViewModel() {
 
@@ -41,25 +42,28 @@ open class CategorySubjectViewModel : ViewModel() {
     private val _categoryTypes = MutableLiveData<List<CategoryType>>()
     val categoryTypes: LiveData<List<CategoryType>> get() = _categoryTypes
 
-    private val retrofit = NetworkModule.getClient()
+    private var retrofit: Retrofit? = null
+    private var apiService: CategoryApiService? = null
 
-    // API 인터페이스를 생성
-    private val apiService: CategoryApiService = retrofit.create(CategoryApiService::class.java)
-
-    init {
-        fetchCategoryTypes()
+    fun initialize(token: String) {
+        Log.d("CategorySubjectViewModel", "Initializing with token: $token")
+        NetworkModule.setAccessToken(token)
+        retrofit = NetworkModule.getClient()
+        apiService = retrofit?.create(CategoryApiService::class.java)
+        Log.d("CategorySubjectViewModel", "Retrofit and ApiService initialized")
     }
 
-    private fun fetchCategoryTypes() {
+    fun fetchCategoryTypes() {
+        Log.d("CategorySubjectViewModel", "Fetching category types...")
         viewModelScope.launch {
             try {
-                val response = apiService.getCategoryTypes()
-                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                val response = apiService?.getCategoryTypes()
+                if (response?.isSuccessful == true && response.body()?.isSuccess == true) {
                     val types = response.body()?.result?.types ?: emptyList()
                     Log.d("CategorySubjectViewModel", "Fetched category types: $types")
                     _categoryTypes.value = types
                 } else {
-                    Log.e("CategorySubjectViewModel", "Failed to fetch category types: ${response.errorBody()?.string()}")
+                    Log.e("CategorySubjectViewModel", "Failed to fetch category types: ${response?.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 Log.e("CategorySubjectViewModel", "Error fetching category types: ${e.message}")

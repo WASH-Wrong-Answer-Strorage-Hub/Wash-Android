@@ -10,6 +10,7 @@ import com.wash.washandroid.model.ChatOCRRequest
 import com.wash.washandroid.model.Content
 import com.wash.washandroid.model.ImageUrl
 import com.wash.washandroid.presentation.fragment.chat.ChatApi
+import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
 import kotlinx.coroutines.launch
 
 class ProblemAnswerViewModel : ViewModel() {
@@ -35,5 +36,12 @@ class ProblemAnswerViewModel : ViewModel() {
                 _recognizedText.postValue("Error occurred: ${e.message}")
             }
         }
+    }
+
+    private val _problemData = MutableLiveData<ProblemData>()
+    val problemData: LiveData<ProblemData> = _problemData
+
+    fun setProblemData(data: ProblemData) {
+        _problemData.value = data
     }
 }

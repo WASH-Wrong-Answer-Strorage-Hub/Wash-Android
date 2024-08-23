@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.category
 
+import MypageViewModel
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,8 +34,17 @@ class ProblemCategorySubjectFragment : Fragment() {
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categorySubjectViewModel: CategorySubjectViewModel by viewModels()
 
+    private val mypageViewModel: MypageViewModel by activityViewModels()
+    private lateinit var token : String
+
     private lateinit var adapter: CategorySubjectAdapter
     private var categorySubjectDialog: CategorySubjectDialog? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        token = mypageViewModel.getRefreshToken() ?: ""
+        Log.d("ProblemCategorySubjectFragment", "Retrieved token: $token")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +63,10 @@ class ProblemCategorySubjectFragment : Fragment() {
         navController = Navigation.findNavController(view)
 
         (requireActivity() as MainActivity).hideBottomNavigation(true)
+
+        Log.d("ProblemCategorySubjectFragment", "Initializing CategorySubjectViewModel with token: $token")
+        categorySubjectViewModel.initialize(token)
+        categorySubjectViewModel.fetchCategoryTypes()
 
         setupRecyclerView()  // 리사이클러뷰 설정 함수 호출
 

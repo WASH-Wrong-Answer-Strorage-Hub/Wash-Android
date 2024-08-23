@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.problem.network
 
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class ProblemInfoResponse(
@@ -38,3 +39,22 @@ data class ProblemStatistics(
     val solvedCount: Int
 )
 
+data class PostProblemResponse(
+    val isSuccess: Boolean,
+    val code: Int,
+    val message: String,
+    val result: PostProblemResult?
+)
+
+data class PostProblemResult(
+    val problemId: Int
+)
+
+data class ProblemData(
+    val problemImageUri: Uri?,
+    val solutionImageUris: List<Uri>,
+    val passageImageUris: List<Uri>,
+    val additionalImageUris: List<Uri>,
+    val problemText: String,
+    val memo: String
+)

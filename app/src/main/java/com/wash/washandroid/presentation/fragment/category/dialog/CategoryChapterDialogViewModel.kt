@@ -27,6 +27,9 @@ class CategoryChapterDialogViewModel : ViewModel() {
     private val _subfieldTypeId = MutableLiveData<Int>()
     val subfieldTypeId: LiveData<Int> = _subfieldTypeId
 
+    private val _chapterTypeId = MutableLiveData<Int>()
+    val chapterTypeId: LiveData<Int> = _chapterTypeId
+
     private val retrofit = NetworkModule.getClient()
 
     // API 인터페이스를 생성
@@ -37,11 +40,12 @@ class CategoryChapterDialogViewModel : ViewModel() {
             try {
                 val response = apiService.postCategoryTypes(CategorySubjectAddRequest(categoryTypeName, parentTypeId, typeLevel))
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val typeId = response.body()?.result?.firstOrNull()?.typeId
+                    val typeId = response.body()?.result?.typeId
                     typeId?.let {
                         when (typeLevel) {
                             1 -> _subjectTypeId.value = it
                             2 -> _subfieldTypeId.value = it
+                            3 -> _chapterTypeId.value = it
                         }
                         Log.d("typeId", "$it")
                     }

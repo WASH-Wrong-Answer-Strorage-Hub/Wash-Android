@@ -1,8 +1,10 @@
 package com.wash.washandroid.presentation.fragment.problem.old
 
+import MypageViewModel
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.wash.washandroid.databinding.FragmentProblemInfoBinding
 import android.os.Bundle
@@ -52,6 +54,15 @@ class ProblemInfoFragment : Fragment() {
 
     private var isEditing = false
 
+    private val mypageViewModel: MypageViewModel by activityViewModels()
+    private lateinit var token : String
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        token = mypageViewModel.getRefreshToken() ?: ""
+        Log.d("ProblemCategorySubjectFragment", "Retrieved token: $token")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -61,7 +72,12 @@ class ProblemInfoFragment : Fragment() {
         _binding = FragmentProblemInfoBinding.inflate(inflater, container, false)
 
         setupButtons()
-        problemInfoViewModel.fetchProblemInfo("61")
+
+        Log.d("ProblemCategorySubjectFragment", "Initializing CategorySubjectViewModel with token: $token")
+        problemInfoViewModel.initialize(token)
+
+        // problemId로 특정 문제 조회
+        problemInfoViewModel.fetchProblemInfo("118")
 
         return binding.root
     }
@@ -110,6 +126,21 @@ class ProblemInfoFragment : Fragment() {
                 binding.problemInfoPhoto.clipToOutline = true
                 binding.photoDeleteLayout.clipToOutline = true
             }
+        }
+
+        problemInfoViewModel.solutionPhotoList.observe(viewLifecycleOwner) { photoList ->
+            solutionPhotoList.addAll(photoList)
+            photoAdapter.notifyDataSetChanged()
+        }
+
+        problemInfoViewModel.printPhotoList.observe(viewLifecycleOwner) { photoList ->
+            printPhotoList.addAll(photoList)
+            printAdapter.notifyDataSetChanged()
+        }
+
+        problemInfoViewModel.addPhotoList.observe(viewLifecycleOwner) { photoList ->
+            addPhotoList.addAll(photoList)
+            addAdapter.notifyDataSetChanged()
         }
 
         problemInfoViewModel.problemType.observe(viewLifecycleOwner) { problemType ->
