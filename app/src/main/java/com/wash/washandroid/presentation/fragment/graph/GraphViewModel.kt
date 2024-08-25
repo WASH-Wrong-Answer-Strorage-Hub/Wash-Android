@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.graph
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,60 +12,72 @@ import retrofit2.Response
 class GraphViewModel : ViewModel() {
 
     // 많이 틀린 문제 데이터를 저장하는 LiveData
-    private val _mistakeResponse = MutableLiveData<List<MistakeResponse>>()
-    val mistakeResponse: LiveData<List<MistakeResponse>> get() = _mistakeResponse
+    private val _mistakeResponse = MutableLiveData<List<Result>>()
+    val mistakeResponse: LiveData<List<Result>> get() = _mistakeResponse
 
     // 자주 틀린 과목 및 유형 데이터를 저장하는 LiveData
-    private val _typeResponse = MutableLiveData<List<TypeResponse>>()
-    val typeResponse: LiveData<List<TypeResponse>> get() = _typeResponse
-
+    private val _typeResponse = MutableLiveData<List<Result>>()
+    val typeResponse: LiveData<List<Result>> get() = _typeResponse
 
     // 많이 틀린 문제 데이터를 가져오는 함수
     fun fetchMistakeData(refreshToken: String) {
         val graphApiService = RetrofitClient.graphApiService
 
-        graphApiService.getMistakes(refreshToken).enqueue(object : Callback<MistakeResponse> {
-            // API 호출 성공 시 호출되는 콜백
-            override fun onResponse(call: Call<MistakeResponse>, response: Response<MistakeResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    // 응답 데이터가 있을 경우 많이 틀린 문제 순으로 정렬
-                    val mistakes = response.body()?.let {
-                        listOf(it)
-                    }?.sortedByDescending { it.result.totalIncorrect } ?: emptyList()
-
-                    _mistakeResponse.postValue(mistakes)
+        graphApiService.getMistakes(refreshToken).enqueue(object : Callback<ProblemsResponse> {
+            override fun onResponse(call: Call<ProblemsResponse>, response: Response<ProblemsResponse>) {
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    Log.d("GraphViewModel", "API Response Successful")
+                    if (body != null) {
+                        Log.d("GraphViewModel", "Response Body: ${body.result}")
+                        val mistakes = body.result.sortedByDescending { it.incorrectCount }
+                        _mistakeResponse.postValue(mistakes)
+                    } else {
+                        Log.d("GraphViewModel", "Response Body is null")
+                        _mistakeResponse.postValue(emptyList())
+                    }
                 } else {
+                    Log.e("GraphViewModel", "API Response Error: ${response.code()} - ${response.message()}")
                     _mistakeResponse.postValue(emptyList())
                 }
             }
-            // API 호출 실패 시 호출되는 콜백
-            override fun onFailure(call: Call<MistakeResponse>, t: Throwable) {
-                // 응답이 성공적이지 않거나 데이터가 없을 경우 빈 리스트로 설정
+
+            override fun onFailure(call: Call<ProblemsResponse>, t: Throwable) {
+                Log.e("GraphViewModel", "API Call Failure", t)
                 _mistakeResponse.postValue(emptyList())
             }
         })
     }
 
+    /*
+    // 자주 틀린 유형 데이터를 가져오는 함수
     fun fetchTypeData(refreshToken: String) {
         val graphApiService = RetrofitClient.graphApiService
 
-        graphApiService.getTypes(refreshToken).enqueue(object : Callback<TypeResponse> {
-            override fun onResponse(call: Call<TypeResponse>, response: Response<TypeResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val types = response.body()?.let {
-                        listOf(it)
-                    } ?: emptyList()
-
-                    _typeResponse.postValue(types)
+        graphApiService.getTypes(refreshToken).enqueue(object : Callback<ProblemsResponse> {
+            override fun onResponse(call: Call<ProblemsResponse>, response: Response<ProblemsResponse>) {
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    Log.d("GraphViewModel", "API Response Successful")
+                    if (body != null) {
+                        Log.d("GraphViewModel", "Response Body: ${body.result}")
+                        val types = body.result
+                        _typeResponse.postValue(types)
+                    } else {
+                        Log.d("GraphViewModel", "Response Body is null")
+                        _typeResponse.postValue(emptyList())
+                    }
                 } else {
+                    Log.e("GraphViewModel", "API Response Error: ${response.code()} - ${response.message()}")
                     _typeResponse.postValue(emptyList())
                 }
             }
 
-            override fun onFailure(call: Call<TypeResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ProblemsResponse>, t: Throwable) {
+                Log.e("GraphViewModel", "API Call Failure", t)
                 _typeResponse.postValue(emptyList())
             }
         })
     }
-
+    */
 }
