@@ -17,7 +17,6 @@ import retrofit2.Response
 object NetworkModule {
 
     private const val BASE_URL = "https://dev.team-wash.store"
-    //private const val BASE_URL = "http://192.168.35.23:3000"
 
     private var retrofit: Retrofit? = null
 
