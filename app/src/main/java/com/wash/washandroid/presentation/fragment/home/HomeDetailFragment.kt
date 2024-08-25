@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeDetailBinding
+import com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoViewModel
 
 class HomeDetailFragment : Fragment() {
 
@@ -31,6 +32,8 @@ class HomeDetailFragment : Fragment() {
 
     // 토큰 받아오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
+
+    private val problemInfoViewModel : ProblemInfoViewModel by activityViewModels()
 
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var adapter: ImageAdapter
@@ -52,6 +55,7 @@ class HomeDetailFragment : Fragment() {
         // 폴더 ID 및 폴더명 가져오기
         val folderId = requireArguments().getInt("folderId")
         val folderName = requireArguments().getString("folderName", "폴더명")
+        val problemID = requireArguments().getString("problemId", "이미지 id")
 
         // 토큰 가져오기 (다른 ViewModel 또는 프레그먼트에서 전달된 토큰)
         val refreshToken = mypageViewModel.getRefreshToken()
@@ -150,7 +154,10 @@ class HomeDetailFragment : Fragment() {
 
     // 이미지 클릭 시 동작
     private fun onImageClick(position: Int) {
-        findNavController().navigate(R.id.action_homeDetailFragment_to_homeClickQuizFragment)
+        val problemId = adapter.items[position].problemId // 선택한 이미지의 Id
+        Log.d("HomeDetailFragment", "Selected image problemId: $problemId")
+        problemInfoViewModel.setProblemID(problemId)
+        findNavController().navigate(R.id.action_homeDetailFragment_to_navigationProblemInfo)
     }
 
     // 이미지 삭제 확인 다이얼로그

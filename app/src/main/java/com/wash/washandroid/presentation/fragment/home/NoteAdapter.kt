@@ -13,7 +13,7 @@ data class Note(
 )
 
 class NoteAdapter(
-    val notes: MutableList<Note>,  // note 리스트를 외부에서 접근할 수 있도록 val로 변경
+    private val notes: MutableList<Note>,  // note 리스트를 외부에서 접근할 수 있도록 val로 변경
     private val onItemClick: (Note) -> Unit,
     private val onDeleteClick: (Note) -> Unit,
     private val onFolderNameChanged: (Note) -> Unit,  // 폴더 이름 변경 콜백 추가
@@ -22,10 +22,32 @@ class NoteAdapter(
 
     inner class NoteViewHolder(private val binding: ItemNoteBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        private var currentTextWatcher: TextWatcher? = null
+
         fun bind(note: Note) {
-            binding.itemImageView.setImageResource(note.imageResId)
+            // 기존의 TextWatcher를 제거합니다.
+            currentTextWatcher?.let {
+                binding.itemEditText.removeTextChangedListener(it)
+            }
+
+            // EditText에 현재 Note의 title을 설정합니다.
             binding.itemEditText.setText(note.title)
-            binding.itemDeleteIcon.visibility = if (isEditing) View.VISIBLE else View.GONE
+
+            // 새로운 TextWatcher를 추가합니다.
+            currentTextWatcher = object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (isEditing) {
+                        note.title = s.toString()
+                        onFolderNameChanged(note)  // 변경된 이름을 ViewModel로 전달
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            }
+
+            binding.itemEditText.addTextChangedListener(currentTextWatcher)
 
             // 편집 모드에 따라 EditText의 상태를 변경
             binding.itemEditText.apply {
@@ -34,21 +56,6 @@ class NoteAdapter(
                 isCursorVisible = isEditing
                 isFocusableInTouchMode = isEditing
             }
-
-            // EditText의 텍스트 변경 감지
-            binding.itemEditText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    // 편집 중인 텍스트를 Note 객체에 반영
-                    if (isEditing) {
-                        note.title = s.toString()  // Note 객체의 title 업데이트
-                        onFolderNameChanged(note)  // 변경된 이름을 ViewModel로 전달
-                    }
-                }
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
 
             binding.root.setOnClickListener {
                 if (!isEditing) {
@@ -59,8 +66,12 @@ class NoteAdapter(
             binding.itemDeleteIcon.setOnClickListener {
                 onDeleteClick(note)
             }
+
+            binding.itemDeleteIcon.visibility = if (isEditing) View.VISIBLE else View.GONE
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val binding = ItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)

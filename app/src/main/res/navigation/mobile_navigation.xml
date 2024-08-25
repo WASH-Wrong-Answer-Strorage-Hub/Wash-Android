@@ -248,8 +248,8 @@
             android:id="@+id/action_homeDetailFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
         <action
-            android:id="@+id/action_homeDetailFragment_to_homeClickQuizFragment"
-            app:destination="@id/homeClickQuizFragment" />
+            android:id="@+id/action_homeDetailFragment_to_navigationProblemInfo"
+            app:destination="@id/navigation_problem_info" />
     </fragment>
 
     <fragment
