@@ -8,390 +8,393 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/subscribe_menu_background_iv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_mypage_background"
-        android:scaleType="fitXY"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageButton
-        android:id="@+id/subscribe_back_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_arrow_left"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="37sp"
-        android:layout_marginStart="24sp"
-        android:layout_marginEnd="312sp" />
-
-    <TextView
-        android:id="@+id/ubscribe_menu_title_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="구독"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:fontFamily="@font/mangoddobak_b"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/subscribe_back_btn"
-        app:layout_constraintBottom_toBottomOf="@id/subscribe_back_btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageView
-        android:id="@+id/subscribe_menu_background_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/layout_mypage_backgroud"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="75sp" />
-
-    <ImageView
-        android:id="@+id/subscribe_pro_background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/subscribe_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_menu_background_view"
-        app:layout_constraintStart_toStartOf="@id/subscribe_menu_background_view"
-        app:layout_constraintEnd_toEndOf="@id/subscribe_menu_background_view"
-        android:layout_marginTop="66sp"
-        />
-    <!-- crown 이미지가 svg로 다운 받으면 깨져서 나중에 다시 해보겠습니다 -->
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
-        android:layout_marginTop="19sp"
-        android:layout_marginStart="13sp"
-        android:src="@drawable/crown_background"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pro 버전"
-        android:fontFamily="@font/mangoddobak_r"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
-        android:layout_marginTop="21sp"
-        android:layout_marginStart="65sp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2023/03/01 - 2024/07/11"
-        android:textColor="@color/dark_gray"
-        android:textSize="8sp"
-        android:fontFamily="@font/mangoddobak_r"
-        app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
-        app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
-        android:layout_marginStart="62sp"
-        android:layout_marginTop="49sp"
-        />
-
-    <LinearLayout
-        android:id="@+id/subscribe_menu_explain_background_layout"
-        android:layout_width="312sp"
-        android:layout_height="337sp"
-        android:background="@drawable/subscribe_explain_view"
-        app:layout_constraintTop_toTopOf="@id/subscribe_menu_background_view"
-        app:layout_constraintStart_toStartOf="@id/subscribe_menu_background_view"
-        app:layout_constraintEnd_toEndOf="@id/subscribe_menu_background_view"
-        android:layout_marginTop="264sp"
-        android:orientation="vertical">
-
-        <LinearLayout
+        <ImageView
+            android:id="@+id/subscribe_menu_background_iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="44sp"
-            android:layout_marginStart="202sp">
+            android:src="@drawable/ic_mypage_background"
+            android:scaleType="fitXY"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="일반" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="Pro"
-                android:layout_marginStart="20sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/subscribe_back_btn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="13sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="18sp">
+            android:background="@drawable/ic_arrow_left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="37dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="312dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="문제 풀기"
-                />
+        <TextView
+            android:id="@+id/ubscribe_menu_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="구독"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/mangoddobak_b"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/subscribe_back_btn"
+            app:layout_constraintBottom_toBottomOf="@id/subscribe_back_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/o"
-                android:layout_marginStart="125sp"
-                />
+        <ImageView
+            android:id="@+id/subscribe_menu_background_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/layout_mypage_backgroud"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="75dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/o"
-                android:layout_marginStart="38sp"
-                />
+        <ImageView
+            android:id="@+id/subscribe_pro_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/subscribe_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_background_view"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_background_view"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_background_view"
+            android:layout_marginTop="66dp" />
 
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/crown_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
+            android:layout_marginTop="19dp"
+            android:layout_marginStart="13dp"
+            android:src="@drawable/crown_background" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/crown"
+            app:layout_constraintTop_toTopOf="@+id/crown_background"
+            app:layout_constraintBottom_toBottomOf="@id/crown_background"
+            app:layout_constraintStart_toStartOf="@id/crown_background"
+            app:layout_constraintEnd_toEndOf="@id/crown_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pro 버전"
+            android:fontFamily="@font/mangoddobak_r"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
+            android:layout_marginTop="21sp"
+            android:layout_marginStart="65sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2023/03/01 - 2024/07/11"
+            android:textColor="@color/dark_gray"
+            android:textSize="8sp"
+            android:fontFamily="@font/mangoddobak_r"
+            app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
+            app:layout_constraintTop_toTopOf="@id/subscribe_pro_background"
+            android:layout_marginStart="62sp"
+            android:layout_marginTop="49sp" />
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1sp"
-            android:background="@color/gray"
-            android:layout_marginTop="10sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="28sp"
-            />
+            android:id="@+id/subscribe_menu_explain_background_layout"
+            android:layout_width="312dp"
+            android:layout_height="337dp"
+            android:background="@drawable/subscribe_explain_view"
+            app:layout_constraintStart_toStartOf="@id/subscribe_pro_background"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_pro_background"
+            app:layout_constraintTop_toBottomOf="@id/subscribe_pro_background"
+            android:layout_marginTop="32dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/normal_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="13sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="18sp">
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="일반"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginStart="202dp"
+            android:layout_marginTop="44dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="문제 유형 정리"
-                />
+        <TextView
+            android:id="@+id/pro_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="Pro"
+            app:layout_constraintStart_toEndOf="@id/normal_text"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="44dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/o"
-                android:layout_marginStart="95sp"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="문제 풀기"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="79.5dp"
+            android:layout_marginStart="28dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/o"
-                android:layout_marginStart="38sp"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/o"
+            app:layout_constraintTop_toBottomOf="@id/normal_text"
+            app:layout_constraintStart_toStartOf="@id/normal_text"
+            app:layout_constraintEnd_toEndOf="@id/normal_text"
+            android:layout_marginTop="10dp" />
 
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/o"
+            app:layout_constraintTop_toBottomOf="@id/pro_text"
+            app:layout_constraintStart_toStartOf="@id/pro_text"
+            app:layout_constraintEnd_toEndOf="@id/pro_text"
+            android:layout_marginTop="10dp" />
 
         <View
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="1sp"
             android:background="@color/gray"
-            android:layout_marginTop="10sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="28sp"
-            />
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="107dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/problem_organize_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="13sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="18sp">
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="문제 유형 정리"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="119.5dp"
+            android:layout_marginStart="28dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="문제 텍스트 인식"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/o"
+            app:layout_constraintTop_toTopOf="@id/problem_organize_text"
+            app:layout_constraintBottom_toBottomOf="@id/problem_organize_text"
+            app:layout_constraintStart_toStartOf="@id/normal_text"
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/x"
-                android:layout_marginStart="83sp"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/o"
-                android:layout_marginStart="38sp"
-                />
-
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/o"
+            app:layout_constraintTop_toTopOf="@id/problem_organize_text"
+            app:layout_constraintBottom_toBottomOf="@id/problem_organize_text"
+            app:layout_constraintStart_toStartOf="@id/pro_text"
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1sp"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
             android:background="@color/gray"
-            android:layout_marginTop="10sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="28sp"
-            />
+            app:layout_constraintTop_toBottomOf="@id/problem_organize_text"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/problem_text_recognize"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="13sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="18sp">
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="문제 텍스트 인식"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="159.5dp"
+            android:layout_marginStart="28dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="문제 검색"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/x"
+            app:layout_constraintTop_toTopOf="@id/problem_text_recognize"
+            app:layout_constraintBottom_toBottomOf="@id/problem_text_recognize"
+            app:layout_constraintStart_toStartOf="@id/normal_text"
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/x"
-                android:layout_marginStart="128sp"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/o"
-                android:layout_marginStart="38sp"
-                />
-
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/o"
+            app:layout_constraintTop_toTopOf="@id/problem_text_recognize"
+            app:layout_constraintBottom_toBottomOf="@id/problem_text_recognize"
+            app:layout_constraintStart_toStartOf="@id/pro_text"
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1sp"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
             android:background="@color/gray"
-            android:layout_marginTop="10sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="28sp"
-            />
+            app:layout_constraintTop_toBottomOf="@id/problem_text_recognize"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/problem_search"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="13sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="18sp">
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="문제 검색"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="199.5dp"
+            android:layout_marginStart="28dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="gpt 문제 풀이"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/x"
+            app:layout_constraintTop_toTopOf="@id/problem_search"
+            app:layout_constraintBottom_toBottomOf="@id/problem_search"
+            app:layout_constraintStart_toStartOf="@id/normal_text"
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/x"
-                android:layout_marginStart="100sp"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mangoddobak_r"
-                android:text="@string/o"
-                android:layout_marginStart="38sp"
-                />
-
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/o"
+            app:layout_constraintTop_toTopOf="@id/problem_search"
+            app:layout_constraintBottom_toBottomOf="@id/problem_search"
+            app:layout_constraintStart_toStartOf="@id/pro_text"
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1sp"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
             android:background="@color/gray"
-            android:layout_marginTop="10sp"
-            android:layout_marginStart="28sp"
-            android:layout_marginEnd="28sp"
-            />
+            app:layout_constraintTop_toBottomOf="@id/problem_search"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/problem_gpt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="gpt 문제 풀이"
+            app:layout_constraintTop_toTopOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="239.5dp"
+            android:layout_marginStart="28dp" />
 
-    <TextView
-        android:id="@+id/terminate_subscribe_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="11sp"
-        android:text="해지하기"
-        android:textColor="#247DCF"
-        android:fontFamily="@font/mangoddobak_r"
-        app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
-        app:layout_constraintTop_toBottomOf="@id/subscribe_menu_explain_background_layout"
-        android:layout_marginTop="30sp"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/x"
+            app:layout_constraintTop_toTopOf="@id/problem_gpt"
+            app:layout_constraintBottom_toBottomOf="@id/problem_gpt"
+            app:layout_constraintStart_toStartOf="@id/normal_text"
+            app:layout_constraintEnd_toEndOf="@id/normal_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mangoddobak_r"
+            android:text="@string/o"
+            app:layout_constraintTop_toTopOf="@id/problem_gpt"
+            app:layout_constraintBottom_toBottomOf="@id/problem_gpt"
+            app:layout_constraintStart_toStartOf="@id/pro_text"
+            app:layout_constraintEnd_toEndOf="@id/pro_text" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/gray"
+            app:layout_constraintTop_toBottomOf="@id/problem_gpt"
+            app:layout_constraintStart_toStartOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp" />
+
+        <TextView
+            android:id="@+id/terminate_subscribe_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:text="해지하기"
+            android:textColor="#247DCF"
+            android:fontFamily="@font/mangoddobak_r"
+            app:layout_constraintEnd_toEndOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintTop_toBottomOf="@id/subscribe_menu_explain_background_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="30sp"
+            android:layout_marginBottom="83sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

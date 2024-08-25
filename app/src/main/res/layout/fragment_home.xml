@@ -46,24 +46,61 @@
         android:background="@drawable/home_search_bar">
 
         <EditText
+            android:id="@+id/search_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="검색하기"
-            android:background="@null"/>
+            android:background="@null"
+            android:inputType="text"
+            android:imeOptions="actionDone" />
 
         <ImageView
+            android:id="@+id/search_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_search"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true" />
+
     </LinearLayout>
 
-    <!-- RecyclerView for notes -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <!-- FrameLayout to overlay RecyclerView and Empty View -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp">
+
+        <!-- RecyclerView for notes -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!-- Empty View -->
+        <LinearLayout
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/noFolderImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/no_folder_img" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="노트를 추가해보세요!"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

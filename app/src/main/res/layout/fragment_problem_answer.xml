@@ -60,7 +60,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/problem_info_layout"
                     android:layout_width="360dp"
-                    android:layout_height="440dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/problem_info_background"
                     app:layout_constraintStart_toStartOf="parent"
@@ -111,6 +111,24 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/problem_info_title" />
 
+                    <EditText
+                        android:id="@+id/ocr_et"
+                        android:layout_width="325dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:inputType="textMultiLine"
+                        android:gravity="top|start"
+                        android:minLines="12"
+                        android:scrollbars="vertical"
+                        android:overScrollMode="always"
+                        android:padding="16dp"
+                        style="@style/mg_b13"
+                        android:textColor="@color/black"
+                        android:background="@drawable/photo_add_btn_background"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/problem_info_photo" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/photo_delete_layout"
                         android:layout_width="40dp"
@@ -136,7 +154,7 @@
                         android:layout_marginTop="10dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/problem_info_photo">
+                        app:layout_constraintTop_toBottomOf="@+id/ocr_et">
 
                         <TextView
                             android:id="@+id/problem_info_answer_title"

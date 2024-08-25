@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.login
 
+import MypageViewModel
 import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NaverIdLoginSDK
@@ -20,6 +22,7 @@ class LogoutPopupFragment : DialogFragment() {
 
     private var _binding: FragmentLogoutPopupBinding? = null
     private val binding get() = _binding!!
+    private lateinit var mypageViewModel: MypageViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,20 +34,26 @@ class LogoutPopupFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mypageViewModel = activityViewModels<MypageViewModel>().value
 
         binding.logoutCancelView.setOnClickListener {
             dismiss()
         }
 
         binding.logoutView.setOnClickListener {
-            if (isKakaoLoggedIn()) {
-                kakaoLogout()
+            isKakaoLoggedIn { isKakaoLoggedIn ->
+                if (isKakaoLoggedIn) {
+                    // ViewModel을 통해 로그아웃 요청
+                    mypageViewModel.logoutUser()
+                    kakaoLogout()
+                } else if (isNaverLoggedIn()) {
+                    // ViewModel을 통해 로그아웃 요청
+                    mypageViewModel.logoutUser()
+                    naverLogout()
+                } else {
+                    Toast.makeText(requireContext(), "로그인 상태를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
                 navigateToLoginFragment()
-            } else if (isNaverLoggedIn()) {
-                naverLogout()
-                navigateToLoginFragment()
-            } else {
-                Toast.makeText(requireContext(), "로그인 상태를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -55,15 +64,24 @@ class LogoutPopupFragment : DialogFragment() {
         dialog?.window?.setDimAmount(0.7f)
     }
 
-    private fun isKakaoLoggedIn(): Boolean {
-        // Kakao 로그인 상태 확인
-        return UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())
+    private fun isKakaoLoggedIn(callback: (Boolean) -> Unit) {
+        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+            if (error != null) {
+                Log.i("LogoutPopupFragment", "카카오 로그인 상태 확인 실패", error)
+                callback(false)
+            } else if (tokenInfo != null) {
+                Log.i("LogoutPopupFragment", "카카오 로그인 상태 확인 성공: $tokenInfo")
+                callback(true)
+            } else {
+                callback(false)
+            }
+        }
     }
 
     private fun kakaoLogout() {
         UserApiClient.instance.logout { error ->
             if (error != null) {
-                Log.e("LogoutPopupFragment", "카카오 로그아웃 실패. SDK에서 토큰 삭제됨", error)
+                Log.e("LogoutPopupFragment", "카카오 로그아웃 실패.", error)
             } else {
                 Log.i("LogoutPopupFragment", "카카오 로그아웃 성공. SDK에서 토큰 삭제됨")
             }

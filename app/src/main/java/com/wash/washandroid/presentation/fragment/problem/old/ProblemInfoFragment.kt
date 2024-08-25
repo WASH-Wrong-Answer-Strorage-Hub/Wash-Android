@@ -1,8 +1,10 @@
 package com.wash.washandroid.presentation.fragment.problem.old
 
+import MypageViewModel
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.wash.washandroid.databinding.FragmentProblemInfoBinding
 import android.os.Bundle
@@ -20,6 +22,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.wash.washandroid.R
 import com.wash.washandroid.presentation.base.MainActivity
 import com.wash.washandroid.presentation.fragment.problem.PhotoAdapter
@@ -37,6 +40,7 @@ class ProblemInfoFragment : Fragment() {
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var printAdapter: PhotoAdapter
     private lateinit var addAdapter: PhotoAdapter
+    private lateinit var categoryAdapter: ProblemInfoCategoryAdapter
     private val solutionPhotoList = mutableListOf<String>()
     private val printPhotoList = mutableListOf<String>()
     private val addPhotoList = mutableListOf<String>()
@@ -50,6 +54,15 @@ class ProblemInfoFragment : Fragment() {
 
     private var isEditing = false
 
+    private val mypageViewModel: MypageViewModel by activityViewModels()
+    private lateinit var token : String
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        token = mypageViewModel.getRefreshToken() ?: ""
+        Log.d("ProblemCategorySubjectFragment", "Retrieved token: $token")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +72,13 @@ class ProblemInfoFragment : Fragment() {
         _binding = FragmentProblemInfoBinding.inflate(inflater, container, false)
 
         setupButtons()
+
+        Log.d("ProblemCategorySubjectFragment", "Initializing CategorySubjectViewModel with token: $token")
+        problemInfoViewModel.initialize(token)
+
+        // problemId로 특정 문제 조회
+        problemInfoViewModel.fetchProblemInfo(problemInfoViewModel.problemId)
+        Log.d("DetailFragment_problem","연결 ${problemInfoViewModel.problemId}")
 
         return binding.root
     }
@@ -74,10 +94,7 @@ class ProblemInfoFragment : Fragment() {
         }
         startVibrationAnimation(binding.floatingActionButton)
 
-
-        val categories = listOf("수학", "미적분", "급수")
-        val categoryAdapter = ProblemInfoCategoryAdapter(categories)
-
+        categoryAdapter = ProblemInfoCategoryAdapter(emptyList())
         binding.categoryRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.categoryRv.adapter = categoryAdapter
 
@@ -104,9 +121,43 @@ class ProblemInfoFragment : Fragment() {
 
         problemInfoViewModel.problemPhotoUri.observe(viewLifecycleOwner) { uri ->
             uri?.let {
-                binding.problemInfoPhoto.setImageURI(it)
+                Glide.with(this)
+                    .load(uri)
+                    .into(binding.problemInfoPhoto)
                 binding.problemInfoPhoto.clipToOutline = true
                 binding.photoDeleteLayout.clipToOutline = true
+            }
+        }
+
+        problemInfoViewModel.solutionPhotoList.observe(viewLifecycleOwner) { photoList ->
+            solutionPhotoList.addAll(photoList)
+            photoAdapter.notifyDataSetChanged()
+        }
+
+        problemInfoViewModel.printPhotoList.observe(viewLifecycleOwner) { photoList ->
+            printPhotoList.addAll(photoList)
+            printAdapter.notifyDataSetChanged()
+        }
+
+        problemInfoViewModel.addPhotoList.observe(viewLifecycleOwner) { photoList ->
+            addPhotoList.addAll(photoList)
+            addAdapter.notifyDataSetChanged()
+        }
+
+        problemInfoViewModel.problemType.observe(viewLifecycleOwner) { problemType ->
+            val categories = listOf(problemType.subject, problemType.subfield, problemType.chapter)
+            categoryAdapter.updateCategories(categories)
+        }
+
+        problemInfoViewModel.answer.observe(viewLifecycleOwner) { answer ->
+            answer?.let {
+                binding.problemInfoAnswer.setText(answer)
+            }
+        }
+
+        problemInfoViewModel.problemText.observe(viewLifecycleOwner) { problemText ->
+            problemText?.let {
+                binding.ocrEt.setText(problemText)
             }
         }
 
@@ -125,7 +176,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(solutionPhotoList, photoAdapter, photoPath)
-                    binding.problemInfoSolutionRv.smoothScrollToPosition(0)
+                    binding.problemInfoSolutionRv.smoothScrollToPosition(solutionPhotoList.size)
                 }
             }
         }
@@ -135,7 +186,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(printPhotoList, printAdapter, photoPath)
-                    binding.problemInfoPrintRv.smoothScrollToPosition(0)
+                    binding.problemInfoPrintRv.smoothScrollToPosition(printPhotoList.size)
                 }
             }
         }
@@ -145,7 +196,7 @@ class ProblemInfoFragment : Fragment() {
                 result.data?.data?.let { uri ->
                     val photoPath = uri.toString()
                     addPhoto(addPhotoList, addAdapter, photoPath)
-                    binding.problemInfoAddRv.smoothScrollToPosition(0)
+                    binding.problemInfoAddRv.smoothScrollToPosition(addPhotoList.size)
                 }
             }
         }

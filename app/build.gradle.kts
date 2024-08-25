@@ -5,6 +5,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("kotlin-android")
+    id("androidx.navigation.safeargs")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 val localProperties = Properties()
@@ -31,6 +34,14 @@ android {
         buildConfigField("String", "NAVER_CLIENT_SECRET", getApiKey("NAVER_CLIENT_SECRET"))
         buildConfigField("String", "NAVER_CLIENT_NAME", getApiKey("NAVER_CLIENT_NAME"))
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAIAPIKEY\"")
+
+        // manifest에서 kakao key값 선언
+        manifestPlaceholders["NATIVE_API_KEY"] = getApiKey("NATIVE_API_KEY")
+        manifestPlaceholders["KAKAO_APP_KEY_SCHEME"] = getApiKey("KAKAO_APP_KEY_SCHEME")
+
+        // API 키 값 출력
+        println("NATIVE_API_KEY: ${getApiKey("NATIVE_API_KEY")}")
+        println("KAKAO_APP_KEY_SCHEME: ${getApiKey("KAKAO_APP_KEY_SCHEME")}")
     }
 
     buildTypes {
@@ -75,18 +86,20 @@ dependencies {
     // naver login
     implementation("com.navercorp.nid:oauth-jdk8:5.9.1")
     // kakao login
-    implementation("com.kakao.sdk:v2-user:2.10.0")
+    implementation ("com.kakao.sdk:v2-all:2.20.4") // 전체 모듈 설치
     
     // CameraX core
-    implementation ("androidx.camera:camera-core:1.1.0-beta01")
-    implementation ("androidx.camera:camera-camera2:1.1.0-beta01")
-    implementation ("androidx.camera:camera-lifecycle:1.1.0-beta01")
-    implementation ("androidx.camera:camera-view:1.0.0-alpha31")
-    implementation ("androidx.camera:camera-extensions:1.0.0-alpha31")
+    implementation("androidx.camera:camera-core:1.1.0-beta01")
+    implementation("androidx.camera:camera-camera2:1.1.0-beta01")
+    implementation("androidx.camera:camera-lifecycle:1.1.0-beta01")
+    implementation("androidx.camera:camera-view:1.0.0-alpha31")
+    implementation("androidx.camera:camera-extensions:1.0.0-alpha31")
 
     // glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+
+    implementation("com.github.yalantis:ucrop:2.2.7")
 
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -97,6 +110,9 @@ dependencies {
     
     //pie chart
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // swipecards
+    implementation("com.lorentzos.swipecards:library:1.0.9@aar")
 }
 
 fun getApiKey(propertyKey: String): String {

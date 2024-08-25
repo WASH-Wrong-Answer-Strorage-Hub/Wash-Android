@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 
-class ProblemInfoCategoryAdapter(private val categories: List<String>) :
+class ProblemInfoCategoryAdapter(private var categories: List<String>) :
     RecyclerView.Adapter<ProblemInfoCategoryAdapter.CategoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -19,6 +19,11 @@ class ProblemInfoCategoryAdapter(private val categories: List<String>) :
     }
 
     override fun getItemCount(): Int = categories.size
+
+    fun updateCategories(newCategories: List<String>) {
+        categories = newCategories
+        notifyDataSetChanged()
+    }
 
     class CategoryViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 }

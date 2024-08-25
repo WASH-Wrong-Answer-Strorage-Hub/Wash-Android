@@ -88,7 +88,7 @@
         app:layout_constraintTop_toTopOf="@id/edit_account_nickname_title_tv"
         app:layout_constraintBottom_toBottomOf="@id/edit_account_nickname_title_tv"
         app:layout_constraintStart_toEndOf="@id/edit_account_nickname_title_tv"
-        android:layout_marginStart="300sp"
+        android:layout_marginStart="262sp"
         />
 
     <TextView
@@ -106,7 +106,7 @@
 
     <View
         android:id="@+id/edit_account_view_1"
-        android:layout_width="345sp"
+        android:layout_width="312sp"
         android:layout_height="1sp"
         android:background="@color/gray"
         app:layout_constraintStart_toStartOf="@id/edit_account_nickname_tv"
@@ -142,7 +142,7 @@
 
     <View
         android:id="@+id/edit_account_view_2"
-        android:layout_width="345sp"
+        android:layout_width="312sp"
         android:layout_height="1sp"
         android:background="@color/gray"
         app:layout_constraintStart_toStartOf="@id/edit_account_name_tv"
@@ -178,7 +178,7 @@
 
     <View
         android:id="@+id/edit_account_view_3"
-        android:layout_width="345sp"
+        android:layout_width="312sp"
         android:layout_height="1sp"
         android:background="@color/gray"
         app:layout_constraintStart_toStartOf="@id/edit_linked_account_tv"

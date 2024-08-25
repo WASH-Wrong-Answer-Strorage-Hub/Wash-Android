@@ -2,9 +2,10 @@ package com.wash.washandroid.presentation.fragment.mypage
 
 import MypageViewModel
 import android.Manifest
-import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -22,64 +23,73 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.kakao.sdk.user.UserApiClient
-import com.navercorp.nid.NaverIdLoginSDK
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentMypageBinding
 import com.wash.washandroid.presentation.fragment.login.LogoutPopupFragment
-import com.wash.washandroid.presentation.fragment.login.WithdrawalAccountFragment
+import com.yalantis.ucrop.UCrop
+import java.io.File
 
 class MypageFragment : Fragment() {
 
     private var _binding: FragmentMypageBinding? = null
-
     private val binding get() = _binding!!
 
-    // ActivityResultLauncher 선언
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
+    private lateinit var cropLauncher: ActivityResultLauncher<Intent>
 
-    // ViewModel을 activityViewModels()를 사용하여 공유 ViewModel 가져오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMypageBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mypageViewModel.getAccountInfo()
+        loadProfileImage()
 
-        // 갤러리에서 이미지 선택 후 처리
+        // 프로필 이미지 URL이 업데이트될 때마다 이미지 로드
+        mypageViewModel.profileImageUrl.observe(viewLifecycleOwner) { url ->
+            Glide.with(this)
+                .load(url)
+                .transform(CircleCrop())
+                .into(binding.mypageProfileIv)
+        }
+
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val selectedImageUri: Uri? = result.data?.data
-                // 선택된 이미지 처리
-                selectedImageUri?.let {
-                    // Glide를 사용하여 이미지 로드
-                    Glide.with(this)
-                        .load(it)
-                        .transform(CircleCrop())
-                        .into(binding.mypageProfileIv)
-                    // mypageEditBtn 숨기기
-                    binding.mypageEditBtn.visibility = View.GONE
-                    binding.mypageEclipseBtn.visibility = View.GONE
+                selectedImageUri?.let { uri ->
+                    startCrop(uri)
                 }
             }
         }
 
-        // ViewModel에서 닉네임을 가져와서 TextView에 설정
+        cropLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                val resultUri: Uri? = UCrop.getOutput(result.data!!)
+                resultUri?.let { uri ->
+                    Glide.with(this)
+                        .load(uri)
+                        .transform(CircleCrop())
+                        .into(binding.mypageProfileIv)
+
+                    val filePath = requireContext().getRealPathFromURI(uri)
+                    filePath?.let { path ->
+                        mypageViewModel.uploadProfileImage(path)
+                    }
+                }
+            }
+        }
+
         mypageViewModel.nickname.observe(viewLifecycleOwner) { nickname ->
             binding.mypageNameTv.text = nickname
         }
 
-//        mypageViewModel.setSubscribed(true)  // 구독 상태를 true로 설정하여 테스트
-
-        // 구독 유무에 따른 UI 업데이트
         mypageViewModel.isSubscribed.observe(viewLifecycleOwner) { isSubscribed ->
             if (isSubscribed) {
                 binding.normalVerTv.text = "Pro 버전"
@@ -95,8 +105,20 @@ class MypageFragment : Fragment() {
             }
         }
 
+        binding.upgradeBtn.setOnClickListener {
+            if (mypageViewModel.checkSubscriptionStatus()) {
+                findNavController().navigate(R.id.navigation_subscribe)
+            } else {
+                findNavController().navigate(R.id.navigation_subscribe_menu)
+            }
+        }
+
         binding.mypageSubscribeLayout.setOnClickListener {
-            findNavController().navigate(R.id.navigation_subscribe_menu)
+            if (mypageViewModel.checkSubscriptionStatus()) {
+                findNavController().navigate(R.id.navigation_subscribe)
+            } else {
+                findNavController().navigate(R.id.navigation_subscribe_menu)
+            }
         }
 
         binding.mypageEditNameLayout.setOnClickListener {
@@ -112,8 +134,6 @@ class MypageFragment : Fragment() {
             logoutPopupFragment.show(parentFragmentManager, "LogoutPopupFragment")
         }
 
-        // 프로필 이미지나 eidt 버튼을 누르면 모두 사진 설정이 가능하게끔 함
-        // 단 edit 버튼은 프로필 설정 후 사라짐
         binding.mypageEditBtn.setOnClickListener {
             checkGalleryPermission()
         }
@@ -122,17 +142,7 @@ class MypageFragment : Fragment() {
         }
     }
 
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-        if (isGranted) {
-            selectGallery()
-        } else {
-            // 권한이 거부된 경우 처리
-            Toast.makeText(context, "갤러리 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun checkGalleryPermission() {
-
         when {
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED -> {
                 selectGallery()
@@ -143,11 +153,65 @@ class MypageFragment : Fragment() {
         }
     }
 
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+            selectGallery()
+        } else {
+            Toast.makeText(context, "갤러리 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun selectGallery() {
-        // 갤러리 호출 인텐트
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//        intent.type = "image/*"
+        intent.type = "image/*"
         galleryLauncher.launch(intent)
+    }
+
+    private fun startCrop(uri: Uri) {
+        val destinationUri = Uri.fromFile(File(requireContext().cacheDir, "croppedImage_${System.currentTimeMillis()}.jpg"))
+
+        val options = UCrop.Options().apply {
+            setCompressionQuality(80)
+            setCircleDimmedLayer(true)
+            setShowCropFrame(false)
+            setShowCropGrid(false)
+        }
+
+        val uCrop = UCrop.of(uri, destinationUri)
+            .withAspectRatio(1f, 1f)
+            .withMaxResultSize(200, 200)
+            .withOptions(options)
+
+        cropLauncher.launch(uCrop.getIntent(requireContext()))
+    }
+
+    private fun Context.getRealPathFromURI(uri: Uri): String? {
+        val file = File(cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            file.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        return file.absolutePath
+    }
+
+    private fun saveProfileImagePath(path: String) {
+        val sharedPreferences = requireContext().getSharedPreferences("mypage_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("profile_image_path", path).apply()
+    }
+
+    private fun loadProfileImage() {
+        val sharedPreferences = requireContext().getSharedPreferences("mypage_prefs", Context.MODE_PRIVATE)
+        val profileImageUrl = sharedPreferences.getString("profile_image_url", null)
+
+        if (!profileImageUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(profileImageUrl)
+                .transform(CircleCrop())
+                .into(binding.mypageProfileIv)
+        } else {
+            Log.e("MypageFragment", "Profile image URL is null or empty")
+        }
     }
 
     override fun onDestroyView() {

@@ -1,7 +1,10 @@
 package com.wash.washandroid.presentation.fragment.category
 
+import MypageViewModel
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +12,18 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategorySubjectBinding
 import com.wash.washandroid.presentation.base.MainActivity
+import com.wash.washandroid.presentation.fragment.category.adapter.CategorySubjectAdapter
+import com.wash.washandroid.presentation.fragment.category.dialog.CategorySubjectDialog
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubjectViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
+import com.wash.washandroid.utils.CategoryItemDecoration
 
 class ProblemCategorySubjectFragment : Fragment() {
 
@@ -25,6 +33,18 @@ class ProblemCategorySubjectFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategorySubjectBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categorySubjectViewModel: CategorySubjectViewModel by viewModels()
+
+    private val mypageViewModel: MypageViewModel by activityViewModels()
+    private lateinit var token : String
+
+    private lateinit var adapter: CategorySubjectAdapter
+    private var categorySubjectDialog: CategorySubjectDialog? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        token = mypageViewModel.getRefreshToken() ?: ""
+        Log.d("ProblemCategorySubjectFragment", "Retrieved token: $token")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,57 +64,70 @@ class ProblemCategorySubjectFragment : Fragment() {
 
         (requireActivity() as MainActivity).hideBottomNavigation(true)
 
-        val animation = ObjectAnimator.ofInt(binding.categoryProgressBar, "progress", 0, 33)
-        animation.duration = 500
-        animation.interpolator = AccelerateDecelerateInterpolator()
+        Log.d("ProblemCategorySubjectFragment", "Initializing CategorySubjectViewModel with token: $token")
+        categorySubjectViewModel.initialize(token)
+        categorySubjectViewModel.fetchCategoryTypes()
 
-        val buttonList = listOf(
-            binding.categoryLanguage,
-            binding.categoryMath,
-            binding.categoryEnglish,
-            binding.categorySociety,
-            binding.categoryScience,
-            binding.categoryAdd
-        )
+        setupRecyclerView()  // 리사이클러뷰 설정 함수 호출
 
-        buttonList.forEach { button ->
-            button.setOnClickListener {
-                categorySubjectViewModel.onButtonClicked(button.id)
-                updateButtonBackgrounds()
-                categoryViewModel.submitCategorySubject(button.text.toString())
-                animation.start()
-            }
-        }
+        setupListeners()  // 리스너 설정 함수 호출
 
-        categorySubjectViewModel.selectedButtonId.observe(viewLifecycleOwner) {
-            updateButtonBackgrounds()
-        }
+        observeCategoryTypes()  // 데이터 변경 관찰 함수 호출
+    }
 
-        categorySubjectViewModel.isNextButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
-            // TODO: 다음 버튼 활성화 로직
+    private fun setupRecyclerView() {
+        adapter = CategorySubjectAdapter(emptyList(), categorySubjectViewModel)
+        binding.categorySubjectRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.categorySubjectRv.adapter = adapter
+
+        val verticalSpaceHeight = resources.getDimensionPixelSize(R.dimen.category_item_space)
+        binding.categorySubjectRv.addItemDecoration(CategoryItemDecoration(verticalSpaceHeight))
+    }
+
+    private fun setupListeners() {
+        binding.categoryAddBtn.setOnClickListener {
+            categorySubjectDialog = CategorySubjectDialog()
+            categorySubjectDialog?.show(parentFragmentManager, "CustomDialog")
         }
 
         binding.categoryNextBtn.setOnClickListener {
-            navController.navigate(R.id.action_navigation_problem_category_subject_to_subfield_fragment)
+            categorySubjectViewModel.selectedButtonId.value?.let { typeId ->
+                Log.d("typeId", "$typeId")
+                val bundle = Bundle().apply {
+                    putInt("selectedTypeId", typeId)
+                }
+                val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
+                with (sharedPref.edit()) {
+                    putInt("selectedSubjectTypeId", typeId)
+                    apply()
+                }
+                navController.navigate(R.id.action_navigation_problem_category_subject_to_subfield_fragment, bundle)
+            }
         }
 
         binding.skipBtn.setOnClickListener {
             navController.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
         }
+
+        binding.categoryBackBtn.setOnClickListener {
+            navController.navigateUp()
+        }
     }
 
-    private fun updateButtonBackgrounds() {
-        val buttonList = listOf(
-            binding.categoryLanguage,
-            binding.categoryMath,
-            binding.categoryEnglish,
-            binding.categorySociety,
-            binding.categoryScience,
-            binding.categoryAdd
-        )
-        buttonList.forEach { button ->
-            button.setBackgroundResource(categorySubjectViewModel.getButtonBackground(button.id))
+    private fun observeCategoryTypes() {
+        categorySubjectViewModel.categoryTypes.observe(viewLifecycleOwner) { types ->
+            Log.d("ProblemCategorySubjectFragment", "Category types updated: $types")
+            adapter.categoryTypes = types
+            adapter.notifyDataSetChanged()
+            startProgressBarAnimation()  // ProgressBar 애니메이션 함수 호출
         }
+    }
+
+    private fun startProgressBarAnimation() {
+        val animation = ObjectAnimator.ofInt(binding.categoryProgressBar, "progress", 0, 33)
+        animation.duration = 500
+        animation.interpolator = AccelerateDecelerateInterpolator()
+        animation.start()
     }
 
     override fun onDestroyView() {

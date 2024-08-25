@@ -16,6 +16,9 @@ import com.wash.washandroid.R
 import android.Manifest
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.wash.washandroid.BuildConfig
 import com.wash.washandroid.presentation.base.MainActivity
 
 class SplashFragment : Fragment() {
@@ -31,6 +34,13 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        NaverIdLoginSDK.initialize(
+            requireContext(),
+            BuildConfig.NAVER_CLIENT_ID,
+            BuildConfig.NAVER_CLIENT_SECRET,
+            BuildConfig.NAVER_CLIENT_NAME
+        )
 
         // Bottom Navigation 숨기기
         (activity as? MainActivity)?.hideBottomNavigation(true)
@@ -57,7 +67,35 @@ class SplashFragment : Fragment() {
 
     private fun navigateToNextScreen() {
         Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_splashFragment_to_socialLoginFragment)
+
+            checkLoginStatus { isLoggedIn ->
+                if (isLoggedIn) {
+                    findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+                    // Bottom Navigation 보이기
+                    (activity as? MainActivity)?.hideBottomNavigation(false)
+                } else {
+                    findNavController().navigate(R.id.action_splashFragment_to_socialLoginFragment)
+                }
+            }
+
         }, 4000)
     }
+
+    private fun checkLoginStatus(callback: (Boolean) -> Unit) {
+        var isLoggedIn = false
+
+        // Kakao 로그인 상태 확인
+        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+            if (tokenInfo != null) {
+                callback(isLoggedIn)
+                isLoggedIn = true
+            } else {
+                // Naver 로그인 상태 확인
+                isLoggedIn = !NaverIdLoginSDK.getAccessToken().isNullOrEmpty()
+                callback(isLoggedIn)
+                isLoggedIn = true
+            }
+        }
+    }
+
 }

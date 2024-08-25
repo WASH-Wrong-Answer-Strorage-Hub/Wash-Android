@@ -1,7 +1,9 @@
 
 package com.wash.washandroid.presentation.base
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +15,7 @@ import com.kakao.sdk.common.KakaoSdk
 import com.wash.washandroid.BuildConfig
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ActivityMainBinding
+import com.wash.washandroid.presentation.fragment.login.SocialLoginFragment
 import com.wash.washandroid.presentation.fragment.splash.SplashFragment
 import com.wash.washandroid.presentation.fragment.note.NoteCameraFragment
 import com.wash.washandroid.presentation.fragment.note.NoteOptionsBottomSheet
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Kakao SDK 초기화
         KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
 
         val navHostFragment =
@@ -35,10 +39,8 @@ class MainActivity : AppCompatActivity() {
 
         // BottomNavigationView 설정
         binding.bottomNavi.setupWithNavController(navController)
+        binding.bottomNavi.itemIconTintList = null
 
-
-        // BottomNavigationView 설정
-        binding.bottomNavi.setupWithNavController(navController)
 
         // BottomNavigationView 아이템 선택 리스너 설정
         binding.bottomNavi.setOnItemSelectedListener { item ->
@@ -52,8 +54,9 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_note -> {
-                    val bottomSheet = NoteOptionsBottomSheet()
-                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+//                    val bottomSheet = NoteOptionsBottomSheet()
+//                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+                    navController.navigate(R.id.navigation_note)
                     true
                 }
                 R.id.navigation_graph -> {
@@ -83,18 +86,5 @@ class MainActivity : AppCompatActivity() {
     // Set main container padding
     fun setContainerPadding(paddingTop: Int) {
         findViewById<View>(R.id.container).setPadding(0, paddingTop, 0, 0)
-    }
-
-    // Set Bottom navigation Visibility
-    fun setBottomNavigationVisibility(visibility: Int) {
-        findViewById<View>(R.id.bottom_navi).visibility = visibility
-    }
-
-    // Start camera fragment
-    fun startCameraFragment() {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, NoteCameraFragment())
-        transaction.addToBackStack(null)
-        transaction.commit()
     }
 }

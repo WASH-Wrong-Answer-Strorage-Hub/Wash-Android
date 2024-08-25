@@ -1,32 +1,29 @@
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.wash.washandroid.R
+import com.bumptech.glide.Glide
+import com.wash.washandroid.databinding.FragmentHomeDetailRecyeImgBinding
+import com.wash.washandroid.presentation.fragment.home.Problem
 
 class ImageAdapter(
-    private val itemCount: Int,
+    var items: List<Problem>, // 초기 데이터로 빈 리스트를 사용
     private val onItemClick: (Int) -> Unit,
     private val itemWidth: Int,
-    private var isEditing: Boolean, // 편집 모드 상태
-    private val onDeleteIconClick: (Int) -> Unit // 삭제 아이콘 클릭 이벤트
+    private var isEditing: Boolean,
+    private val onDeleteIconClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
-    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView: ImageView = itemView.findViewById(R.id.image_view)
-        val deleteIconImageView: ImageView = itemView.findViewById(R.id.deleteIconImageView)
-
+    inner class ImageViewHolder(val binding: FragmentHomeDetailRecyeImgBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            itemView.setOnClickListener {
-                if (!isEditing) { // 편집 모드가 아닐 때만 클릭 이벤트 처리
+            binding.root.setOnClickListener {
+                if (!isEditing) {
                     onItemClick(adapterPosition)
                 }
             }
-
-            deleteIconImageView.setOnClickListener {
-                if (isEditing) { // 편집 모드일 때만 삭제 아이콘 클릭 이벤트 처리
+            binding.deleteIconImageView.setOnClickListener {
+                if (isEditing) {
                     onDeleteIconClick(adapterPosition)
                 }
             }
@@ -34,42 +31,34 @@ class ImageAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_home_detail_recye_img, parent, false)
-        return ImageViewHolder(view)
+        val binding = FragmentHomeDetailRecyeImgBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ImageViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        // 레이아웃 파라미터 설정
-        val layoutParams = holder.imageView.layoutParams as FrameLayout.LayoutParams
+        val problem = items[position]
+        Glide.with(holder.itemView.context)
+            .load(problem.problemImage)
+            .into(holder.binding.imageView)
+
+        val layoutParams = holder.binding.imageView.layoutParams as FrameLayout.LayoutParams
         layoutParams.width = itemWidth
         layoutParams.height = itemWidth
-
-        // 마진 설정
-        val margin = 2 // 원하는 마진 값 (단위는 dp)
-        val density = holder.itemView.resources.displayMetrics.density
-        val marginPx = (margin * density).toInt()
-        layoutParams.setMargins(marginPx, marginPx, marginPx, marginPx)
-        holder.imageView.layoutParams = layoutParams
-
-        // scaleType 설정
-        holder.imageView.scaleType = ImageView.ScaleType.CENTER_CROP // 또는 fitCenter
+        holder.binding.imageView.layoutParams = layoutParams
 
         if (isEditing) {
-            holder.deleteIconImageView.visibility = View.VISIBLE
-            holder.imageView.isEnabled = false // 이미지 뷰 비활성화
+            holder.binding.deleteIconImageView.visibility = View.VISIBLE
+            holder.binding.imageView.isEnabled = false
         } else {
-            holder.deleteIconImageView.visibility = View.GONE
-            holder.imageView.isEnabled = true // 이미지 뷰 활성화
+            holder.binding.deleteIconImageView.visibility = View.GONE
+            holder.binding.imageView.isEnabled = true
         }
     }
 
-    override fun getItemCount(): Int {
-        return itemCount
-    }
+    override fun getItemCount(): Int = items.size
 
     fun setEditing(isEditing: Boolean) {
         this.isEditing = isEditing
-        notifyDataSetChanged() // 데이터 변경 알림으로 UI 업데이트
+        notifyDataSetChanged()
     }
 }

@@ -9,7 +9,8 @@
         android:id="@+id/problemImageView"
         android:layout_width="57dp"
         android:layout_height="57dp"
-        android:src="@drawable/temporary_img" />
+        android:src="@drawable/temporary_img"
+        android:scaleType="centerCrop"/>
 
     <ImageView
         android:id="@+id/deleteIconImageView"
