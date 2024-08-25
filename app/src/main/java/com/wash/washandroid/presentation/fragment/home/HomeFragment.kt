@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -109,6 +110,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun onCategoryClick(note: Note) {
+
+        // 로그에 폴더 ID 출력
+        Log.d("HomeFragment", "폴더 이동 : ${note.folderId}")
+
+        // 폴더 상세 페이지로 이동
         val bundle = Bundle().apply {
             putInt("folderId", note.folderId)
             putString("folderName", note.title)
@@ -118,27 +124,26 @@ class HomeFragment : Fragment() {
         navController.navigate(R.id.action_navigation_home_to_homeDetailFragment, bundle)
     }
 
+
     private fun setupRecyclerView() {
         adapter = NoteAdapter(
             notes = mutableListOf(),
             onItemClick = { note ->
-                Log.d("HomeFragment", "${note.title} 클릭됨")
+                Log.d("HomeFragment", "아이템 클릭됨: ${note.title}")
                 onCategoryClick(note)
             },
             onDeleteClick = { note ->
                 showDeleteConfirmationDialog(note)
             },
             onFolderNameChanged = { note ->
-                homeViewModel.updateFolderName(note.folderId, note.title,
-                    mypageViewModel.getRefreshToken().toString()
-                )
+                homeViewModel.updateFolderName(note.folderId, note.title, mypageViewModel.getRefreshToken().toString())
             },
             isEditing = isEditing
         )
-
         binding.recyclerView.layoutManager = GridLayoutManager(context, 3)
         binding.recyclerView.adapter = adapter
     }
+
 
     private fun showDeleteConfirmationDialog(note: Note) {
         AlertDialog.Builder(requireContext())
