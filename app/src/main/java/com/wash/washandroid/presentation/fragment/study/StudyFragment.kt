@@ -74,31 +74,34 @@ class StudyFragment : Fragment() {
         (activity as MainActivity).hideBottomNavigation(false)
 
         // recyclerview adapter 클릭 이벤트
-        folderAdapter = FolderAdapter(emptyList()) { folderName ->
-            Log.d("StudyFragment", "Folder clicked: $folderName") // 로그 추가
-            val folderId = viewModel.getIdByName(folderName)
-            folderId?.let {
-                Log.d("StudyFragment", "Folder ID: $it") // 로그 추가
-                viewModel.loadStudyFolderById(it.toString())
+        folderAdapter = FolderAdapter(emptyList()) { position, folderName ->
+            Log.d("fraglog", "Folder clicked: $position") // 로그 추가
 
-                // problemIds 가 로드된 후에만 이동하도록 보장
-                viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
-                    if (!problemIds.isNullOrEmpty()) {
-                        Log.d("StudyFragment", "Problem IDs loaded: $problemIds")
-                        val bundle = Bundle().apply {
-                            putInt("folderId", it)
-                            putString("folderName", folderName)
+            val folderIdByOrder = viewModel.folderMapByOrder.value
+            folderIdByOrder?.let { folderMap ->
+                val folderId = folderMap[position]
+                folderId?.let {
+                    Log.d("fraglog", "Folder ID: $it") // 로그 추가
+                    viewModel.loadStudyFolderById(it.toString())
+
+                    // problemIds 가 로드된 후에만 이동하도록 보장
+                    viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
+                        if (!problemIds.isNullOrEmpty()) {
+                            Log.d("fraglog", "Problem IDs loaded: $problemIds")
+                            val bundle = Bundle().apply {
+                                putInt("folderId", it)
+                                putString("folderName", "$folderName")
+                            }
+                            navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
+                        } else {
+                            Log.e("fraglog", "Problem IDs are not yet loaded for folderId: $folderId")
                         }
-                        navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
-                    } else {
-                        Log.e("fraglog", "Problem IDs are not yet loaded for folderId: $folderId")
-                    }
-                })
-            } ?: run {
-                Log.e("fraglog", "Folder ID not found for name: $folderName")
+                    })
+                } ?: run {
+                    Log.e("fraglog", "Folder ID not found for name: $folderName")
+                }
             }
         }
-
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = folderAdapter
