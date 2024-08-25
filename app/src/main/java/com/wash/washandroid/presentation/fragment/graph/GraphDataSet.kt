@@ -26,3 +26,15 @@ data class Result(
     val mainCategory: String?,
     val subCategory: String?
 )
+
+data class TypeResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<TypeResult> // result를 리스트로 변경
+)
+
+data class TypeResult(
+    val sub_category: String,
+    val total_incorrect: String // 총 틀린 문제 수를 문자열로 받음
+)

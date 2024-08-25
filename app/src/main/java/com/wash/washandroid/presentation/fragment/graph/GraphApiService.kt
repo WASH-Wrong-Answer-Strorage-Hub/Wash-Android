@@ -7,18 +7,6 @@ import retrofit2.http.Header
 
 interface GraphApiService {
 
-    /*
-    @GET("/problems/statistics/mistakes")
-    fun getMistakes(
-        @Header("Authorization") accessToken: String
-    ): Call<MistakeResponse>
-
-    @GET("/problems/statistics/types")
-    fun getTypes(
-        @Header("Authorization") accessToken: String
-    ): Call<TypeResponse>
-     */
-
     @GET("/problems/statistics/mistakes")
     fun getMistakes(
         @Header("Authorization") accessToken: String
@@ -27,6 +15,6 @@ interface GraphApiService {
     @GET("/problems/statistics/types")
     fun getTypes(
         @Header("Authorization") accessToken: String
-    ): Call<ProblemsResponse>  // 만약 동일한 응답 형식을 사용한다면
+    ): Call<TypeResponse>  // 만약 동일한 응답 형식을 사용한다면
 
 }
