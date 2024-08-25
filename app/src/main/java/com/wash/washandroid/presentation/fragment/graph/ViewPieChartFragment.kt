@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,15 +19,18 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentViewPieChartBinding
 
+data class ChartItem(
+    val category: String,
+    val percentage: String,
+    val color: Int
+)
+
 class ViewPieChartFragment : Fragment() {
 
     private var _binding: FragmentViewPieChartBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var allEntries: List<PieEntry>
-    private lateinit var colors: List<Int>
-
-    // 기본적으로 보여줄 데이터 개수
+    private lateinit var allItems: List<ChartItem>
     private val initialDataCount = 3
 
     override fun onCreateView(
@@ -41,29 +45,28 @@ class ViewPieChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 모든 파이 차트 데이터를 설정
-        allEntries = listOf(
-            PieEntry(45f, "도함수의 활용"),
-            PieEntry(25f, "여러 가지 미분법"),
-            PieEntry(20f, "정적분의 활용"),
-            PieEntry(10f, "미적분의 활용"),
-            PieEntry(5f, "기타")
+        // 데이터 초기화 (색상 리소스 사용)
+        allItems = listOf(
+            ChartItem("도함수의 활용", "45%", ContextCompat.getColor(requireContext(), R.color.main)),
+            ChartItem("여러 가지 미분법", "25%", ContextCompat.getColor(requireContext(), R.color.sub2)),
+            ChartItem("정적분의 활용", "20%", ContextCompat.getColor(requireContext(), R.color.sub3)),
+            ChartItem("미적분의 활용", "10%", ContextCompat.getColor(requireContext(), R.color.sub4)),
+            ChartItem("기타", "5%", ContextCompat.getColor(requireContext(), R.color.sub5))
         )
 
-        // 파이 차트의 색상 설정
-        colors = listOf(
-            requireContext().getColor(R.color.main),
-            requireContext().getColor(R.color.sub2),
-            requireContext().getColor(R.color.sub3),
-            requireContext().getColor(R.color.sub4),
-            requireContext().getColor(R.color.sub5)
-        )
-
-        // 파이차트는 항상 모든 데이터를 표시
-        updatePieChart(allEntries)
+        // 파이 차트의 색상 및 데이터 설정
+        updatePieChart(allItems)
 
         // 기본적으로 상위 3개 데이터만 리사이클러뷰에 표시
-        updateRecyclerView(allEntries.take(initialDataCount))
+        updateRecyclerView(allItems.take(initialDataCount))
+        // 더 보기 버튼 클릭 리스너 설정
+
+        binding.viewMoreBtn.setOnClickListener {
+            // 전체 데이터를 리사이클러뷰에 표시
+            updateRecyclerView(allItems)
+            // 더 보기 버튼 숨기기
+            binding.viewMoreBtn.visibility = View.GONE
+        }
 
         // 차트 조각 클릭 시 발생하는 이벤트 처리
         binding.pieChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
@@ -83,13 +86,7 @@ class ViewPieChartFragment : Fragment() {
             }
         })
 
-        // 더 보기 버튼 클릭 리스너 설정
-        binding.viewMoreBtn.setOnClickListener {
-            // 전체 데이터를 리사이클러뷰에 표시
-            updateRecyclerView(allEntries)
-            // 더 보기 버튼 숨기기
-            binding.viewMoreBtn.visibility = View.GONE
-        }
+
 
         // 뒤로가기 버튼 클릭 리스너 설정
         binding.backBtn.setOnClickListener {
@@ -97,18 +94,14 @@ class ViewPieChartFragment : Fragment() {
         }
     }
 
-    private fun updatePieChart(entries: List<PieEntry>) {
+    private fun updatePieChart(items: List<ChartItem>) {
+        val entries = items.map { PieEntry(it.percentage.replace("%", "").toFloat(), it.category) }
         val dataSet = PieDataSet(entries, "").apply {
             // 데이터 항목 수에 맞는 색상 리스트 가져오기
-            val colorList = colors.take(entries.size).toMutableList()
+            val colorList = items.map { it.color }
             Log.d("PieChart", "Color List Used: $colorList") // 색상 리스트 확인
 
-            // 색상 리스트가 데이터 항목 수보다 적으면 반복하여 사용
-            while (colorList.size < entries.size) {
-                colorList.addAll(colors) // 색상을 반복하여 추가
-            }
             this.colors = colorList
-
             this.sliceSpace = 3f
             this.setDrawValues(false) // 퍼센트 표시 제거
         }
@@ -125,13 +118,10 @@ class ViewPieChartFragment : Fragment() {
         }
     }
 
-
-
-
-    private fun updateRecyclerView(entries: List<PieEntry>) {
+    private fun updateRecyclerView(items: List<ChartItem>) {
         binding.chartItemsRecyclerView.apply {
             this.layoutManager = LinearLayoutManager(requireContext())
-            this.adapter = ChartDataAdapter(entries, colors.take(entries.size))
+            this.adapter = ChartDataAdapter(items)
         }
     }
 
