@@ -133,6 +133,16 @@ class StudySolveFragment : Fragment() {
         viewModel.studyProgress.observe(viewLifecycleOwner, Observer { progressList ->
             // 서버로부터 가져온 progressList를 어댑터에 업데이트
             progressAdapter.updateProgressList(progressList)
+
+            val isAllCompleted = progressList.all { it.second == "틀린 문제" || it.second == "맞은 문제" }
+
+            if (isAllCompleted) {
+//                Log.d("fraglog", "모든 문제 상태가 완료임")
+                val bundle = bundleOf("folderId" to folderId)
+                navController.navigate(
+                    R.id.action_navigation_study_solve_to_navigation_study_complete, bundle
+                )
+            }
         })
 
         // 지문 보기
