@@ -8,6 +8,6 @@ data class PostGeneralLoginResponse(
 )
 
 data class Result(
-    val accessToken: String,
-    val refreshToken: String
+    val accesstoken: String,
+    val refreshtoken: String
 )
