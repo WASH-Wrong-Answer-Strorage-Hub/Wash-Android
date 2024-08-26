@@ -257,6 +257,10 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                         _nickname.value = userInfo.nickname
                         _name.value = userInfo.name
                         _email.value = userInfo.email
+
+                        val isSubscribed = userInfo.subscribe == 1
+                        _isSubscribed.value = isSubscribed
+
                         Log.i(TAG, "유저조회 성공: ${getUserInfoResponse.message}")
                     } else {
                         Log.e(TAG, "유저조회 실패: ${getUserInfoResponse?.message}")
