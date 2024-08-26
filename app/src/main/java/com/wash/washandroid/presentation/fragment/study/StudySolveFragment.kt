@@ -1,6 +1,5 @@
 package com.wash.washandroid.presentation.fragment.study
 
-import MypageViewModel
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -36,8 +35,7 @@ class StudySolveFragment : Fragment() {
     private lateinit var folderName: String
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var gestureDetector: GestureDetector
-    private lateinit var problemIds: List<String>
-    private lateinit var progressAdapter: StudyProgressAdapter
+    private var isGestureDetected = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -69,8 +67,18 @@ class StudySolveFragment : Fragment() {
         gestureDetector = GestureDetector(requireContext(), GestureListener())
 
         binding.root.setOnTouchListener { v, event ->
-            gestureDetector.onTouchEvent(event)
-            true
+            // DrawerLayout이 열려 있는지 확인
+            if (binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+                // DrawerLayout이 열려 있는 경우 기본 Drawer 동작 유지
+                return@setOnTouchListener false
+            } else {
+                // Drawer가 닫혀 있는 경우에만 제스처 감지
+                if (gestureDetector.onTouchEvent(event)) {
+                    v.performClick()
+                    return@setOnTouchListener true
+                }
+            }
+            false
         }
 
         (activity as MainActivity).hideBottomNavigation(true)
@@ -146,14 +154,17 @@ class StudySolveFragment : Fragment() {
 
         // 문제 이미지 클릭 리스너
         binding.ivSolveCard.setOnClickListener {
-            val currentProblem = viewModel.getCurrentProblem()
-            val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() }
-                ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+            if (!isGestureDetected) {
+                val currentProblem = viewModel.getCurrentProblem()
+                val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() }
+                    ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
 
-            val bundle = bundleOf("image_url" to imageUrl)
-            navController.navigate(
-                R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle
-            )
+                val bundle = bundleOf("image_url" to imageUrl)
+                navController.navigate(
+                    R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle
+                )
+            }
+            isGestureDetected = false
         }
 
         binding.studySolveBackBtn.setOnClickListener {
@@ -237,10 +248,14 @@ class StudySolveFragment : Fragment() {
         override fun onFling(
             e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float
         ): Boolean {
-            val diffX = e2?.x?.minus(e1!!.x) ?: 0.0f
-            val diffY = e2?.y?.minus(e1!!.y) ?: 0.0f
+            if (e1 == null || e2 == null) return super.onFling(e1, e2, velocityX, velocityY)
+
+            val diffX = e2.x - e1.x
+            val diffY = e2.y - e1.y
+
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    isGestureDetected = true
                     if (diffX > 0) {
                         onSwipeRight()
                     } else {
