@@ -41,13 +41,13 @@ data class TypeResult(
 
 // 파이차트
 data class PieChartResponse(
-    val isSuccess: Boolean,
-    val code: String,
-    val message: String,
-    val result: List<Portion>
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: List<Portion>
 )
 
 data class Portion(
-    val sub_category: String,
-    val incorrect_percentage: String
+    @SerializedName("sub_category") val sub_category: String,
+    @SerializedName("incorrect_percentage") val incorrect_percentage: String
 )

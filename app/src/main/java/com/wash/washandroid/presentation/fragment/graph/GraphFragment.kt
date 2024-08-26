@@ -67,7 +67,6 @@ class GraphFragment : Fragment() {
         //binding.subjectsRecyclerView.adapter = SubjectsAdapter(emptyList())
     }
 
-
     private fun setupProblemRecyclerView(mistakes: List<Result>) {
         val problems = mistakes.map { mistake ->
             // Result를 Problem으로 변환
@@ -92,8 +91,11 @@ class GraphFragment : Fragment() {
         }
 
         val SJadapter = SubjectsAdapter(subjects) { subject ->
-            // 과목 클릭 시 PieChartFragment로 이동
-            findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment)
+            // 과목 클릭 시 PieChartFragment로 이동 및 카테고리 이름 전달
+            val bundle = Bundle().apply {
+                putString("CATEGORY_NAME", subject.name) // 카테고리 이름을 전달
+            }
+            findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment, bundle)
         }
         binding.subjectsRecyclerView.adapter = SJadapter
     }
