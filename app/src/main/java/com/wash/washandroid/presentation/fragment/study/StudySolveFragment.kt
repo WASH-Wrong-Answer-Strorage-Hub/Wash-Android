@@ -221,6 +221,20 @@ class StudySolveFragment : Fragment() {
         val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() }
             ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
         Glide.with(this).load(imageUrl).into(binding.ivSolveCard)
+
+        // 첫 번째 문제인 경우
+        if (viewModel.currentProblemIndex == 0) {
+            binding.ivLeftArrow.visibility = View.INVISIBLE
+        } else {
+            binding.ivLeftArrow.visibility = View.VISIBLE
+        }
+
+        // 마지막 문제인 경우
+        if (viewModel.currentProblemIndex == (viewModel.getProblemIds().size - 1)) {
+            binding.ivRightArrow.visibility = View.INVISIBLE
+        } else {
+            binding.ivRightArrow.visibility = View.VISIBLE
+        }
     }
 
     private fun openPhotoPager() {
@@ -231,8 +245,6 @@ class StudySolveFragment : Fragment() {
 
         viewModel.setPhotoUris(passageUrls)
 
-        val sharedPreferences =
-            requireContext().getSharedPreferences("your_shared_prefs", Context.MODE_PRIVATE)
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
 
         Log.d("fraglog", "Loaded photo URIs from SharedPreferences before split: $savedUrisString")

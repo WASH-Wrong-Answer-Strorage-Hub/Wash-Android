@@ -187,8 +187,8 @@ class StudyViewModel(
         _currentFolderId.value = folderId
     }
 
-    fun getCurrentFolderId(): String? {
-        return _currentFolderId.value
+    fun getProblemIds(): List<String> {
+        return loadProblemIdsFromPreferences(sharedPreferences)
     }
 
     fun loadProblemIdsFromPreferences(sharedPreferences: SharedPreferences): List<String> {
@@ -213,8 +213,7 @@ class StudyViewModel(
 
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
         Log.d(
-            "fraglog",
-            "Immediately after saving, photo URIs in SharedPreferences: $savedUrisString"
+            "fraglog", "Immediately after saving, photo URIs in SharedPreferences: $savedUrisString"
         )
     }
 
