@@ -1,10 +1,12 @@
 package com.wash.washandroid.presentation.fragment.mypage.data.service
 
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.NicknameRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.PostGeneralLoginRequest
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.RefreshTokenRequest
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.ChangeNicknameResponse
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.ChangeProfileImageResponse
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.GetUserInfoResponse
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.PostGeneralLoginResponse
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.SubscriptionResponse
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.response.UserResponse
 import okhttp3.MultipartBody
@@ -18,6 +20,11 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 interface AuthService {
+
+    @POST("auth/login/general")
+    suspend fun postGeneralLogin(
+        @Body postGeneralLoginRequest: PostGeneralLoginRequest
+    ): Response<PostGeneralLoginResponse>
 
     @POST("auth/naver")
     suspend fun postNaverLogin(

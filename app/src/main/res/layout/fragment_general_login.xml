@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditText
+        android:id="@+id/general_login_tv"
+        android:layout_width="312sp"
+        android:layout_height="40sp"
+        android:hint="id"
+        android:textSize="12sp"
+        android:ems="10"
+        android:textColor="@color/middle_gray"
+        android:background="@drawable/bt_password_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="30dp"
+        android:paddingLeft="10sp"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:singleLine="true"
+        />
+
+    <EditText
+        android:id="@+id/general_login_password_tv"
+        android:layout_width="312sp"
+        android:layout_height="40sp"
+        android:hint="password"
+        android:textSize="12sp"
+        android:ems="10"
+        android:textColor="@color/middle_gray"
+        android:background="@drawable/bt_password_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="30dp"
+        android:paddingLeft="10sp"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        />
+
+    <TextView
+        android:id="@+id/general_login_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="완료"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/general_login_password_tv"
+        app:layout_constraintStart_toStartOf="@id/general_login_password_tv"
+        android:layout_marginTop="30dp"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
