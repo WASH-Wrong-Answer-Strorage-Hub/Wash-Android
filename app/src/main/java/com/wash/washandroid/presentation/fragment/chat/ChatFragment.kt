@@ -7,23 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentChatBinding
 import com.wash.washandroid.presentation.base.MainActivity
+import com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoViewModel
 import com.wash.washandroid.utils.ChatItemDecoration
 
 class ChatFragment : Fragment() {
 
-    private val chatViewModel: ChatViewModel by viewModels()
     private lateinit var binding: FragmentChatBinding
     private lateinit var chatAdapter: ChatAdapter
-
     private lateinit var navController: NavController
+    private val chatViewModel: ChatViewModel by viewModels()
+    private val problemInfoModel: ProblemInfoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,12 +50,20 @@ class ChatFragment : Fragment() {
         val itemSpace = resources.getDimensionPixelSize(R.dimen.item_space)
         binding.chatRv.addItemDecoration(ChatItemDecoration(itemSpace))
 
-        chatViewModel.messages.observe(viewLifecycleOwner, Observer { messages ->
+        chatViewModel.messages.observe(viewLifecycleOwner) { messages ->
             Log.d("ChatFragment", "글자 업데이트 완료: $messages")
             chatAdapter = ChatAdapter(messages)
             binding.chatRv.adapter = chatAdapter
             binding.chatRv.scrollToPosition(messages.size - 1)
-        })
+        }
+
+        problemInfoModel.recognizedText.observe(viewLifecycleOwner) { recognizedText ->
+            recognizedText?.let {
+                val aiCommand = "다음 문제의 자세한 풀이방법을 알려줘: $it"
+                chatViewModel.message.value = aiCommand
+                chatViewModel.sendMessage()
+            }
+        }
 
         binding.chatMessageSendBtn.setOnClickListener {
             Log.d("ChatFragment", "전송 버튼 클릭됨")
