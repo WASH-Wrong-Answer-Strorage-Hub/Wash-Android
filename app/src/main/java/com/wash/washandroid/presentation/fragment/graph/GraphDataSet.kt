@@ -38,3 +38,16 @@ data class TypeResult(
     val sub_category: String,
     val total_incorrect: String // 총 틀린 문제 수를 문자열로 받음
 )
+
+// 파이차트
+data class PieChartResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<Portion>
+)
+
+data class Portion(
+    val sub_category: String,
+    val incorrect_percentage: String
+)
