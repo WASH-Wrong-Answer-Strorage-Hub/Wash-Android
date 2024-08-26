@@ -228,7 +228,12 @@
     <fragment
         android:id="@+id/navigation_subscribe_menu"
         android:name="com.wash.washandroid.presentation.fragment.mypage.SubscribeMenuFragment"
-        tools:layout="@layout/fragment_subscribe_menu" />
+        tools:layout="@layout/fragment_subscribe_menu" >
+
+        <action
+            android:id="@+id/action_navigation_subsctibe_menu_to_tosspayment"
+            app:destination="@id/navigation_tosspayment"/>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_subscribe"
@@ -385,6 +390,16 @@
         android:name="com.wash.washandroid.presentation.fragment.study.StudyFullScreenImageFragment"
         tools:layout="@layout/fragment_study_full_screen_image">
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_tosspayment"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.TosspaymentFragment"
+        tools:layout="@layout/fragment_tosspayment">
+
+        <action
+            android:id="@+id/action_navigation_tosspayment_to_subscribe"
+            app:destination="@id/navigation_subscribe" />
     </fragment>
 
 </navigation>
