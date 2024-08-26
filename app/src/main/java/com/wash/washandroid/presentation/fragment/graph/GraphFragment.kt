@@ -58,10 +58,15 @@ class GraphFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        // 리사이클러뷰
+        // 레이아웃 매니저 설정
         binding.problemsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.subjectsRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        // 어댑터를 기본으로 설정 (빈 리스트로)
+        binding.problemsRecyclerView.adapter = ProblemImageAdapter(emptyList())
+        //binding.subjectsRecyclerView.adapter = SubjectsAdapter(emptyList())
     }
+
 
     private fun setupProblemRecyclerView(mistakes: List<Result>) {
         val problems = mistakes.map { mistake ->

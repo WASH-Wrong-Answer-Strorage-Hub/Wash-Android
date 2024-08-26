@@ -1,32 +1,32 @@
 package com.wash.washandroid.presentation.fragment.graph
 
+import com.google.gson.annotations.SerializedName
+
 data class ProblemsResponse(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
     val result: List<Result> // result를 리스트로 변경
 )
-
 data class Result(
-    val problemId: Long,
-    val folderId: Long,
-    val userId: Long,
-    val problemText: String,
-    val answer: String,
-    val status: String,
-    val correctCount: Int,
-    val incorrectCount: Int,
-    val orderValue: Int,
-    val createdAt: String,  // ISO 8601 형식의 날짜/시간 문자열로 변경
-    val updatedAt: String,
-    val subscriptionPlan: String?,
-    val memo: String,
-    val gptSessionKey: String?,
-    val progress: String,
-    val mainCategory: String?,
-    val subCategory: String?
+    @SerializedName("problem_id")    val problemId: Long,
+    @SerializedName("folder_id")    val folderId: Long,
+    @SerializedName("user_id")    val userId: Long,
+    @SerializedName("problem_text")    val problemText: String?,
+    @SerializedName("answer")    val answer: String,
+    @SerializedName("status")    val status: String,
+    @SerializedName("correct_count")    val correctCount: Int,
+    @SerializedName("incorrect_count")    val incorrectCount: Int,
+    @SerializedName("order_value")    val orderValue: Int,
+    @SerializedName("created_at")    val createdAt: String,  // ISO 8601 형식의 날짜/시간 문자열
+    @SerializedName("updated_at")    val updatedAt: String,
+    @SerializedName("subscription_plan")    val subscriptionPlan: String?,
+    @SerializedName("memo")    val memo: String,
+    @SerializedName("gpt_session_key")    val gptSessionKey: String?,
+    @SerializedName("progress")    val progress: String,
+    @SerializedName("main_category")    val mainCategory: String?,
+    @SerializedName("sub_category")    val subCategory: String?
 )
-
 data class TypeResponse(
     val isSuccess: Boolean,
     val code: String,
