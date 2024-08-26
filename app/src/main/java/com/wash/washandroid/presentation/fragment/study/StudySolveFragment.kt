@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
@@ -13,11 +15,9 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudySolveBinding
@@ -35,6 +35,7 @@ class StudySolveFragment : Fragment() {
     private lateinit var folderId: String
     private lateinit var folderName: String
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var gestureDetector: GestureDetector
     private lateinit var problemIds: List<String>
     private lateinit var progressAdapter: StudyProgressAdapter
 
@@ -49,7 +50,8 @@ class StudySolveFragment : Fragment() {
         val studyApiService = StudyRetrofitInstance.api
         repository = StudyRepository(studyApiService)
 
-        sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+        sharedPreferences =
+            requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
 
         val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
@@ -64,6 +66,12 @@ class StudySolveFragment : Fragment() {
 
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
+        gestureDetector = GestureDetector(requireContext(), GestureListener())
+
+        binding.root.setOnTouchListener { v, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
 
         (activity as MainActivity).hideBottomNavigation(true)
 
@@ -75,14 +83,20 @@ class StudySolveFragment : Fragment() {
 
         // 정답 확인 전송 여부 검사
         if (viewModel.getProblemSolvedState()) {
-            Log.d("fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next")
+            Log.d(
+                "fraglog",
+                "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next"
+            )
             viewModel.setProblemSolvedState(false)
             viewModel.loadStudyProgress(folderId)
             viewModel.moveToNextProblem(folderId)
         } else {
             // 정답 확인 전송 하지 않은 경우
             viewModel.loadStudyProblem(folderId)
-            Log.d("fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> 유지")
+            Log.d(
+                "fraglog",
+                "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> 유지"
+            )
         }
 
         viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
@@ -133,10 +147,13 @@ class StudySolveFragment : Fragment() {
         // 문제 이미지 클릭 리스너
         binding.ivSolveCard.setOnClickListener {
             val currentProblem = viewModel.getCurrentProblem()
-            val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+            val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() }
+                ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
 
             val bundle = bundleOf("image_url" to imageUrl)
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle)
+            navController.navigate(
+                R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle
+            )
         }
 
         binding.studySolveBackBtn.setOnClickListener {
@@ -147,11 +164,15 @@ class StudySolveFragment : Fragment() {
         binding.studySolveBtnAnswer.setOnClickListener {
             val currentProblem = viewModel.studyProblem.value
             val bundle = bundleOf(
-                "folderId" to folderId, "problemId" to currentProblem?.result?.problemId, "answer" to currentProblem?.result?.answer
+                "folderId" to folderId,
+                "problemId" to currentProblem?.result?.problemId,
+                "answer" to currentProblem?.result?.answer
             )
 //                Toast.makeText(requireContext(), "solve -- id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
 
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
+            navController.navigate(
+                R.id.action_navigation_study_solve_to_navigation_study_answer, bundle
+            )
         }
 
         binding.ivDrawer.setOnClickListener {
@@ -162,7 +183,9 @@ class StudySolveFragment : Fragment() {
         binding.btnRvDrawerFinish.setOnClickListener {
 
             val bundle = bundleOf("folderId" to folderId)
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_complete, bundle)
+            navController.navigate(
+                R.id.action_navigation_study_solve_to_navigation_study_complete, bundle
+            )
         }
     }
 
@@ -174,7 +197,8 @@ class StudySolveFragment : Fragment() {
 
     private fun updateUI(problem: StudyProblemResponse) {
         binding.tvStudySolveProblemId.text = "문제 " + (viewModel.currentProblemIndex + 1)
-        val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+        val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() }
+            ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
         Glide.with(this).load(imageUrl).into(binding.ivSolveCard)
     }
 
@@ -186,7 +210,8 @@ class StudySolveFragment : Fragment() {
 
         viewModel.setPhotoUris(passageUrls)
 
-        val sharedPreferences = requireContext().getSharedPreferences("your_shared_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireContext().getSharedPreferences("your_shared_prefs", Context.MODE_PRIVATE)
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
 
         Log.d("fraglog", "Loaded photo URIs from SharedPreferences before split: $savedUrisString")
@@ -203,5 +228,40 @@ class StudySolveFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+        private val SWIPE_THRESHOLD = 100
+        private val SWIPE_VELOCITY_THRESHOLD = 100
+
+        override fun onFling(
+            e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float
+        ): Boolean {
+            val diffX = e2?.x?.minus(e1!!.x) ?: 0.0f
+            val diffY = e2?.y?.minus(e1!!.y) ?: 0.0f
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight()
+                    } else {
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+            return super.onFling(e1, e2, velocityX, velocityY)
+        }
+    }
+
+    private fun onSwipeRight() {
+        // 오른쪽 스와이프 처리
+        viewModel.moveToNextProblem(folderId)
+        setupObservers()
+    }
+
+    private fun onSwipeLeft() {
+        // 왼쪽 스와이프 처리
+        viewModel.moveToPreviousProblem(folderId)
+        setupObservers()
     }
 }
