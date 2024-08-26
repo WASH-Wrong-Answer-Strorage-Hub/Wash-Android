@@ -111,7 +111,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                 if (loginResponse?.isSuccess == true) {
 
                     // 서버로부터 받은 새로운 액세스 토큰을 헤더에서 가져옴
-                    val newRefreshToken = loginResponse.result.refreshToken
+                    val newRefreshToken = loginResponse.result.refreshtoken
                     sharedPreferences.edit().putString("refreshToken", newRefreshToken).apply()
 
                     if (!newRefreshToken.isNullOrEmpty()) {
