@@ -48,9 +48,6 @@ class StudyViewModel(
     private val _folders = MutableLiveData<List<FolderInfo>>()
     val folders: LiveData<List<FolderInfo>> get() = _folders
 
-    private val _folderMapByOrder = MutableLiveData<Map<Int, Int>>()
-    val folderMapByOrder: LiveData<Map<Int, Int>> get() = _folderMapByOrder
-
     fun setToken(token: String?) {
         StudyRetrofitInstance.setAccessToken(token)
     }
@@ -68,12 +65,7 @@ class StudyViewModel(
                         Log.d("fraglog", "Folders fetched successfully: $folderList")
 
                         val sortedFolders = it.sortedBy { folder -> folder.orderValue }
-                        val folderMap = sortedFolders.associateBy({ folder -> folder.orderValue }, { folder -> folder.folderId })
-                        _folderMapByOrder.postValue(folderMap)
-
-                        // Update folder name list
-                        val folderNames = sortedFolders.map { folder -> folder.folderName }
-                        _studyFolders.postValue(folderNames)
+                        _folders.postValue(sortedFolders)
                     } ?: Log.e("fraglog", "load study folders -- Failed to load folders")
                 }
             } else {
@@ -121,21 +113,33 @@ class StudyViewModel(
     fun loadStudyProblem(folderId: String) {
         viewModelScope.launch {
             val problemIds = loadProblemIdsFromPreferences()
-            Log.d("fraglog", "loadstudyproblem -- problem IDs: $problemIds, cur prob index: $currentProblemIndex")
+            Log.d(
+                "fraglog",
+                "loadstudyproblem -- problem IDs: $problemIds, cur prob index: $currentProblemIndex"
+            )
 
             if (!problemIds.isNullOrEmpty() && currentProblemIndex in problemIds.indices) {
                 val problemId = problemIds[currentProblemIndex]
-                Log.d("fraglog", "Attempting to load problem with ID: $problemId for folder ID: $folderId")
+                Log.d(
+                    "fraglog",
+                    "Attempting to load problem with ID: $problemId for folder ID: $folderId"
+                )
 
                 repository.getStudyProblem(folderId, problemId) { studyProblem ->
                     studyProblem?.let {
                         _studyProblem.postValue(it)
                         setProblemSolvedState(false)
                         Log.d("fraglog", "Problem loaded successfully for problem ID: $problemId")
-                    } ?: Log.e("fraglog", "Failed to load problem for folderId: $folderId, problemId: $problemId")
+                    } ?: Log.e(
+                        "fraglog",
+                        "Failed to load problem for folderId: $folderId, problemId: $problemId"
+                    )
                 }
             } else {
-                Log.e("fraglog", "Problem IDs are not initialized or index out of bounds. Current index: $currentProblemIndex")
+                Log.e(
+                    "fraglog",
+                    "Problem IDs are not initialized or index out of bounds. Current index: $currentProblemIndex"
+                )
             }
         }
     }
@@ -145,7 +149,8 @@ class StudyViewModel(
         viewModelScope.launch {
             repository.getStudyProgress(folderId) { response ->
                 response?.let {
-                    val sortedProgress = it.result.sortedBy { problemStatus -> problemStatus.problemId.toInt() }
+                    val sortedProgress =
+                        it.result.sortedBy { problemStatus -> problemStatus.problemId.toInt() }
                     val progressList = sortedProgress.map { progress ->
                         Pair(progress.problemId, progress.status)
                     }
@@ -165,10 +170,14 @@ class StudyViewModel(
                 if (success) {
                     loadStudyProgress(folderId)
                     Log.d(
-                        "fraglog", "----------- Answer submitted successfully with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} -----------"
+                        "fraglog",
+                        "----------- Answer submitted successfully with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} -----------"
                     )
                 } else {
-                    Log.e("fraglog", "----------- Failed to submit answer with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} -----------")
+                    Log.e(
+                        "fraglog",
+                        "----------- Failed to submit answer with folderId: ${answerRequest.folderId}, problemId: ${answerRequest.problemId} -----------"
+                    )
                 }
             }
         }
@@ -203,7 +212,10 @@ class StudyViewModel(
         }
 
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
-        Log.d("fraglog", "Immediately after saving, photo URIs in SharedPreferences: $savedUrisString")
+        Log.d(
+            "fraglog",
+            "Immediately after saving, photo URIs in SharedPreferences: $savedUrisString"
+        )
     }
 
     fun loadPhotoUrisFromPreferences(): List<String> {
