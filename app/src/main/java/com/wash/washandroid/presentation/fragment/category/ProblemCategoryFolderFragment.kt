@@ -40,7 +40,7 @@ class ProblemCategoryFolderFragment : Fragment() {
 
     private var categoryFolderDialog: CategoryFolderDialog? = null
 
-    private val categoryFolderViewModel: CategoryFolderViewModel by viewModels {
+    private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels {
         CategoryFolderViewModelFactory(
             ProblemRepository(
                 NetworkModule

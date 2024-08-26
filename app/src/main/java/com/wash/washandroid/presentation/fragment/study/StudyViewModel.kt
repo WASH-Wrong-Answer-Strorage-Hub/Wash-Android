@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
+import com.wash.washandroid.presentation.fragment.study.data.model.response.FolderInfo
 import com.wash.washandroid.presentation.fragment.study.data.model.response.StudyProblemResponse
 import com.wash.washandroid.presentation.fragment.study.data.repository.StudyRepository
 import kotlinx.coroutines.*
@@ -44,6 +45,12 @@ class StudyViewModel(
     private val _currentFolderId = MutableLiveData<String>()
     val retrofit: Retrofit? = null
 
+    private val _folders = MutableLiveData<List<FolderInfo>>()
+    val folders: LiveData<List<FolderInfo>> get() = _folders
+
+    private val _folderMapByOrder = MutableLiveData<Map<Int, Int>>()
+    val folderMapByOrder: LiveData<Map<Int, Int>> get() = _folderMapByOrder
+
     fun setToken(token: String?) {
         StudyRetrofitInstance.setAccessToken(token)
     }
@@ -61,10 +68,11 @@ class StudyViewModel(
                         Log.d("fraglog", "Folders fetched successfully: $folderList")
 
                         val sortedFolders = it.sortedBy { folder -> folder.orderValue }
-                        val folderNames = sortedFolders.map { folder ->
-                            nameToIdMap[folder.folderName] = folder.folderId
-                            folder.folderName
-                        }
+                        val folderMap = sortedFolders.associateBy({ folder -> folder.orderValue }, { folder -> folder.folderId })
+                        _folderMapByOrder.postValue(folderMap)
+
+                        // Update folder name list
+                        val folderNames = sortedFolders.map { folder -> folder.folderName }
                         _studyFolders.postValue(folderNames)
                     } ?: Log.e("fraglog", "load study folders -- Failed to load folders")
                 }
@@ -102,11 +110,6 @@ class StudyViewModel(
         editor.apply()
 
         Log.d("fraglog", "SharedPreferences -- problem IDs saved: $problemIds")
-    }
-
-    // name으로 id 찾기
-    fun getIdByName(name: String): Int? {
-        return nameToIdMap[name]
     }
 
     // SharedPreferences에서 problemIds 불러오기
