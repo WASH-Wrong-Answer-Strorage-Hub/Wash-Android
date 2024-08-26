@@ -113,6 +113,9 @@ dependencies {
 
     // swipecards
     implementation("com.lorentzos.swipecards:library:1.0.9@aar")
+
+    // tosspayment
+    implementation ("com.github.tosspayments:payment-sdk-android:0.1.16")
 }
 
 fun getApiKey(propertyKey: String): String {
