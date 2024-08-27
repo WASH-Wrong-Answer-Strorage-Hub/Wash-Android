@@ -24,9 +24,9 @@ class SwipeGestureListener(
         if (Math.abs(diffX) > Math.abs(diffY)) {
             if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                 if (diffX > 0) {
-                    onSwipeRight()
-                } else {
                     onSwipeLeft()
+                } else {
+                    onSwipeRight()
                 }
                 return true
             }

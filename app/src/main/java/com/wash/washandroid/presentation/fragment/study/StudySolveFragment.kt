@@ -48,8 +48,7 @@ class StudySolveFragment : Fragment() {
         val studyApiService = StudyRetrofitInstance.api
         repository = StudyRepository(studyApiService)
 
-        sharedPreferences =
-            requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
 
         val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
@@ -65,11 +64,7 @@ class StudySolveFragment : Fragment() {
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
 
-        gestureDetector = GestureDetector(requireContext(), SwipeGestureListener(
-            context = requireContext(),
-            onSwipeRight = { onSwipeRight() },
-            onSwipeLeft = { onSwipeLeft() }
-        ))
+        gestureDetector = GestureDetector(requireContext(), SwipeGestureListener(context = requireContext(), onSwipeRight = { onSwipeRight() }, onSwipeLeft = { onSwipeLeft() }))
 
         binding.root.setOnTouchListener { v, event ->
             // DrawerLayout이 열려 있는지 확인
@@ -97,8 +92,7 @@ class StudySolveFragment : Fragment() {
         // 정답 확인 전송 여부 검사
         if (viewModel.getProblemSolvedState()) {
             Log.d(
-                "fraglog",
-                "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next"
+                "fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next"
             )
             viewModel.setProblemSolvedState(false)
             viewModel.loadStudyProgress(folderId)
@@ -107,8 +101,7 @@ class StudySolveFragment : Fragment() {
             // 정답 확인 전송 하지 않은 경우
             viewModel.loadStudyProblem(folderId)
             Log.d(
-                "fraglog",
-                "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> 유지"
+                "fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> 유지"
             )
         }
 
@@ -171,8 +164,7 @@ class StudySolveFragment : Fragment() {
         binding.ivSolveCard.setOnClickListener {
             if (!isGestureDetected) {
                 val currentProblem = viewModel.getCurrentProblem()
-                val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() }
-                    ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+                val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
 
                 val bundle = bundleOf("image_url" to imageUrl)
                 navController.navigate(
@@ -190,9 +182,7 @@ class StudySolveFragment : Fragment() {
         binding.studySolveBtnAnswer.setOnClickListener {
             val currentProblem = viewModel.studyProblem.value
             val bundle = bundleOf(
-                "folderId" to folderId,
-                "problemId" to currentProblem?.result?.problemId,
-                "answer" to currentProblem?.result?.answer
+                "folderId" to folderId, "problemId" to currentProblem?.result?.problemId, "answer" to currentProblem?.result?.answer
             )
 //                Toast.makeText(requireContext(), "solve -- id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
 
@@ -223,8 +213,7 @@ class StudySolveFragment : Fragment() {
 
     private fun updateUI(problem: StudyProblemResponse) {
         binding.tvStudySolveProblemId.text = "문제 " + (viewModel.currentProblemIndex + 1)
-        val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() }
-            ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+        val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
         Glide.with(this).load(imageUrl).into(binding.ivSolveCard)
 
         // 첫 번째 문제인 경우
