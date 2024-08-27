@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.wash.washandroid.presentation.fragment.study.data.api.StudyRetrofitInstance
 import com.wash.washandroid.presentation.fragment.study.data.model.request.AnswerRequest
 import com.wash.washandroid.presentation.fragment.study.data.model.response.FolderInfo
@@ -25,20 +27,12 @@ class StudyViewModel(
     var currentProblemIndex: Int = 0
         private set
 
-    private val _photoUris = MutableLiveData<List<String>>(emptyList())
-    val photoUris: LiveData<List<String>> get() = _photoUris
-
     private val _selectedPhotoPosition = MutableLiveData<Int>()
     val selectedPhotoPosition: LiveData<Int> get() = _selectedPhotoPosition
-
-    private val _studyFolders = MutableLiveData<List<String>>()
-    val studyFolders: LiveData<List<String>> get() = _studyFolders
 
     private val _problemIds = MutableLiveData<List<String>>()
     val problemIds: LiveData<List<String>> get() = _problemIds
 
-    // name으로 id를 찾기 위한 Map
-    private val nameToIdMap = mutableMapOf<String, Int>()
     private val _studyProgress = MutableLiveData<List<Pair<String, String>>>()
     val studyProgress: LiveData<List<Pair<String, String>>> get() = _studyProgress
 
@@ -47,6 +41,7 @@ class StudyViewModel(
 
     private val _folders = MutableLiveData<List<FolderInfo>>()
     val folders: LiveData<List<FolderInfo>> get() = _folders
+    private val gson = Gson()
 
     fun setToken(token: String?) {
         StudyRetrofitInstance.setAccessToken(token)
@@ -80,15 +75,16 @@ class StudyViewModel(
             Log.d("fraglog", "Loading folder with ID: $folderId")
             repository.getStudyFolderId(folderId) { folder ->
                 folder?.let {
-                    _problemIds.value = it.problemIds
-                    saveProblemIdsToPreferences(it.problemIds) // SharedPreferences에 저장
+                    val sortedProblemIds = it.problemIds.sortedBy { problemId -> problemId.toIntOrNull() ?: Int.MAX_VALUE }
+                    _problemIds.value = sortedProblemIds
+                    saveProblemIdsToPreferences(sortedProblemIds) // SharedPreferences에 저장
                     setCurrentFolderId(folderId)
-                    Log.d("fraglog", "***Problem IDs loaded***: ${it.problemIds}")
+                    Log.d("fraglog", "***Problem IDs loaded***: ${sortedProblemIds}")
 
                     // problemIds가 null이면 재시도
                     if (_problemIds.value.isNullOrEmpty()) {
                         Log.e("fraglog", "Problem IDs are null, retrying...")
-                        _problemIds.value = it.problemIds
+                        _problemIds.value = sortedProblemIds
                     }
                 } ?: Log.e("fraglog", "Failed to load folder for id: $folderId")
             }
@@ -98,21 +94,27 @@ class StudyViewModel(
     // SharedPreferences에 problemIds 저장
     private fun saveProblemIdsToPreferences(problemIds: List<String>) {
         val editor = sharedPreferences.edit()
-        editor.putStringSet("problem_ids", problemIds.toSet())
+        val jsonString = gson.toJson(problemIds) // List를 JSON 문자열로 변환
+        editor.putString("problem_ids", jsonString)
         editor.apply()
 
-        Log.d("fraglog", "SharedPreferences -- problem IDs saved: $problemIds")
+        Log.d("fraglog", "SharedPreferences -- problem IDs saved as JSON: $jsonString")
     }
 
     // SharedPreferences에서 problemIds 불러오기
-    private fun loadProblemIdsFromPreferences(): List<String>? {
-        val savedProblemIds = sharedPreferences.getStringSet("problem_ids", emptySet())
-        return savedProblemIds?.toList()
+    private fun loadProblemIdsFromDefaultPreferences(): List<String>? {
+        val jsonString = sharedPreferences.getString("problem_ids", null)
+        return if (jsonString != null) {
+            val type = object : TypeToken<List<String>>() {}.type
+            gson.fromJson(jsonString, type) // JSON 문자열을 List<String>으로 변환
+        } else {
+            emptyList()
+        }
     }
 
     fun loadStudyProblem(folderId: String) {
         viewModelScope.launch {
-            val problemIds = loadProblemIdsFromPreferences()
+            val problemIds = loadProblemIdsFromDefaultPreferences()
             Log.d(
                 "fraglog",
                 "loadstudyproblem -- problem IDs: $problemIds, cur prob index: $currentProblemIndex"
@@ -192,8 +194,13 @@ class StudyViewModel(
     }
 
     fun loadProblemIdsFromPreferences(sharedPreferences: SharedPreferences): List<String> {
-        val savedProblemIds = sharedPreferences.getStringSet("problem_ids", emptySet())
-        return savedProblemIds?.toList() ?: emptyList()
+        val jsonString = sharedPreferences.getString("problem_ids", null)
+        return if (jsonString != null) {
+            val type = object : TypeToken<List<String>>() {}.type
+            gson.fromJson(jsonString, type) // JSON 문자열을 List<String>으로 변환
+        } else {
+            emptyList()
+        }
     }
 
     fun setPhotoUris(uris: List<String>) {
@@ -254,7 +261,7 @@ class StudyViewModel(
     // 다음 문제로 이동
     fun moveToNextProblem(folderId: String) {
         viewModelScope.launch {
-            val problemIds = loadProblemIdsFromPreferences()
+            val problemIds = loadProblemIdsFromDefaultPreferences()
             if (problemIds != null && currentProblemIndex < problemIds.size - 1) {
                 currentProblemIndex++
                 loadStudyProblem(folderId) // 다음 문제 로드
