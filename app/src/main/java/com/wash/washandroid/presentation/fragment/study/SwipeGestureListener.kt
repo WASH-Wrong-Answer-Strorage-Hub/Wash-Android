@@ -29,7 +29,11 @@ class SwipeGestureListener(
                     onSwipeRight()
                 }
                 return true
+            } else {
+                false
             }
+        } else {
+            false
         }
         return super.onFling(e1, e2, velocityX, velocityY)
     }

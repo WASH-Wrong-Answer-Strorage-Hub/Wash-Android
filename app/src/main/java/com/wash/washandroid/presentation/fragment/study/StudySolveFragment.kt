@@ -63,25 +63,8 @@ class StudySolveFragment : Fragment() {
 
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
-
-        gestureDetector = GestureDetector(requireContext(), SwipeGestureListener(context = requireContext(), onSwipeRight = { onSwipeRight() }, onSwipeLeft = { onSwipeLeft() }))
-
-        binding.root.setOnTouchListener { v, event ->
-            // DrawerLayout이 열려 있는지 확인
-            if (binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
-                // DrawerLayout이 열려 있는 경우 기본 Drawer 동작 유지
-                return@setOnTouchListener false
-            } else {
-                // Drawer가 닫혀 있는 경우에만 제스처 감지
-                if (gestureDetector.onTouchEvent(event)) {
-                    v.performClick()
-                    return@setOnTouchListener true
-                }
-            }
-            false
-        }
-
         (activity as MainActivity).hideBottomNavigation(true)
+        gestureDetector = GestureDetector(requireContext(), SwipeGestureListener(context = requireContext(), onSwipeRight = { onSwipeRight() }, onSwipeLeft = { onSwipeLeft() }))
 
         // recycler view 설정
         binding.rvDrawerProgress.layoutManager = LinearLayoutManager(requireContext())
@@ -142,6 +125,44 @@ class StudySolveFragment : Fragment() {
                 )
             }
         })
+
+        var isSwipeDetected = false
+
+        binding.ivSolveCard.setOnTouchListener { v, event ->
+            // DrawerLayout이 열려 있지 않을 때만 동작
+            if (!binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+                if (gestureDetector.onTouchEvent(event)) {
+                    // 스와이프가 감지된 경우 플래그를 설정
+                    isSwipeDetected = true
+                }
+
+                // 클릭 이벤트 처리
+                if (event.action == MotionEvent.ACTION_UP) {
+                    if (!isSwipeDetected) {
+                        // 스와이프가 감지되지 않은 경우에만 클릭 이벤트를 처리
+                        v.performClick()
+                    }
+                    // 스와이프 감지 플래그 초기화
+                    isSwipeDetected = false
+                }
+            }
+            true // 터치 이벤트 처리 완료
+        }
+
+        binding.root.setOnTouchListener { v, event ->
+            // DrawerLayout이 열려 있는지 확인
+            if (binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+                // DrawerLayout이 열려 있는 경우 기본 Drawer 동작 유지
+                return@setOnTouchListener false
+            } else {
+                // Drawer가 닫혀 있는 경우에만 제스처 감지
+                if (gestureDetector.onTouchEvent(event)) {
+                    v.performClick()
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
 
         // 지문 보기
         binding.studySolveBtnDes.setOnClickListener {
