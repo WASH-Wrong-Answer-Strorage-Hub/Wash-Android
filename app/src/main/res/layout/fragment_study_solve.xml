@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="20dp" />
+            app:layout_constraintGuide_begin="32dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_study_1st_v2"
@@ -65,7 +65,7 @@
             style="@style/mg_b25"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="52dp"
             android:text="문제 4"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
@@ -171,6 +171,7 @@
             android:id="@+id/tv_drawer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/mangoddobak_b"
             android:text="풀이 진척도"
             android:textColor="@color/black"
@@ -180,7 +181,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_drawer_progress"
             android:layout_width="128dp"
-            android:layout_height="wrap_content"
+            android:layout_height="390dp"
             android:layout_marginTop="16dp"
             android:orientation="vertical" />
 
