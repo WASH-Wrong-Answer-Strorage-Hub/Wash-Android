@@ -158,7 +158,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline_study_1st_v2"
             app:layout_constraintTop_toBottomOf="@+id/study_solve_card_bg" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <!-- 드로어 컨텐츠 레이아웃 -->
+    <!-- 드로어 레이아웃 -->
     <LinearLayout
         android:layout_width="152dp"
         android:layout_height="match_parent"

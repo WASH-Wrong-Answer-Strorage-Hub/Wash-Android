@@ -72,7 +72,7 @@ class StudySolveFragment : Fragment() {
         val progressAdapter = StudyProgressAdapter(problemIds.map { it to "미완료" }, problemIds)
         binding.rvDrawerProgress.adapter = progressAdapter
 
-        // 정답 확인 전송 여부 검사
+        // 정답 확인 여부 검사
         if (viewModel.getProblemSolvedState()) {
             Log.d(
                 "fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next"
@@ -132,7 +132,7 @@ class StudySolveFragment : Fragment() {
             // DrawerLayout이 열려 있지 않을 때만 동작
             if (!binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
                 if (gestureDetector.onTouchEvent(event)) {
-                    // 스와이프가 감지된 경우 플래그를 설정
+                    // 스와이프가 감지된 경우
                     isSwipeDetected = true
                 }
 
@@ -142,7 +142,6 @@ class StudySolveFragment : Fragment() {
                         // 스와이프가 감지되지 않은 경우에만 클릭 이벤트를 처리
                         v.performClick()
                     }
-                    // 스와이프 감지 플래그 초기화
                     isSwipeDetected = false
                 }
             }
@@ -150,12 +149,10 @@ class StudySolveFragment : Fragment() {
         }
 
         binding.root.setOnTouchListener { v, event ->
-            // DrawerLayout이 열려 있는지 확인
             if (binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
-                // DrawerLayout이 열려 있는 경우 기본 Drawer 동작 유지
                 return@setOnTouchListener false
             } else {
-                // Drawer가 닫혀 있는 경우에만 제스처 감지
+                // Drawer가 닫혀 있는 경우 제스처 감지
                 if (gestureDetector.onTouchEvent(event)) {
                     v.performClick()
                     return@setOnTouchListener true
