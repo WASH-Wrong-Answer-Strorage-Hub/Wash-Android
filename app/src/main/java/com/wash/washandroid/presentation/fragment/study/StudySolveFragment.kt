@@ -64,7 +64,12 @@ class StudySolveFragment : Fragment() {
 
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
-        gestureDetector = GestureDetector(requireContext(), GestureListener())
+
+        gestureDetector = GestureDetector(requireContext(), SwipeGestureListener(
+            context = requireContext(),
+            onSwipeRight = { onSwipeRight() },
+            onSwipeLeft = { onSwipeLeft() }
+        ))
 
         binding.root.setOnTouchListener { v, event ->
             // DrawerLayout이 열려 있는지 확인
@@ -261,33 +266,6 @@ class StudySolveFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        private val SWIPE_THRESHOLD = 100
-        private val SWIPE_VELOCITY_THRESHOLD = 100
-
-        override fun onFling(
-            e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float
-        ): Boolean {
-            if (e1 == null || e2 == null) return super.onFling(e1, e2, velocityX, velocityY)
-
-            val diffX = e2.x - e1.x
-            val diffY = e2.y - e1.y
-
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    isGestureDetected = true
-                    if (diffX > 0) {
-                        onSwipeRight()
-                    } else {
-                        onSwipeLeft()
-                    }
-                    return true
-                }
-            }
-            return super.onFling(e1, e2, velocityX, velocityY)
-        }
     }
 
     private fun onSwipeRight() {
