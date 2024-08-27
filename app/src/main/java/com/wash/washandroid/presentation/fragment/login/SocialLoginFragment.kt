@@ -62,6 +62,10 @@ class SocialLoginFragment : Fragment() {
             // Bottom Navigation 보이기
             (activity as? MainActivity)?.hideBottomNavigation(false)
         }
+        binding.generalLogin.setOnClickListener {
+            findNavController().navigate(R.id.navigation_general_login)
+            (activity as? MainActivity)?.hideBottomNavigation(false)
+        }
     }
 
     private fun kakaoLogin() {

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.wash.washandroid.R
 import android.Manifest
+import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.kakao.sdk.user.UserApiClient
@@ -83,6 +84,17 @@ class SplashFragment : Fragment() {
 
     private fun checkLoginStatus(callback: (Boolean) -> Unit) {
         var isLoggedIn = false
+
+        // 일반 로그인 상태 확인
+        val sharedPreferences = requireContext().getSharedPreferences("mypage_prefs", Context.MODE_PRIVATE)
+        val refreshToken = sharedPreferences.getString("refreshToken", null)
+
+        if (!refreshToken.isNullOrEmpty()) {
+            // 토큰이 존재하면 로그인된 상태로 판단
+            isLoggedIn = true
+            callback(isLoggedIn)
+            return
+        }
 
         // Kakao 로그인 상태 확인
         UserApiClient.instance.accessTokenInfo { tokenInfo, error ->

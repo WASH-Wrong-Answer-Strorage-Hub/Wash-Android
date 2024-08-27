@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.NicknameRequest
+import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.PostGeneralLoginRequest
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.RefreshTokenRequest
 import com.wash.washandroid.presentation.fragment.mypage.data.service.RetrofitClient
 import kotlinx.coroutines.launch
@@ -98,6 +99,33 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
     // 구독 상태 확인
     fun checkSubscriptionStatus(): Boolean {
         return _isSubscribed.value ?: false
+    }
+
+    fun generalLoginUser(email: String, password: String) {
+        val loginRequest = PostGeneralLoginRequest(email, password)
+
+        viewModelScope.launch {
+            val response = RetrofitClient.apiService.postGeneralLogin(loginRequest)
+            if (response.isSuccessful) {
+                val loginResponse = response.body()
+                if (loginResponse?.isSuccess == true) {
+
+                    // 서버로부터 받은 새로운 액세스 토큰을 헤더에서 가져옴
+                    val newRefreshToken = loginResponse.result.refreshtoken
+                    sharedPreferences.edit().putString("refreshToken", newRefreshToken).apply()
+
+                    if (!newRefreshToken.isNullOrEmpty()) {
+                        _refreshToken.value = newRefreshToken
+                        Log.i(TAG, "New access token stored: $newRefreshToken")
+                        sharedPreferences.edit().putString("refreshToken", newRefreshToken).apply()
+                    } else {
+                        Log.e(TAG, "Failed to retrieve new access token from server response")
+                    }
+                } else {
+                    Log.e(TAG, "Server returned an error: ${loginResponse?.message}")
+                }
+            }
+        }
     }
 
     // 서버로 사용자 정보 전송 후 액세스 토큰 저장

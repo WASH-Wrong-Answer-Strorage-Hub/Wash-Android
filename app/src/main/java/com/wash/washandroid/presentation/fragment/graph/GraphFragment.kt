@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentGraphBinding
 import com.wash.washandroid.presentation.adapter.Problem
@@ -21,8 +22,6 @@ class GraphFragment : Fragment() {
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
     private val viewModel: GraphViewModel by activityViewModels()
-
-    // MypageViewModel을 가져와서 refreshToken을 사용
     private val mypageViewModel: MypageViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -32,73 +31,71 @@ class GraphFragment : Fragment() {
     ): View {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
+        // RecyclerView 초기화
         setupRecyclerViews()
 
-        val refreshToken = mypageViewModel.getRefreshToken() // MypageViewModel에서 refreshToken을 가져옴
+        // 토큰
+        val refreshToken = mypageViewModel.getRefreshToken() ?: return binding.root // Token이 없으면 반환
         val bearerToken = "Bearer $refreshToken"
-        Log.d("graphFragment","$refreshToken")
-        Log.d("graphFragment","$bearerToken")
 
+        // API데이터
         viewModel.fetchMistakeData(bearerToken)
         viewModel.fetchTypeData(bearerToken)
 
-        // ViewModel의 mistakeResponse를 관찰하여 RecyclerView에 반영
+        // mistakeResponse LiveData
         viewModel.mistakeResponse.observe(viewLifecycleOwner) { mistakes ->
+            Log.d("GraphFragment", "Mistakes Data: $mistakes")
             setupProblemRecyclerView(mistakes)
         }
+
+        // typeResponse LiveData
         viewModel.typeResponse.observe(viewLifecycleOwner) { types ->
+            Log.d("GraphFragment", "Types Data: $types")
             setupTypeRecyclerView(types)
         }
 
         return binding.root
     }
 
-    fun setupRecyclerViews() {
-        val subjects = listOf(
-            Subject(1, "수학", "미적분"),
-            Subject(2, "수학", "기하"),
-            Subject(3, "영어", "토플")
-        )
-        val problems = listOf(
-            Problem(1, "문제 1", R.drawable.temporary_img_test),
-            Problem(2, "문제 2", R.drawable.temporary_img_test),
-            Problem(3, "문제 3", R.drawable.temporary_img_test),
-            Problem(4, "문제 4", R.drawable.temporary_img_test),
-            Problem(5, "문제 5", R.drawable.temporary_img_test)
-        )
+    private fun setupRecyclerViews() {
+        // 레이아웃 매니저 설정
+        binding.problemsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.subjectsRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        // SubjectsRecyclerView 설정
-        val SJadapter = SubjectsAdapter(subjects) { subject ->
-            // 네비게이션을 사용하여 ViewPieChartFragment로 이동
-            Log.d("piechart","이동 전9")
-            findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment)
-            Log.d("piechart","이동 완")
-        }
-        binding.subjectsRecyclerView.adapter = SJadapter
-
-        // ProblemsRecyclerView 설정
-        val PBadapter = ProblemImageAdapter(problems)
-        binding.problemsRecyclerView.adapter = PBadapter
+        // 어댑터를 기본으로 설정 (빈 리스트로)
+        binding.problemsRecyclerView.adapter = ProblemImageAdapter(emptyList())
+        //binding.subjectsRecyclerView.adapter = SubjectsAdapter(emptyList())
     }
 
-    private fun setupProblemRecyclerView(mistakes: List<MistakeResponse>) {
+    private fun setupProblemRecyclerView(mistakes: List<Result>) {
         val problems = mistakes.map { mistake ->
-            // 서버에서 받은 데이터로 Problem 객체를 생성
-            Problem(mistake.result.subCategory.hashCode(), mistake.result.subCategory, R.drawable.temporary_img_test)
+            // Result를 Problem으로 변환
+            Problem(
+                id = mistake.problemId.toInt(),
+                imageResId = R.drawable.temporary_img_test // 자리 표시자 이미지
+            )
         }
 
-        // ProblemsRecyclerView 설정
         val PBadapter = ProblemImageAdapter(problems)
         binding.problemsRecyclerView.adapter = PBadapter
     }
 
-    private fun setupTypeRecyclerView(types: List<TypeResponse>) {
+    private fun setupTypeRecyclerView(types: List<TypeResult>) {
         val subjects = types.map { type ->
-            Subject(type.result.subCategory.hashCode(), type.result.subCategory, "${type.result.totalIncorrect} mistakes")
+            // TypeResult를 Subject로 변환
+            Subject(
+                id = type.sub_category.hashCode(), // 카테고리에 기반한 고유 ID
+                name = type.sub_category ?: "제목 없음", // 카테고리 null 처리
+                type = "${type.total_incorrect}개의 실수" // 오류 수
+            )
         }
 
         val SJadapter = SubjectsAdapter(subjects) { subject ->
-            findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment)
+            // 과목 클릭 시 PieChartFragment로 이동 및 카테고리 이름 전달
+            val bundle = Bundle().apply {
+                putString("CATEGORY_NAME", subject.name) // 카테고리 이름을 전달
+            }
+            findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment, bundle)
         }
         binding.subjectsRecyclerView.adapter = SJadapter
     }
