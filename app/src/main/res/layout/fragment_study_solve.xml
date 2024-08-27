@@ -177,13 +177,20 @@
             android:textColor="@color/black"
             android:textSize="15sp" />
 
-        <!-- 풀이 진척도를 표시하는 RecyclerView -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_drawer_progress"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="128dp"
-            android:layout_height="390dp"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_drawer_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHeight_max="390dp"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
             android:id="@+id/btn_rv_drawer_finish"
