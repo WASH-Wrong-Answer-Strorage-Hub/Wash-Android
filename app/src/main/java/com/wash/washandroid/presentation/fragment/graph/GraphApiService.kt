@@ -15,6 +15,10 @@ interface GraphApiService {
     @GET("/problems/statistics/types")
     fun getTypes(
         @Header("Authorization") accessToken: String
-    ): Call<TypeResponse>  // 만약 동일한 응답 형식을 사용한다면
+    ): Call<TypeResponse>
 
+    @GET("/problems/statistics/ratios")
+    fun getRatios(
+        @Header("Authorization") accessToken: String
+    ): Call<PieChartResponse>
 }
