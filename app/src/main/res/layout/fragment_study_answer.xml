@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp" />
+        app:layout_constraintGuide_begin="32dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_study_1st_v2"
@@ -58,7 +58,7 @@
         android:id="@+id/iv_study_solve"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/study_incomplete"
         app:layout_constraintBottom_toTopOf="@+id/study_card_frame"
         app:layout_constraintEnd_toStartOf="@id/guideline_study_1st_v2"
