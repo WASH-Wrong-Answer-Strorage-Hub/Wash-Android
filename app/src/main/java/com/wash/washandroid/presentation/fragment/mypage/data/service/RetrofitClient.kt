@@ -10,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 object RetrofitClient {
 
     private const val BASE_URL = "https://dev.team-wash.store"
+
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }

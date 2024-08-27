@@ -113,6 +113,9 @@ dependencies {
 
     // swipecards
     implementation("com.lorentzos.swipecards:library:1.0.9@aar")
+
+    // photoView
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 }
 
 fun getApiKey(propertyKey: String): String {
