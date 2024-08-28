@@ -192,6 +192,9 @@
             android:id="@+id/action_navigation_problem_category_folder_to_home_fragment"
             app:destination="@id/navigation_home"
             app:popUpTo="@id/navigation_home" />
+        <action
+            android:id="@+id/action_navigation_problem_category_folder_to_problem_add_fragment"
+            app:destination="@id/navigation_problem_add" />
     </fragment>
 
     <fragment
