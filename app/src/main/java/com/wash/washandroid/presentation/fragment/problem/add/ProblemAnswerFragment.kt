@@ -1,7 +1,6 @@
 package com.wash.washandroid.presentation.fragment.problem.add
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.wash.washandroid.databinding.FragmentProblemAnswerBinding
@@ -25,7 +24,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 import com.wash.washandroid.presentation.base.MainActivity
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.problem.PhotoAdapter
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
 import com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoViewModel
@@ -43,7 +44,10 @@ class ProblemAnswerFragment : Fragment() {
 
     private val problemInfoViewModel: ProblemInfoViewModel by activityViewModels()
     private val problemAnswerViewModel: ProblemAnswerViewModel by viewModels()
-    private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels()
+    private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels {
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
+    }
 
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var printAdapter: PhotoAdapter
@@ -79,18 +83,6 @@ class ProblemAnswerFragment : Fragment() {
             }
         }
 
-        // 나머지 사진들로 리사이클러뷰 설정
-        problemInfoViewModel.remainingPhotoUris.observe(viewLifecycleOwner) { photoList ->
-            addAdapter = PhotoAdapter(
-                requireContext(),
-                photoList.toMutableList(),
-                {},
-                {}
-            )
-            binding.problemInfoAddRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            binding.problemInfoAddRv.adapter = addAdapter
-        }
-
         return binding.root
     }
 
@@ -99,14 +91,6 @@ class ProblemAnswerFragment : Fragment() {
 
         (requireActivity() as MainActivity).hideBottomNavigation(true)
         navController = Navigation.findNavController(view)
-
-        problemAnswerViewModel.recognizedText.observe(viewLifecycleOwner) { text ->
-            binding.ocrEt.setText(text)
-        }
-
-        // 예시로 이미지 URL을 넘겨서 텍스트 인식을 시작
-        val imageUrl = "https://i.postimg.cc/Qd8M8hRR/20240707-210207.jpg"
-        problemAnswerViewModel.recognizeTextFromImage(imageUrl)
 
         binding.photoDeleteLayout.setOnClickListener {
             binding.problemInfoPhoto.setImageURI(null)
@@ -129,7 +113,7 @@ class ProblemAnswerFragment : Fragment() {
             if (isInputValid()) {
                 val problemData = collectProblemData()
                 Log.d("problemData", problemData.toString())
-                problemAnswerViewModel.setProblemData(problemData)
+                categoryFolderViewModel.setProblemData(problemData)
                 navController.navigate(R.id.action_navigation_problem_answer_to_category_subject_fragment)
             } else {
                 Toast.makeText(requireContext(), "사진을 추가하고 정답을 입력해 주세요.", Toast.LENGTH_SHORT).show()
@@ -141,7 +125,7 @@ class ProblemAnswerFragment : Fragment() {
                 binding.problemInfoPhoto.setImageURI(it)
                 binding.problemInfoPhoto.clipToOutline = true
                 binding.photoDeleteLayout.clipToOutline = true
-            }
+            } ?: Log.d("ProblemPhotoUri", "problemPhotoUri is null")
         }
 
         photoProblemPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -216,31 +200,56 @@ class ProblemAnswerFragment : Fragment() {
             val firstPhotoUri = selectedPhotos[0]
             binding.problemInfoPhoto.setImageURI(firstPhotoUri.toUri())
             binding.problemInfoPhoto.clipToOutline = true
-
-            // 나머지 사진들은 problemInfoAddRv에 배치
-            val remainingPhotos = selectedPhotos.subList(1, selectedPhotos.size)
-            addPhotoList.addAll(remainingPhotos)
-            addAdapter.notifyDataSetChanged()
         }
     }
 
     private fun collectProblemData(): ProblemData {
-        val problemImageUri = selectedPhotos?.firstOrNull()?.toUri()
-        val additionalImageUris = selectedPhotos?.drop(1)?.map { it.toUri() } ?: emptyList()
+        val problemImageUri = problemInfoViewModel.firstPhotoUri.value?.let { Uri.parse(it) }
+            ?: problemInfoViewModel.problemPhotoUri.value
+        val additionalImageUris = addPhotoList.map { it.toUri() }
         val solutionImageUris = solutionPhotoList.map { it.toUri() }
         val passageImageUris = printPhotoList.map { it.toUri() }
 
-        val problemText = binding.ocrEt.text.toString()
+        val problemText = "인공지능이 작성중..."
+        val answer = binding.problemInfoAnswer.text.toString()
         val memo = binding.problemInfoMemo.text.toString()
 
-        return ProblemData(
-            problemImageUri = problemImageUri,
-            solutionImageUris = solutionImageUris,
-            passageImageUris = passageImageUris,
-            additionalImageUris = additionalImageUris,
+        val problemData = ProblemData(
+            problemImageUri = problemImageUri?.let { convertUriToFile(it) },
+            solutionImageUris = solutionImageUris.map { convertUriToFile(it) },
+            passageImageUris = passageImageUris.map { convertUriToFile(it) },
+            additionalImageUris = additionalImageUris.map { convertUriToFile(it) },
             problemText = problemText,
+            answer = answer,
             memo = memo
         )
+
+        // Log를 통해 ProblemData 객체의 내용을 확인
+        Log.d("ProblemData", "Problem Image URI: $problemImageUri")
+        Log.d("ProblemData", "Solution Image URIs: $solutionImageUris")
+        Log.d("ProblemData", "Passage Image URIs: $passageImageUris")
+        Log.d("ProblemData", "Additional Image URIs: $additionalImageUris")
+        Log.d("ProblemData", "Problem Text: $problemText")
+        Log.d("ProblemData", "Answer: $answer")
+        Log.d("ProblemData", "Memo: $memo")
+
+        return problemData
+    }
+
+    private fun convertUriToFile(uri: Uri): File {
+        return try {
+            val contentResolver = requireContext().contentResolver
+            val inputStream = contentResolver.openInputStream(uri) ?: throw IOException("Cannot open input stream from URI")
+            val tempFile = File.createTempFile("image", ".png", requireContext().cacheDir)
+            val outputStream = FileOutputStream(tempFile)
+            inputStream.copyTo(outputStream)
+            outputStream.close()
+            inputStream.close()
+            tempFile
+        } catch (e: IOException) {
+            Log.e("convertUriToFile", "Failed to convert URI to File: ${e.message}")
+            throw e
+        }
     }
 
     private fun setupRecyclerView(
@@ -305,7 +314,6 @@ class ProblemAnswerFragment : Fragment() {
         val hasText = binding.problemInfoAnswer.text?.isNotBlank() == true
         return hasPhoto && hasText
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
