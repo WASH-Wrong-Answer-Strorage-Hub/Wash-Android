@@ -1,7 +1,6 @@
 package com.wash.washandroid.presentation.fragment.category
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
@@ -23,12 +22,8 @@ import com.wash.washandroid.presentation.fragment.category.network.ProblemReposi
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
-import com.wash.washandroid.presentation.fragment.problem.network.ProblemApiService
-import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
 import com.wash.washandroid.utils.CategoryItemDecoration
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import kotlinx.coroutines.launch
 
 class ProblemCategoryFolderFragment : Fragment() {
 
@@ -41,13 +36,8 @@ class ProblemCategoryFolderFragment : Fragment() {
     private var categoryFolderDialog: CategoryFolderDialog? = null
 
     private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels {
-        CategoryFolderViewModelFactory(
-            ProblemRepository(
-                NetworkModule
-                    .getClient()
-                    .create(ProblemApiService::class.java)
-            )
-        )
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
     }
 
 
@@ -59,6 +49,7 @@ class ProblemCategoryFolderFragment : Fragment() {
         _binding = FragmentProblemCategoryFolderBinding.inflate(layoutInflater, container, false)
         binding.viewModel = categoryFolderViewModel
         binding.lifecycleOwner = viewLifecycleOwner
+        categoryFolderViewModel.fetchCategoryTypes()
         return binding.root
     }
 
@@ -67,9 +58,9 @@ class ProblemCategoryFolderFragment : Fragment() {
         navController = Navigation.findNavController(view)
 
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
-        val selectedSubjectTypeId = sharedPref?.getInt("selectedSubjectTypeId", -1)
-        val selectedSubfieldTypeId = sharedPref?.getInt("selectedSubfieldTypeId", -1)
-        val selectedChapterTypeId = sharedPref?.getInt("selectedChapterTypeId", -1)
+        val selectedSubjectTypeId = sharedPref?.getInt("selectedSubjectTypeId", -1) ?: -1
+        val selectedSubfieldTypeId = sharedPref?.getInt("selectedSubfieldTypeId", -1) ?: -1
+        val selectedChapterTypeId = sharedPref?.getInt("selectedChapterTypeId", -1) ?: -1
 
         Log.d("subjectType", "Received typeId: $selectedSubjectTypeId")
         Log.d("subfieldType", "Received typeId: $selectedSubfieldTypeId")
@@ -93,64 +84,45 @@ class ProblemCategoryFolderFragment : Fragment() {
         }
 
         binding.categoryFolderCheckBtn.setOnClickListener {
+
+            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
+                Log.d("typeId", "$typeId")
+                categoryFolderViewModel.setFolderId(typeId)
+            }
+
+            val problemData = categoryFolderViewModel.problemData.value
+            Log.d("ProblemData", "ProblemData: $problemData")
+
             categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
                 Log.d("typeId", "$typeId")
             }
 
-            // 문제 추가 api 최종 전송
-            categoryFolderViewModel.postProblem()
+            // 문제 추가 API 호출
+            viewLifecycleOwner.lifecycleScope.launch {
+                categoryFolderViewModel.postProblem() // 비동기 호출
 
-            categoryFolderViewModel.apiResponse.observe(viewLifecycleOwner) { response ->
-                if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "문제가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "문제 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                // API 응답 관찰
+                categoryFolderViewModel.apiResponse.observe(viewLifecycleOwner) { response ->
+                    if (response != null) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(requireContext(), "문제가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                            // 네비게이션
+                            val navOptions = NavOptions.Builder()
+                                .setPopUpTo(R.id.navigation_problem_category_folder, true)
+                                .build()
+                            navController.navigate(R.id.action_navigation_problem_category_folder_to_problem_add_fragment, null, navOptions)
+                        } else {
+                            Toast.makeText(requireContext(), "문제 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                            Log.e("API Error", "Response Failed: ${response.errorBody()?.string()}")
+                        }
+                    }
                 }
             }
-
-            val navOptions = NavOptions.Builder()
-                .setPopUpTo(R.id.navigation_problem_category_folder, true)
-                .build()
-            navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment, null, navOptions)
         }
 
         binding.categoryBackBtn.setOnClickListener {
             navController.navigateUp()
         }
-    }
-
-    private fun uriToFile(context: Context, uri: Uri): File {
-        val inputStream = context.contentResolver.openInputStream(uri)
-            ?: throw IOException("Unable to open input stream for URI: $uri")
-        val file = File(context.cacheDir, "temp_image_file_${System.currentTimeMillis()}.jpg")
-        val outputStream = FileOutputStream(file)
-        inputStream.copyTo(outputStream)
-        inputStream.close()
-        outputStream.close()
-        return file
-    }
-
-    private fun processAndSetProblemData() {
-//        val problemData = ProblemData // 문제 데이터를 수집하는 메서드
-//
-//        val problemImageFile = problemData.problemImageUri?.let { uri ->
-//            uriToFile(requireContext(), uri)
-//        }
-//        val solutionImageFiles = problemData.solutionImageUris.map { uri ->
-//            uriToFile(requireContext(), uri)
-//        }
-//        val passageImageFiles = problemData.passageImageUris.map { uri ->
-//            uriToFile(requireContext(), uri)
-//        }
-//        val additionalImageFiles = problemData.additionalImageUris.map { uri ->
-//            uriToFile(requireContext(), uri)
-//        }
-//
-//        // ViewModel에 데이터 설정
-//        categoryFolderViewModel.setProblemData(problemData)
-//
-//        // 문제를 API에 제출
-//        categoryFolderViewModel.postProblem()
     }
 
     override fun onDestroyView() {
