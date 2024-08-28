@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="25dp"
     android:text="수학"
-    android:textColor="@color/black"
+    android:textColor="@color/white"
     android:paddingStart="20dp"
     android:paddingEnd="20dp"
     style="@style/mg_16"

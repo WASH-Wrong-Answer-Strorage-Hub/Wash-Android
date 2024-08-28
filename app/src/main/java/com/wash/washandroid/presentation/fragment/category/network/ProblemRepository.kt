@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.category.network
 
+import android.util.Log
 import com.wash.washandroid.presentation.fragment.problem.network.PostProblemResponse
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemApiService
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -9,7 +10,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
 
-class ProblemRepository(private val apiService: ProblemApiService) {
+class ProblemRepository {
+
+    private val retrofit = NetworkModule.getClient()
+    private val apiService: ProblemApiService = retrofit.create(ProblemApiService::class.java)
 
     suspend fun postProblem(
         problemImageFile: File?,
@@ -18,6 +22,12 @@ class ProblemRepository(private val apiService: ProblemApiService) {
         additionalImageFiles: List<File>,
         jsonData: String
     ): Response<PostProblemResponse> {
+
+        Log.d("postProblem", "Problem Image File: ${problemImageFile?.name}")
+        Log.d("postProblem", "Solution Image Files: ${solutionImageFiles.map { it.name }}")
+        Log.d("postProblem", "Passage Image Files: ${passageImageFiles.map { it.name }}")
+        Log.d("postProblem", "Additional Image Files: ${additionalImageFiles.map { it.name }}")
+        Log.d("postProblem", "JSON Data: $jsonData")
 
         val problemImagePart = problemImageFile?.let {
             MultipartBody.Part.createFormData(
@@ -52,6 +62,8 @@ class ProblemRepository(private val apiService: ProblemApiService) {
         }
 
         val dataPart = jsonData.toRequestBody("application/json".toMediaTypeOrNull())
+
+        Log.d("postProblem", "Request Data Prepared")
 
         return apiService.postProblem(
             problemImage = problemImagePart,

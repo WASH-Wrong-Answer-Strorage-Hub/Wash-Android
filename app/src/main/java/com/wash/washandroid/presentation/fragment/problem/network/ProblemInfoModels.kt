@@ -1,7 +1,7 @@
 package com.wash.washandroid.presentation.fragment.problem.network
 
-import android.net.Uri
 import com.google.gson.annotations.SerializedName
+import java.io.File
 
 data class ProblemInfoResponse(
     val isSuccess: Boolean,
@@ -17,6 +17,7 @@ data class ProblemResult(
     val solutionImages: List<String>,
     val passageImages: List<String>,
     val additionalProblemImages: List<String>,
+    val memo: String,
     val problemText: String,
     val gptSessionKey: String?,
     val problemType: ProblemType,
@@ -51,10 +52,11 @@ data class PostProblemResult(
 )
 
 data class ProblemData(
-    val problemImageUri: Uri?,
-    val solutionImageUris: List<Uri>,
-    val passageImageUris: List<Uri>,
-    val additionalImageUris: List<Uri>,
+    val problemImageUri: File?,
+    val solutionImageUris: List<File>,
+    val passageImageUris: List<File>,
+    val additionalImageUris: List<File>,
     val problemText: String,
+    val answer: String,
     val memo: String
 )

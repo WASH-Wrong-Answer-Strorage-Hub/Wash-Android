@@ -18,6 +18,9 @@ import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategorySubfieldBinding
 import com.wash.washandroid.presentation.fragment.category.adapter.CategorySubfieldAdapter
 import com.wash.washandroid.presentation.fragment.category.dialog.CategorySubfieldDialog
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubfieldViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
@@ -30,6 +33,10 @@ class ProblemCategorySubfieldFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategorySubfieldBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categorySubfieldViewModel: CategorySubfieldViewModel by viewModels()
+    private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels {
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
+    }
 
     private var categorySubfieldDialog: CategorySubfieldDialog? = null
 
@@ -88,6 +95,7 @@ class ProblemCategorySubfieldFragment : Fragment() {
                     putInt("selectedSubfieldTypeId", typeId)
                     apply()
                 }
+                categoryFolderViewModel.setMidTypeId(typeId)
                 navController.navigate(R.id.action_navigation_problem_category_subfield_to_chapter_fragment, bundle)
             }
         }

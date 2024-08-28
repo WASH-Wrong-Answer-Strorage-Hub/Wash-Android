@@ -12,7 +12,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +20,9 @@ import com.wash.washandroid.databinding.FragmentProblemCategorySubjectBinding
 import com.wash.washandroid.presentation.base.MainActivity
 import com.wash.washandroid.presentation.fragment.category.adapter.CategorySubjectAdapter
 import com.wash.washandroid.presentation.fragment.category.dialog.CategorySubjectDialog
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubjectViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
@@ -39,6 +41,10 @@ class ProblemCategorySubjectFragment : Fragment() {
 
     private lateinit var adapter: CategorySubjectAdapter
     private var categorySubjectDialog: CategorySubjectDialog? = null
+    private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels {
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -101,6 +107,7 @@ class ProblemCategorySubjectFragment : Fragment() {
                     putInt("selectedSubjectTypeId", typeId)
                     apply()
                 }
+                categoryFolderViewModel.setMainTypeId(typeId)
                 navController.navigate(R.id.action_navigation_problem_category_subject_to_subfield_fragment, bundle)
             }
         }
