@@ -74,10 +74,11 @@ class ProblemInfoFragment : Fragment() {
         setupButtons()
 
         Log.d("ProblemCategorySubjectFragment", "Initializing CategorySubjectViewModel with token: $token")
+        // refresh token 주입
         problemInfoViewModel.initialize(token)
 
         // problemId로 특정 문제 조회
-        problemInfoViewModel.fetchProblemInfo("118")
+        problemInfoViewModel.fetchProblemInfo("166")
 
         return binding.root
     }
@@ -92,6 +93,7 @@ class ProblemInfoFragment : Fragment() {
             navController.navigate(R.id.action_navigation_problem_info_to_chat_fragment)
         }
         startVibrationAnimation(binding.floatingActionButton)
+
 
         categoryAdapter = ProblemInfoCategoryAdapter(emptyList())
         binding.categoryRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -118,6 +120,11 @@ class ProblemInfoFragment : Fragment() {
             }
         }
 
+        problemInfoViewModel.problemType.observe(viewLifecycleOwner) { problemType ->
+            val categories = listOf(problemType.subject, problemType.subfield, problemType.chapter)
+            categoryAdapter.updateCategories(categories)
+        }
+
         problemInfoViewModel.problemPhotoUri.observe(viewLifecycleOwner) { uri ->
             uri?.let {
                 Glide.with(this)
@@ -125,6 +132,28 @@ class ProblemInfoFragment : Fragment() {
                     .into(binding.problemInfoPhoto)
                 binding.problemInfoPhoto.clipToOutline = true
                 binding.photoDeleteLayout.clipToOutline = true
+            }
+        }
+
+        problemInfoViewModel.recognizedText.observe(viewLifecycleOwner) { recognizedText ->
+            binding.ocrEt.setText(recognizedText)
+        }
+
+        problemInfoViewModel.answer.observe(viewLifecycleOwner) { answer ->
+            answer?.let {
+                binding.problemInfoAnswer.setText(answer)
+            }
+        }
+
+        problemInfoViewModel.memo.observe(viewLifecycleOwner) { memo ->
+            memo?.let {
+                binding.problemInfoMemo.setText(memo)
+            }
+        }
+
+        problemInfoViewModel.problemText.observe(viewLifecycleOwner) { memo ->
+            memo?.let {
+                binding.problemInfoMemo.setText(memo)
             }
         }
 
@@ -141,23 +170,6 @@ class ProblemInfoFragment : Fragment() {
         problemInfoViewModel.addPhotoList.observe(viewLifecycleOwner) { photoList ->
             addPhotoList.addAll(photoList)
             addAdapter.notifyDataSetChanged()
-        }
-
-        problemInfoViewModel.problemType.observe(viewLifecycleOwner) { problemType ->
-            val categories = listOf(problemType.subject, problemType.subfield, problemType.chapter)
-            categoryAdapter.updateCategories(categories)
-        }
-
-        problemInfoViewModel.answer.observe(viewLifecycleOwner) { answer ->
-            answer?.let {
-                binding.problemInfoAnswer.setText(answer)
-            }
-        }
-
-        problemInfoViewModel.problemText.observe(viewLifecycleOwner) { problemText ->
-            problemText?.let {
-                binding.ocrEt.setText(problemText)
-            }
         }
 
         photoProblemPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -225,7 +237,7 @@ class ProblemInfoFragment : Fragment() {
     }
 
     private fun startVibrationAnimation(view: View) {
-        val animator = ObjectAnimator.ofFloat(view, "translationY", 0f, 10f, -10f, 10f, -10f, 10f, 0f)
+        val animator = ObjectAnimator.ofFloat(view, "translationY", 0f, 12f, -12f, 12f, -12f, 12f, 0f)
         animator.duration = 1500
         animator.repeatMode = ValueAnimator.RESTART
         animator.repeatCount = ValueAnimator.INFINITE
