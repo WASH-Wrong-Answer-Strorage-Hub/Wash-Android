@@ -90,12 +90,20 @@ class ProblemInfoViewModel : ViewModel() {
         Log.d("ProblemInfoViewModel", "Retrofit and ApiService initialized")
     }
 
-    // 문제 상세 정보를 API를 통해 가져오기
-    fun fetchProblemInfo(problemId: String) {
+    private val _problemID = MutableLiveData<Int>()
+    val problemId : LiveData<Int> = _problemID
+
+    fun setProblemID(problemId: Int){
+        _problemID.value = problemId
+    }
+
+    // 문제 정보를 API를 통해 가져오기
+    fun fetchProblemInfo(problemId: LiveData<Int>) {
         viewModelScope.launch {
             try {
-                val response = apiService?.getProblemInfo(problemId)
-                if (response?.isSuccess == true) {
+                val response = apiService?.getProblemInfo(problemId.toString())
+                Log.d("DetailFragment_problem","연결 ${problemId}")
+                if (response?.isSuccess == true) { // 성공 여부를 직접 확인
                     _problemInfo.value = response.result
                     Log.d("result", "$response.result")
 

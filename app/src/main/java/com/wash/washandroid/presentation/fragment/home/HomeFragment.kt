@@ -12,12 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.navercorp.nid.oauth.NidOAuthPreferencesManager.accessToken
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.refreshToken
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeBinding
 import com.wash.washandroid.presentation.base.MainActivity
@@ -109,6 +110,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun onCategoryClick(note: Note) {
+        // 로그에 폴더 ID 출력
+        Log.d("HomeFragment", "폴더 이동 : ${note.folderId}")
+
+        // 폴더 상세 페이지로 이동
         val bundle = Bundle().apply {
             putInt("folderId", note.folderId)
             putString("folderName", note.title)
@@ -122,35 +127,33 @@ class HomeFragment : Fragment() {
         adapter = NoteAdapter(
             notes = mutableListOf(),
             onItemClick = { note ->
-                Log.d("HomeFragment", "${note.title} 클릭됨")
+                Log.d("HomeFragment", "아이템 클릭됨: ${note.title}")
                 onCategoryClick(note)
             },
             onDeleteClick = { note ->
                 showDeleteConfirmationDialog(note)
             },
             onFolderNameChanged = { note ->
-                homeViewModel.updateFolderName(note.folderId, note.title,
-                    mypageViewModel.getRefreshToken().toString()
-                )
+                homeViewModel.updateFolderName(note.folderId, note.title, mypageViewModel.getRefreshToken().toString())
             },
             isEditing = isEditing
         )
-
         binding.recyclerView.layoutManager = GridLayoutManager(context, 3)
         binding.recyclerView.adapter = adapter
     }
 
+    //폴더 삭제
     private fun showDeleteConfirmationDialog(note: Note) {
         AlertDialog.Builder(requireContext())
             .setMessage("폴더를 삭제하시겠습니까?\n삭제하면 해당 폴더는 복구하기 어렵습니다.")
             .setPositiveButton("확인") { dialog, _ ->
-                homeViewModel.deleteFolder(note.folderId,
-                    mypageViewModel.getRefreshToken().toString()
-                )
-                dialog.dismiss()
+                homeViewModel.deleteFolder(note.folderId, mypageViewModel.getRefreshToken().toString())
+                Toast.makeText(requireContext(), "폴더가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                dialog.dismiss() // 대화상자 닫기
+                homeViewModel.fetchFolders(refreshToken.toString()) //연결 재설정
             }
             .setNegativeButton("취소") { dialog, _ ->
-                dialog.dismiss()
+                dialog.dismiss() // 대화상자 닫기
             }
             .create()
             .show()

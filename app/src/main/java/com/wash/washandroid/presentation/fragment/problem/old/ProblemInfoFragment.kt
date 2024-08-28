@@ -78,7 +78,8 @@ class ProblemInfoFragment : Fragment() {
         problemInfoViewModel.initialize(token)
 
         // problemId로 특정 문제 조회
-        problemInfoViewModel.fetchProblemInfo("166")
+        problemInfoViewModel.fetchProblemInfo(problemInfoViewModel.problemId)
+        Log.d("DetailFragment_problem","연결 ${problemInfoViewModel.problemId}")
 
         return binding.root
     }

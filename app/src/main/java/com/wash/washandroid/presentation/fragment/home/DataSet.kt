@@ -17,7 +17,6 @@ data class Folder(
 
 )
 
-
 //폴더 이름 수정
 data class EditFolder(
     val isSuccess: Boolean,

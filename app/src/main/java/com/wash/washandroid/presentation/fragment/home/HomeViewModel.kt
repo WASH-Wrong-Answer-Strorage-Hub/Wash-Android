@@ -89,7 +89,10 @@ class HomeViewModel : ViewModel() {
                         if (response.isSuccessful) {
                             val apiResponse = response.body()
                             if (apiResponse?.isSuccess == true) {
-                                Log.d("HomeViewModel", "Folder name updated successfully: ${apiResponse.result}")
+                                // 업데이트 성공 로그
+                                Log.d("HomeViewModel-edit", "Folder name updated successfully: ${apiResponse.result}")
+                                // 폴더 목록 다시 가져오기
+                                fetchFolders(accessToken)
                             } else {
                                 Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
                             }
@@ -99,11 +102,12 @@ class HomeViewModel : ViewModel() {
                     }
 
                     override fun onFailure(call: Call<EditFolder>, t: Throwable) {
-                        Log.e("HomeViewModel", "Network Error: ${t.message}")
+                        Log.e("HomeViewModel-edit", "Network Error: ${t.message}")
                     }
                 })
         }
     }
+
 
     fun deleteFolder(folderId: Int, accessToken: String) {
         viewModelScope.launch {

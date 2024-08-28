@@ -7,27 +7,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.databinding.ItemNoteBinding
 
 data class Note(
-    var folderId : Int,
+    var folderId: Int,
     var title: String,
     val imageResId: Int
 )
 
 class NoteAdapter(
-    val notes: MutableList<Note>,  // note 리스트를 외부에서 접근할 수 있도록 val로 변경
+    val notes: MutableList<Note>,
     private val onItemClick: (Note) -> Unit,
     private val onDeleteClick: (Note) -> Unit,
-    private val onFolderNameChanged: (Note) -> Unit,  // 폴더 이름 변경 콜백 추가
+    private val onFolderNameChanged: (Note) -> Unit,
     private var isEditing: Boolean
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     inner class NoteViewHolder(private val binding: ItemNoteBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        private var currentNote: Note? = null
+        private var textWatcher: TextWatcher? = null
+
         fun bind(note: Note) {
+            currentNote = note
             binding.itemImageView.setImageResource(note.imageResId)
             binding.itemEditText.setText(note.title)
             binding.itemDeleteIcon.visibility = if (isEditing) View.VISIBLE else View.GONE
 
-            // 편집 모드에 따라 EditText의 상태를 변경
+            // 편집 모드에 따라 EditText의 상태를 설정
             binding.itemEditText.apply {
                 isFocusable = isEditing
                 isClickable = isEditing
@@ -35,27 +39,34 @@ class NoteAdapter(
                 isFocusableInTouchMode = isEditing
             }
 
-            // EditText의 텍스트 변경 감지
-            binding.itemEditText.addTextChangedListener(object : TextWatcher {
+            // 기존 TextWatcher가 있으면 제거
+            textWatcher?.let { binding.itemEditText.removeTextChangedListener(it) }
+
+            // 새로운 TextWatcher 추가
+            textWatcher = object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    // 편집 중인 텍스트를 Note 객체에 반영
                     if (isEditing) {
-                        note.title = s.toString()  // Note 객체의 title 업데이트
-                        onFolderNameChanged(note)  // 변경된 이름을 ViewModel로 전달
+                        currentNote?.let { note ->
+                            note.title = s.toString()
+                            onFolderNameChanged(note)
+                        }
                     }
                 }
 
                 override fun afterTextChanged(s: Editable?) {}
-            })
+            }
+            binding.itemEditText.addTextChangedListener(textWatcher)
 
+            // EditText가 편집 모드가 아닐 때 아이템 클릭
             binding.root.setOnClickListener {
                 if (!isEditing) {
                     onItemClick(note)
                 }
             }
 
+            // 삭제 아이콘 클릭 시 삭제 처리
             binding.itemDeleteIcon.setOnClickListener {
                 onDeleteClick(note)
             }
@@ -73,16 +84,16 @@ class NoteAdapter(
 
     override fun getItemCount(): Int = notes.size
 
-    // 편집 모드 상태를 설정하는 함수
+    // 편집 모드 설정
     fun setEditing(isEditing: Boolean) {
         this.isEditing = isEditing
-        notifyDataSetChanged()  // UI를 업데이트
+        notifyDataSetChanged() // UI를 새로 고침
     }
 
-    // 노트를 업데이트하는 함수
+    // 노트 목록 업데이트
     fun updateNotes(newNotes: List<Note>) {
-        notes.clear()  // 기존 데이터 삭제
-        notes.addAll(newNotes)  // 새 데이터 추가
-        notifyDataSetChanged()  // UI 갱신
+        notes.clear()
+        notes.addAll(newNotes)
+        notifyDataSetChanged() // UI를 새로 고침
     }
 }

@@ -27,7 +27,17 @@
             android:id="@+id/action_socialLoginFragment_to_homeFragment"
             app:destination="@+id/navigation_social_login"
             app:popUpTo="@id/navigation_home" />
+
+        <action
+            android:id="@+id/action_socialLoginFragment_to_generalLoginFragment"
+            app:destination="@+id/navigation_social_login"
+            app:popUpTo="@id/navigation_general_login"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_general_login"
+        android:name="com.wash.washandroid.presentation.fragment.login.GeneralLoginFragment"
+        tools:layout="@layout/fragment_general_login" />
 
     <fragment
         android:id="@+id/navigation_home"
@@ -251,8 +261,8 @@
             android:id="@+id/action_homeDetailFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
         <action
-            android:id="@+id/action_homeDetailFragment_to_homeClickQuizFragment"
-            app:destination="@id/homeClickQuizFragment" />
+            android:id="@+id/action_homeDetailFragment_to_navigationProblemInfo"
+            app:destination="@id/navigation_problem_info" />
     </fragment>
 
     <fragment

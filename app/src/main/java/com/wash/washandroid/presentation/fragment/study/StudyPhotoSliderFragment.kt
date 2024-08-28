@@ -29,14 +29,13 @@ class StudyPhotoSliderFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPhotoSliderBinding.inflate(inflater, container, false)
 
         // SharedPreferences 초기화
-        sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+        sharedPreferences =
+            requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
 
         // Repository 초기화
         val studyApiService = StudyRetrofitInstance.api
@@ -56,7 +55,9 @@ class StudyPhotoSliderFragment : Fragment() {
 
         val savedUris = viewModel.loadPhotoUrisFromPreferences()
 
-        Log.d("fraglog", "Loaded photo URIs from SharedPreferences in PhotoSliderFragment: $savedUris")
+        Log.d(
+            "fraglog", "Loaded photo URIs from SharedPreferences in PhotoSliderFragment: $savedUris"
+        )
 
         val initialPosition = viewModel.selectedPhotoPosition.value ?: 0
 
