@@ -18,7 +18,10 @@ import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentProblemCategoryChapterBinding
 import com.wash.washandroid.presentation.fragment.category.adapter.CategoryChapterAdapter
 import com.wash.washandroid.presentation.fragment.category.dialog.CategoryChapterDialog
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryChapterViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
 
@@ -30,6 +33,10 @@ class ProblemCategoryChapterFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategoryChapterBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categoryChapterViewModel: CategoryChapterViewModel by viewModels()
+    private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels {
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
+    }
 
     private var categoryChapterDialog: CategoryChapterDialog? = null
 
@@ -90,6 +97,7 @@ class ProblemCategoryChapterFragment : Fragment() {
                     putStringSet("selectedChapterTypeIds", ids.map { it.toString() }.toSet())
                     apply()
                 }
+                categoryFolderViewModel.setSubTypeIds(ids)
                 navController.navigate(R.id.action_navigation_problem_category_chapter_to_folder_fragment, bundle)
             }
         }
