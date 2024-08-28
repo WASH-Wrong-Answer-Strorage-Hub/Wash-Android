@@ -18,6 +18,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.navercorp.nid.oauth.NidOAuthPreferencesManager.refreshToken
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeBinding
@@ -84,9 +86,14 @@ class HomeFragment : Fragment() {
 
         // 쿼리가 비어 있지 않을 때만 검색을 수행
         if (query.isNotEmpty()) {
-            val token = mypageViewModel.getRefreshToken().toString() // 토큰 가져오기
-            homeViewModel.searchProblems(query, null, token) // 전체 문제 검색
-            Log.d("HomeFragment", "Search performed with query: $query")
+            if (mypageViewModel.checkSubscriptionStatus() == true) { // 구독 여부를 확인
+                val token = mypageViewModel.getRefreshToken().toString() // 토큰 가져오기
+                homeViewModel.searchProblems(query, null, token) // 전체 문제 검색
+                Log.d("HomeFragment", "Search performed with query: $query")
+            } else {
+                Toast.makeText(requireContext(), "구독 계정만 검색이 가능합니다.", Toast.LENGTH_SHORT).show()
+                Log.d("HomeFragment", "Search blocked due to lack of subscription")
+            }
         } else {
             Log.d("HomeFragment", "Search query is empty")
         }
@@ -94,10 +101,21 @@ class HomeFragment : Fragment() {
 
     private fun observeViewModel() {
         homeViewModel.notes.observe(viewLifecycleOwner, { notes ->
+            // 폴더 위치 업데이트 (어댑터 업데이트)
             adapter.updateNotes(notes)
             updateEmptyViewVisibility(notes.isEmpty())
         })
+
+        homeViewModel.reorderResult.observe(viewLifecycleOwner, { result ->
+            result.onSuccess { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            }
+            result.onFailure { exception ->
+                Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
+
 
     private fun updateEmptyViewVisibility(isEmpty: Boolean) {
         if (isEmpty) {
@@ -136,10 +154,43 @@ class HomeFragment : Fragment() {
             onFolderNameChanged = { note ->
                 homeViewModel.updateFolderName(note.folderId, note.title, mypageViewModel.getRefreshToken().toString())
             },
+            onOrderChanged = { updatedNotes ->
+                // 서버에 폴더 순서 업데이트 요청
+                val order = updatedNotes.map { it.folderId }
+                val token = mypageViewModel.getRefreshToken().toString()
+                homeViewModel.reorderFolders(token, order)
+            },
             isEditing = isEditing
         )
-        binding.recyclerView.layoutManager = GridLayoutManager(context, 3)
-        binding.recyclerView.adapter = adapter
+
+
+        val recyclerView = binding.recyclerView
+        recyclerView.layoutManager = GridLayoutManager(context, 3)
+        recyclerView.adapter = adapter
+
+        // ItemTouchHelper를 사용하여 드래그 앤 드롭 기능 추가
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+            0
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+                adapter.moveItem(fromPosition, toPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // 좌우 스와이프를 통한 삭제 등 기능이 필요하다면 여기서 처리
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     //폴더 삭제

@@ -3,12 +3,15 @@ import com.wash.washandroid.presentation.fragment.home.DeleteProblemResponse
 import com.wash.washandroid.presentation.fragment.home.EditFolder
 import com.wash.washandroid.presentation.fragment.home.ProblemSearchResponse
 import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
+import com.wash.washandroid.presentation.fragment.home.ReorderRequest
+import com.wash.washandroid.presentation.fragment.home.ReorderResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -56,5 +59,13 @@ interface ApiService {
         @Query("folderId") folderId: Int? = null,
         @Query("query") query: String
     ): Call<ProblemSearchResponse>
+
+    // 폴더 순서 조정
+    @PATCH("folders/order")
+    fun reorderFolders(
+        @Header("Authorization") token: String,
+        @Body requestBody: ReorderRequest
+    ): Call<ReorderResponse>
+
 
 }

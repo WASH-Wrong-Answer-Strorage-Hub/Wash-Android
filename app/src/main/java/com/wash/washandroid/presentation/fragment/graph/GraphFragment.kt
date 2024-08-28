@@ -38,7 +38,8 @@ class GraphFragment : Fragment() {
         val refreshToken = mypageViewModel.getRefreshToken() ?: return binding.root // Token이 없으면 반환
         val bearerToken = "Bearer $refreshToken"
 
-        // API데이터
+
+        // API 데이터
         viewModel.fetchMistakeData(bearerToken)
         viewModel.fetchTypeData(bearerToken)
 
@@ -62,21 +63,22 @@ class GraphFragment : Fragment() {
         binding.problemsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.subjectsRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        // 어댑터를 기본으로 설정 (빈 리스트로)
-        binding.problemsRecyclerView.adapter = ProblemImageAdapter(emptyList())
-        //binding.subjectsRecyclerView.adapter = SubjectsAdapter(emptyList())
     }
 
     private fun setupProblemRecyclerView(mistakes: List<Result>) {
+
         val problems = mistakes.map { mistake ->
             // Result를 Problem으로 변환
             Problem(
                 id = mistake.problemId.toInt(),
-                imageResId = R.drawable.temporary_img_test // 자리 표시자 이미지
+                imageResId = R.drawable.temporary_img_test, // 자리 표시자 이미지
             )
         }
 
-        val PBadapter = ProblemImageAdapter(problems)
+        val PBadapter = ProblemImageAdapter(problems) { problemId ->
+            // 아이템 클릭 시 로그 찍기
+            Log.d("GraphFragment", "Clicked Problem ID: $problemId")
+        }
         binding.problemsRecyclerView.adapter = PBadapter
     }
 
