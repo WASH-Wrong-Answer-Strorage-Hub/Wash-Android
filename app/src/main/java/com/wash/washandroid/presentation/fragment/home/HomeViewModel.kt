@@ -5,41 +5,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.navercorp.nid.oauth.NidOAuthPreferencesManager.refreshToken
 import com.wash.washandroid.R
-import com.wash.washandroid.presentation.fragment.home.ApiResponse
-import com.wash.washandroid.presentation.fragment.home.DeleteProblemResponse
-import com.wash.washandroid.presentation.fragment.home.EditFolder
-import com.wash.washandroid.presentation.fragment.home.HomeFragment
 import com.wash.washandroid.presentation.fragment.home.Problem
 import com.wash.washandroid.presentation.fragment.home.ProblemSearch
-import com.wash.washandroid.presentation.fragment.home.ProblemSearchResponse
-import com.wash.washandroid.presentation.fragment.home.ProblemsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-
+import kotlinx.coroutines.withContext
 
 class HomeViewModel : ViewModel() {
 
     private val _notes = MutableLiveData<List<Note>>()
     val notes: LiveData<List<Note>> get() = _notes
 
-    private val apiService = NetworkModule.getClient().create(ApiService::class.java)
-
     private val _images = MutableLiveData<List<Problem>>()
     val images: LiveData<List<Problem>> get() = _images
 
-    private var _currentFolderId: Int? = null
-
-    // 문제 검색 결과를 위한 LiveData
     private val _searchResults = MutableLiveData<List<ProblemSearch>>()
     val searchResults: LiveData<List<ProblemSearch>> get() = _searchResults
 
-    // 특정 폴더 내 문제 데이터를 위한 LiveData
     private val _folderProblems = MutableLiveData<List<Problem>>()
     val folderProblems: LiveData<List<Problem>> get() = _folderProblems
 
+    private var _currentFolderId: Int? = null
+
+    private val apiService = NetworkModule.getClient().create(ApiService::class.java)
 
     fun setCurrentFolderId(folderId: Int) {
         _currentFolderId = folderId
@@ -47,157 +35,121 @@ class HomeViewModel : ViewModel() {
 
     // 전체 폴더 조회
     fun fetchFolders(accessToken: String) {
-        Log.d("homeviewmodel-folder", "$accessToken")
-        viewModelScope.launch {
-            NetworkModule.setAccessToken(accessToken)
-            apiService.getFolders("Bearer $accessToken").enqueue(object : Callback<ApiResponse> {
-                override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-                    Log.d("homeviewmodel-folder", "$accessToken")
-                    if (response.isSuccessful) {
-                        val apiResponse = response.body()
-                        if (apiResponse?.isSuccess == true) {
-                            val folders = apiResponse.result.map { folder ->
-                                Note(
-                                    folderId = folder.folderId,
-                                    title = folder.folderName,
-                                    imageResId = R.drawable.ic_list_frame
-                                )
-                            }
-                            _notes.value = folders
-                            Log.d("HomeViewModel", "Fetched folders: $folders")
-                        } else {
-                            Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
-                        }
-                    } else {
-                        Log.e("HomeViewModel-folder", "Response Error: ${response.code()} ${response.message()}")
-                    }
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("HomeViewModel", "refreshToken : $accessToken")
+            try {
+                // NetworkModule에 액세스 토큰 설정
+                NetworkModule.setAccessToken(accessToken)
 
-                override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
-                    Log.e("HomeViewModel", "Network Error: ${t.message}")
+                // API 호출
+                val response = apiService.getFolders("Bearer $accessToken").execute()
+
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    // 폴더 리스트를 변환
+                    val folders = response.body()?.result?.map { folder ->
+                        Note(
+                            folderId = folder.folderId,
+                            title = folder.folderName,
+                            imageResId = R.drawable.ic_list_frame
+                        )
+                    } ?: emptyList()
+
+                    // 폴더 리스트 로그 출력
+                    folders.forEach { folder ->
+                        Log.d("HomeViewModel", "Folder ID: ${folder.folderId}, Name: ${folder.title}")
+                    }
+
+                    // LiveData에 폴더 리스트 업데이트
+                    _notes.postValue(folders)
+                } else {
+                    Log.e("HomeViewModel", "API Error: ${response.message()}")
                 }
-            })
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Network Error: ${e.message}")
+            }
         }
     }
 
     fun updateFolderName(folderId: Int, newFolderName: String, accessToken: String) {
-        viewModelScope.launch {
-            val updateRequest = mapOf("folderName" to newFolderName)
-            apiService.updateFolderName("Bearer $accessToken", folderId, updateRequest)
-                .enqueue(object : Callback<EditFolder> {
-                    override fun onResponse(call: Call<EditFolder>, response: Response<EditFolder>) {
-                        if (response.isSuccessful) {
-                            val apiResponse = response.body()
-                            if (apiResponse?.isSuccess == true) {
-                                // 업데이트 성공 로그
-                                Log.d("HomeViewModel-edit", "Folder name updated successfully: ${apiResponse.result}")
-                                // 폴더 목록 다시 가져오기
-                                fetchFolders(accessToken)
-                            } else {
-                                Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
-                            }
-                        } else {
-                            Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
-                        }
-                    }
-
-                    override fun onFailure(call: Call<EditFolder>, t: Throwable) {
-                        Log.e("HomeViewModel-edit", "Network Error: ${t.message}")
-                    }
-                })
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val updateRequest = mapOf("folderName" to newFolderName)
+                val response = apiService.updateFolderName("Bearer $accessToken", folderId, updateRequest).execute()
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    Log.d("HomeViewModel", "Folder name updated successfully: ${response.body()?.result}")
+                    fetchFolders(accessToken)
+                } else {
+                    Log.e("HomeViewModel", "API Error: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Network Error: ${e.message}")
+            }
         }
     }
 
-
     fun deleteFolder(folderId: Int, accessToken: String) {
-        viewModelScope.launch {
-            apiService.deleteFolder(accessToken, folderId)
-                .enqueue(object : Callback<ApiResponse> {
-                    override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-                        if (response.isSuccessful) {
-                            val apiResponse = response.body()
-                            if (apiResponse?.isSuccess == true) {
-                                Log.d("HomeViewModel", "Folder deleted successfully: ${apiResponse.result}")
-                                fetchFolders(accessToken) // 폴더 삭제 후 목록 다시 가져옴
-                            } else {
-                                Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
-                            }
-                        } else {
-                            Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
-                        }
-                    }
-
-                    override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
-                        Log.e("HomeViewModel", "Network Error: ${t.message}")
-                    }
-                })
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = apiService.deleteFolder("Bearer $accessToken", folderId).execute()
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    Log.d("HomeViewModel", "Folder deleted successfully: ${response.body()?.result}")
+                    fetchFolders(accessToken)
+                } else {
+                    Log.e("HomeViewModel", "API Error: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Network Error: ${e.message}")
+            }
         }
     }
 
     fun fetchImagesForFolder(folderId: Int, accessToken: String) {
-        Log.d("HomeViewModel", "Fetching images for folderId: $folderId with token: $accessToken")
-        apiService.getImagesForFolder("Bearer $accessToken", folderId).enqueue(object : Callback<ProblemsResponse> {
-            override fun onResponse(call: Call<ProblemsResponse>, response: Response<ProblemsResponse>) {
+        Log.d("HomeViewModel","FolderID : ${folderId}")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = apiService.getImagesForFolder("Bearer $accessToken", folderId).execute()
                 if (response.isSuccessful) {
                     val problems = response.body()?.result?.problems ?: emptyList()
-                    _images.value = problems
+                    _images.postValue(problems)
                     Log.d("HomeViewModel", "Fetched images: $problems")
                 } else {
-                    Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
+                    Log.e("HomeViewModel", "Response Error: ${response.message()}")
                 }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Network Error: ${e.message}")
             }
-
-            override fun onFailure(call: Call<ProblemsResponse>, t: Throwable) {
-                Log.e("HomeViewModel", "Network Error: ${t.message}")
-            }
-        })
+        }
     }
 
     fun deleteProblem(problemId: Int, folderId: Int, accessToken: String) {
-        viewModelScope.launch {
-            apiService.deleteProblem("Bearer $accessToken", problemId)
-                .enqueue(object : Callback<DeleteProblemResponse> {
-                    override fun onResponse(call: Call<DeleteProblemResponse>, response: Response<DeleteProblemResponse>) {
-                        if (response.isSuccessful) {
-                            val apiResponse = response.body()
-                            if (apiResponse?.isSuccess == true) {
-                                Log.d("HomeViewModel", "Problem deleted successfully: ${apiResponse.result}")
-                                fetchImagesForFolder(folderId, accessToken) // 문제 삭제 후 목록 다시 가져옴
-                            } else {
-                                Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
-                            }
-                        } else {
-                            Log.e("HomeViewModel", "Response Error: ${response.code()} ${response.message()}")
-                        }
-                    }
-
-                    override fun onFailure(call: Call<DeleteProblemResponse>, t: Throwable) {
-                        Log.e("HomeViewModel", "Network Error: ${t.message}")
-                    }
-                })
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = apiService.deleteProblem("Bearer $accessToken", problemId).execute()
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    Log.d("HomeViewModel", "Problem deleted successfully: ${response.body()?.result}")
+                    fetchImagesForFolder(folderId, accessToken)
+                } else {
+                    Log.e("HomeViewModel", "API Error: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Network Error: ${e.message}")
+            }
         }
     }
 
     // 문제 검색 함수 (특정 폴더 또는 전체 문제)
     fun searchProblems(query: String, folderId: Int?, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val call = apiService.searchProblems(token, folderId, query)
-            call.enqueue(object : Callback<ProblemSearchResponse> {
-                override fun onResponse(call: Call<ProblemSearchResponse>, response: Response<ProblemSearchResponse>) {
-                    if (response.isSuccessful) {
-                        _searchResults.postValue(response.body()?.result)
-                    } else {
-                        // 오류 처리
-                        Log.d("HomeViewModel", "검색 오류")
-                    }
+            try {
+                val response = apiService.searchProblems(token, folderId, query).execute()
+                if (response.isSuccessful) {
+                    _searchResults.postValue(response.body()?.result)
+                } else {
+                    Log.d("HomeViewModel", "검색 오류: ${response.message()}")
                 }
-                override fun onFailure(call: Call<ProblemSearchResponse>, t: Throwable) {
-                    // 실패 처리
-                    Log.d("HomeViewModel", "검색실패")
-                }
-            })
+            } catch (e: Exception) {
+                Log.d("HomeViewModel", "검색 실패: ${e.message}")
+            }
         }
     }
-
-
 }

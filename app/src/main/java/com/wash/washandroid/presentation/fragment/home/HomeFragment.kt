@@ -30,7 +30,7 @@ class HomeFragment : Fragment() {
     private var isEditing = false
 
     private lateinit var adapter: NoteAdapter
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     // 토큰 받아오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
@@ -41,18 +41,18 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         (activity as MainActivity).hideBottomNavigation(false)
 
+
         val refreshToken = mypageViewModel.getRefreshToken()
         val bearerToken = "Bearer $refreshToken"
         Log.d("homeFragment", "$refreshToken")
         Log.d("homeFragment", "$bearerToken")
-
-        setupRecyclerView()
-        observeViewModel()
-
         // fetchFolders에 token을 전달
         if (refreshToken != null) {
             homeViewModel.fetchFolders(refreshToken)
         }
+        setupRecyclerView()
+        observeViewModel()
+
 
         binding.editButton.setOnClickListener {
             isEditing = !isEditing
@@ -163,4 +163,14 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onResume() {
+        super.onResume()
+        val refreshToken = mypageViewModel.getRefreshToken()
+        if (refreshToken != null) {
+            homeViewModel.fetchFolders(refreshToken)
+        }
+    }
+
+
 }
