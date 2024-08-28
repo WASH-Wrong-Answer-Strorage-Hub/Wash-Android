@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.R
+import com.wash.washandroid.presentation.fragment.home.ApiResponse
 import com.wash.washandroid.presentation.fragment.home.Problem
 import com.wash.washandroid.presentation.fragment.home.ProblemSearch
 import com.wash.washandroid.presentation.fragment.home.ReorderRequest
@@ -36,41 +37,40 @@ class HomeViewModel : ViewModel() {
 
     private val apiService = NetworkModule.getClient().create(ApiService::class.java)
 
+    // 전체 폴더 조회
     fun fetchFolders(accessToken: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                NetworkModule.setAccessToken(accessToken)
-                val response = apiService.getFolders("Bearer $accessToken").execute()
-
-                if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    // 폴더 목록을 성공적으로 받아온 경우
-                    val folders = response.body()?.result?.mapIndexed { index, folder ->
-                        // 각 폴더의 위치를 추적
-                        folderPositionMap[folder.folderId] = index
-                        Note(
-                            folderId = folder.folderId,
-                            title = folder.folderName,
-                            imageResId = R.drawable.ic_list_frame
-                        )
-                    } ?: emptyList()
-
-                    // 폴더 목록을 로그로 출력
-                    folders.forEach { note ->
-                        Log.d("HomeViewModel", "Fetched Folder: id=${note.folderId}, title=${note.title}, position=${folderPositionMap[note.folderId]}")
+        Log.d("homeviewmodel-folder", "$accessToken")
+        viewModelScope.launch {
+            NetworkModule.setAccessToken(accessToken)
+            apiService.getFolders("Bearer $accessToken").enqueue(object : Callback<ApiResponse> {
+                override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                    Log.d("homeviewmodel-folder", "$accessToken")
+                    if (response.isSuccessful) {
+                        val apiResponse = response.body()
+                        if (apiResponse?.isSuccess == true) {
+                            val folders = apiResponse.result.map { folder ->
+                                Note(
+                                    folderId = folder.folderId,
+                                    title = folder.folderName,
+                                    imageResId = R.drawable.ic_list_frame
+                                )
+                            }
+                            _notes.value = folders
+                            Log.d("HomeViewModel", "Fetched folders: $folders")
+                        } else {
+                            Log.e("HomeViewModel", "API Error: ${apiResponse?.message}")
+                        }
+                    } else {
+                        Log.e("HomeViewModel-folder", "Response Error: ${response.code()} ${response.message()}")
                     }
-
-                    // LiveData 업데이트
-                    _notes.postValue(folders)
-                } else {
-                    Log.e("HomeViewModel", "API Error: ${response.message()}")
                 }
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Network Error: ${e.message}")
-            }
+
+                override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                    Log.e("HomeViewModel", "Network Error: ${t.message}")
+                }
+            })
         }
     }
-
-
 
     fun updateFolderName(folderId: Int, newFolderName: String, accessToken: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -165,8 +165,11 @@ class HomeViewModel : ViewModel() {
                 override fun onResponse(call: Call<ReorderResponse>, response: Response<ReorderResponse>) {
                     if (response.isSuccessful) {
                         Log.d("HomeViewModel", "Reorder response: ${response.body()}")
-                        _reorderResult.value = Result.success(response.body()?.result?.message ?: "Reordered successfully")
-                        fetchFolders(token) // 폴더 순서 변경 저장
+                        val resultMessage = response.body()?.result?.message ?: "Reordered successfully"
+                        _reorderResult.value = Result.success(resultMessage)
+
+                        // 폴더 목록을 직접 업데이트
+                        fetchFolders(token) // 필요에 따라 이 호출을 제거할 수 있습니다.
                     } else {
                         Log.e("HomeViewModel", "Reorder API Error: ${response.message()}")
                         _reorderResult.value = Result.failure(Exception("Failed to reorder folders"))
@@ -179,6 +182,7 @@ class HomeViewModel : ViewModel() {
             })
         }
     }
+
 
     // 폴더 위치를 저장할 Map
     private val folderPositionMap = mutableMapOf<Int, Int>()

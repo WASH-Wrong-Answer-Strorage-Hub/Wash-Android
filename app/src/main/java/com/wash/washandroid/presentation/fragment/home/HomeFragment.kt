@@ -101,21 +101,10 @@ class HomeFragment : Fragment() {
 
     private fun observeViewModel() {
         homeViewModel.notes.observe(viewLifecycleOwner, { notes ->
-            // 폴더 위치 업데이트 (어댑터 업데이트)
             adapter.updateNotes(notes)
             updateEmptyViewVisibility(notes.isEmpty())
         })
-
-        homeViewModel.reorderResult.observe(viewLifecycleOwner, { result ->
-            result.onSuccess { message ->
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            }
-            result.onFailure { exception ->
-                Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
-            }
-        })
     }
-
 
     private fun updateEmptyViewVisibility(isEmpty: Boolean) {
         if (isEmpty) {
@@ -162,8 +151,6 @@ class HomeFragment : Fragment() {
             },
             isEditing = isEditing
         )
-
-
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.adapter = adapter

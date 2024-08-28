@@ -12,12 +12,13 @@ data class Note(
     var title: String,
     val imageResId: Int
 )
+
 class NoteAdapter(
     val notes: MutableList<Note>,
     private val onItemClick: (Note) -> Unit,
     private val onDeleteClick: (Note) -> Unit,
     private val onFolderNameChanged: (Note) -> Unit,
-    private val onOrderChanged: (List<Note>) -> Unit, // 아이템 순서 변경 콜백
+    private val onOrderChanged: (List<Note>) -> Unit, // 새로운 콜백
     private var isEditing: Boolean
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
@@ -99,9 +100,11 @@ class NoteAdapter(
     }
 
     // 아이템 이동 처리
+    // 아이템 이동 처리
     fun moveItem(fromPosition: Int, toPosition: Int) {
         Collections.swap(notes, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
         onOrderChanged(notes) // 순서가 변경된 후 콜백 호출
     }
+
 }

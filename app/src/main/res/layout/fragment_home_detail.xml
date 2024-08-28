@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
         <ImageView
             android:id="@+id/back_btn"
             android:layout_width="24dp"
@@ -27,6 +28,7 @@
             android:fontFamily="@font/mangoddobak_b"
             android:textSize="20sp"
             android:textColor="#000000"
+            android:paddingLeft="4dp"
             android:gravity="center_vertical" />
         <Switch
             android:id="@+id/response_switch"
