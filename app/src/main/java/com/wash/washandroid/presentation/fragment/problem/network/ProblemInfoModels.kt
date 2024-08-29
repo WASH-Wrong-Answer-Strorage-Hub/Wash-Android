@@ -1,8 +1,8 @@
 package com.wash.washandroid.presentation.fragment.problem.network
 
 import com.google.gson.annotations.SerializedName
-import java.io.File
 
+// 문제 상세정보 조회 api 응답
 data class ProblemInfoResponse(
     val isSuccess: Boolean,
     val code: Int,
@@ -40,6 +40,24 @@ data class ProblemStatistics(
     val solvedCount: Int
 )
 
+// 문제 추가 api 요청
+data class PostProblemRequest(
+    var folderId: Int,
+    var problemText: String,
+    var answer: String,
+    var status: String = "작성",
+    var memo: String,
+    var mainTypeId: Int,
+    var midTypeId: Int,
+    var subTypeIds: List<Int>,
+    var problemImage: List<String?>,
+    var solutionImages: List<String?>,
+    var passageImages: List<String?>,
+    var additionalImages: List<String?>
+)
+
+
+// 문제 추가 api 응답
 data class PostProblemResponse(
     val isSuccess: Boolean,
     val code: Int,
@@ -51,11 +69,44 @@ data class PostProblemResult(
     val problemId: Int
 )
 
+// 문제 편집 api 요청
+data class EditProblemRequest(
+    var problemId: Int,
+    var problemText: String,
+    var answer: String,
+    var status: String = "active",
+    var memo: String,
+    var problemImage: List<String?>,
+    var solutionImages: List<String?>,
+    var passageImages: List<String?>,
+    var additionalImages: List<String?>
+)
+
+// 문제 편집 api 응답
+data class EditProblemResponse(
+    val isSuccess: Boolean,
+    val code: Int,
+    val message: String,
+    val result: EditProblemResult?
+)
+
+data class EditProblemResult(
+    val message: String
+)
+
+// 이미지 url 변환 api 응답
+data class PostImageUrlResponse(
+    val isSuccess: Boolean,
+    val code: Int,
+    val message: String,
+    val result: String
+)
+
 data class ProblemData(
-    val problemImageUri: File?,
-    val solutionImageUris: List<File>,
-    val passageImageUris: List<File>,
-    val additionalImageUris: List<File>,
+    val problemImageUri: String?,
+    val solutionImageUris: List<String?>,
+    val passageImageUris: List<String?>,
+    val additionalImageUris: List<String?>,
     val problemText: String,
     val answer: String,
     val memo: String
