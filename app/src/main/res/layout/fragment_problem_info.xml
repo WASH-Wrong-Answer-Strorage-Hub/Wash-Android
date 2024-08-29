@@ -148,7 +148,7 @@
                         android:text="필수"
                         android:textColor="#0CCF67"
                         style="@style/mg_b13"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="18dp"
                         android:layout_marginStart="5dp"
                         app:layout_constraintStart_toEndOf="@+id/problem_info_title"
                         app:layout_constraintBottom_toBottomOf="@+id/problem_info_title" />
@@ -227,7 +227,7 @@
                             android:text="필수"
                             android:textColor="#0CCF67"
                             style="@style/mg_b13"
-                            android:layout_marginBottom="10dp"
+                            android:layout_marginBottom="8dp"
                             android:layout_marginStart="5dp"
                             app:layout_constraintStart_toEndOf="@+id/problem_info_answer_title"
                             app:layout_constraintBottom_toBottomOf="@+id/problem_info_answer_title" />
