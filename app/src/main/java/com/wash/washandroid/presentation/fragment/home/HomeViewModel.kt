@@ -109,10 +109,13 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = apiService.getImagesForFolder("Bearer $accessToken", folderId).execute()
-
                 if (response.isSuccessful) {
                     val problems = response.body()?.result?.problems ?: emptyList()
                     _images.postValue(problems)
+                    Log.d("HomeViewModel", "Fetched images: $problems")
+
+                    // _images 업데이트 후 로그
+                    Log.d("HomeViewModel", "Images value after fetch: ${_images.value}")
                 } else {
                     Log.e("HomeViewModel", "Response Error: ${response.message()}")
                 }
@@ -121,6 +124,7 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
+
 
     fun deleteProblem(problemId: Int, folderId: Int, accessToken: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -191,6 +195,14 @@ class HomeViewModel : ViewModel() {
         folders.forEachIndexed { index, note ->
             folderPositionMap[note.folderId] = index
         }
+    }
+
+    //id에 따른 이미지 전달
+    fun getProblemImageUrl(problemId: Int): String? {
+        Log.d("HomeViewModel", "Current _images value: ${_images.value}")
+        val problem = _images.value?.find { it.problemId == problemId }
+        Log.d("HomeViewModel", "Found problem: $problem for problemId: $problemId")
+        return problem?.problemImage
     }
 
 }

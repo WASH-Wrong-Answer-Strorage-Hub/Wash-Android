@@ -55,6 +55,12 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
 
+        homeViewModel.images.observe(viewLifecycleOwner, { images ->
+            // _images가 업데이트되었을 때 처리
+            Log.d("HomeFragment", "Images updated: $images")
+        })
+
+
 
         binding.editButton.setOnClickListener {
             isEditing = !isEditing

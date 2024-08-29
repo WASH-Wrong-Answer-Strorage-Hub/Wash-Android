@@ -27,17 +27,33 @@ data class Result(
     @SerializedName("main_category")    val mainCategory: String?,
     @SerializedName("sub_category")    val subCategory: String?
 )
+
+
+
+
+// 문제 통계 응답 데이터 클래스
 data class TypeResponse(
-    val isSuccess: Boolean,
-    val code: String,
-    val message: String,
-    val result: List<TypeResult> // result를 리스트로 변경
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: ProblemStatistics // result를 객체로 변경
 )
 
-data class TypeResult(
-    val sub_category: String,
-    val total_incorrect: String // 총 틀린 문제 수를 문자열로 받음
+// 문제 통계 데이터 클래스
+data class ProblemStatistics(
+    @SerializedName("mainCategory") val mainCategory: String,
+    @SerializedName("category") val category: String,
+    @SerializedName("subCategories") val subCategories: List<SubCategory>
 )
+
+// 서브 카테고리 데이터 클래스
+data class SubCategory(
+    @SerializedName("subCategory") val subCategory: String,
+    @SerializedName("totalIncorrect") val totalIncorrect: Int // 총 틀린 문제 수를 정수로 받음
+)
+
+
+
 
 // 파이차트
 data class PieChartResponse(
