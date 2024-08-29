@@ -15,6 +15,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeDetailBinding
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoViewModel
 
 class HomeDetailFragment : Fragment() {
@@ -33,7 +36,10 @@ class HomeDetailFragment : Fragment() {
     // 토큰 받아오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
 
-    private val problemInfoViewModel : ProblemInfoViewModel by activityViewModels()
+    private val problemInfoViewModel: ProblemInfoViewModel by activityViewModels {
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
+    }
 
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var adapter: ImageAdapter
