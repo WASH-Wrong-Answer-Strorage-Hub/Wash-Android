@@ -15,6 +15,7 @@ import com.wash.washandroid.R
 import com.wash.washandroid.databinding.DialogCategorySubfieldBinding
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubfieldViewModel
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemAddViewModel
 
 class CategorySubfieldDialog : DialogFragment() {
 
@@ -34,6 +35,7 @@ class CategorySubfieldDialog : DialogFragment() {
     private val categorySubfieldDialogViewModel: CategorySubfieldDialogViewModel by activityViewModels()
     private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels()
     private val categorySubfieldViewModel: CategorySubfieldViewModel by activityViewModels()
+    private val problemAddViewModel: ProblemAddViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,15 +87,31 @@ class CategorySubfieldDialog : DialogFragment() {
         }
 
         binding.categoryAddCompleteBtn.setOnClickListener {
-            // 폴더화면으로 넘어가기
-            val navController = parentFragment?.let { fragment ->
-                Navigation.findNavController(fragment.requireView())
-            }
-            navController?.navigate(R.id.action_navigation_problem_category_subfield_to_folder_fragment)
 
             // 문제 추가 api에 새롭게 추가된 중분류, 소분류 한꺼번에 추가하기
             categoryFolderViewModel.setMidTypeId(categorySubfieldDialogViewModel.subfieldTypeId.value ?: 0)
             categoryFolderViewModel.setSubTypeIds(listOf(categorySubfieldDialogViewModel.chapterTypeId.value ?: 0))
+
+            val currentIndex = problemAddViewModel.currentIndex.value ?: 0
+            val photoList = problemAddViewModel.photoList.value ?: mutableListOf()
+
+            // 폴더화면으로 넘어가기
+            val navController = parentFragment?.let { fragment ->
+                Navigation.findNavController(fragment.requireView())
+            }
+
+            // 로그로 현재 인덱스와 사진 경로 확인
+            Log.d("problemAddViewModel", "Current Index: $currentIndex, Photo: ${photoList[currentIndex]}")
+
+            // 인덱스가 마지막이 아니라면 다음 프로세스를 반복
+            if (!problemAddViewModel.isLastIndex()) {
+                problemAddViewModel.incrementIndex()
+                navController?.navigate(R.id.action_navigation_problem_category_subject_to_problem_answer_fragment)
+            } else {
+                // 모든 사진을 처리했다면 프로세스 종료
+                navController?.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
+                problemAddViewModel.resetIndex() // 인덱스 초기화
+            }
         }
     }
 
