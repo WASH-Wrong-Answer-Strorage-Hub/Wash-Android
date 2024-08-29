@@ -23,6 +23,7 @@ import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryCha
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemAddViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
 
 class ProblemCategoryChapterFragment : Fragment() {
@@ -37,6 +38,7 @@ class ProblemCategoryChapterFragment : Fragment() {
         val problemRepository = ProblemRepository()
         CategoryFolderViewModelFactory(problemRepository)
     }
+    private val problemAddViewModel: ProblemAddViewModel by activityViewModels()
 
     private var categoryChapterDialog: CategoryChapterDialog? = null
 
@@ -86,19 +88,35 @@ class ProblemCategoryChapterFragment : Fragment() {
         }
 
         binding.categoryNextBtn.setOnClickListener {
-            val selectedTypeIds = categoryChapterViewModel.selectedButtonIds.value
-            selectedTypeIds?.let { ids ->
-                Log.d("selectedTypeIds", "$ids")
-                val bundle = Bundle().apply {
-                    putIntegerArrayList("selectedTypeIds", ArrayList(ids))
+
+            val currentIndex = problemAddViewModel.currentIndex.value ?: 0
+            val photoList = problemAddViewModel.photoList.value ?: mutableListOf()
+
+            // 로그로 현재 인덱스와 사진 경로 확인
+            Log.d("problemAddViewModel", "Current Index: $currentIndex, Photo: ${photoList[currentIndex]}")
+
+            // 인덱스가 마지막이 아니라면 다음 프로세스를 반복
+            if (!problemAddViewModel.isLastIndex()) {
+                problemAddViewModel.incrementIndex()
+                val selectedTypeIds = categoryChapterViewModel.selectedButtonIds.value
+                selectedTypeIds?.let { ids ->
+                    Log.d("selectedTypeIds", "$ids")
+                    val bundle = Bundle().apply {
+                        putIntegerArrayList("selectedTypeIds", ArrayList(ids))
+                    }
+                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
+                    with(sharedPref.edit()) {
+                        putStringSet("selectedChapterTypeIds", ids.map { it.toString() }.toSet())
+                        apply()
+                    }
+                    categoryFolderViewModel.setSubTypeIds(ids)
+//                    navController.navigate(R.id.action_navigation_problem_category_chapter_to_folder_fragment, bundle)
                 }
-                val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
-                with(sharedPref.edit()) {
-                    putStringSet("selectedChapterTypeIds", ids.map { it.toString() }.toSet())
-                    apply()
-                }
-                categoryFolderViewModel.setSubTypeIds(ids)
-                navController.navigate(R.id.action_navigation_problem_category_chapter_to_folder_fragment, bundle)
+                navController.navigate(R.id.action_navigation_problem_category_chapter_to_problem_answer_fragment)
+            } else {
+                // 모든 사진을 처리했다면 프로세스 종료
+                navController.navigate(R.id.action_navigation_problem_category_chapter_to_folder_fragment)
+                problemAddViewModel.resetIndex() // 인덱스 초기화
             }
         }
 
