@@ -156,6 +156,10 @@
             android:id="@+id/action_navigation_problem_category_subject_to_folder_fragment"
             app:destination="@id/navigation_problem_category_folder"
             app:popUpTo="@id/navigation_problem_category_folder" />
+        <action
+            android:id="@+id/action_navigation_problem_category_subject_to_problem_answer_fragment"
+            app:destination="@id/navigation_problem_answer"
+            app:popUpTo="@id/navigation_problem_answer" />
     </fragment>
 
     <fragment
@@ -188,6 +192,10 @@
             android:id="@+id/action_navigation_problem_category_chapter_to_subfield_fragment"
             app:destination="@id/navigation_problem_category_subfield"
             app:popUpTo="@id/navigation_problem_category_subfield" />
+        <action
+            android:id="@+id/action_navigation_problem_category_chapter_to_problem_answer_fragment"
+            app:destination="@id/navigation_problem_answer"
+            app:popUpTo="@id/navigation_problem_answer" />
     </fragment>
 
     <fragment
