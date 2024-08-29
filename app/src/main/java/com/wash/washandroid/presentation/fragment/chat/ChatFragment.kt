@@ -57,8 +57,8 @@ class ChatFragment : Fragment() {
             binding.chatRv.scrollToPosition(messages.size - 1)
         }
 
-        problemInfoModel.recognizedText.observe(viewLifecycleOwner) { recognizedText ->
-            recognizedText?.let {
+        problemInfoModel.problemText.observe(viewLifecycleOwner) { problemText ->
+            problemText?.let {
                 val aiCommand = "다음 문제의 자세한 풀이방법을 알려줘: $it"
                 chatViewModel.message.value = aiCommand
                 chatViewModel.sendMessage()
