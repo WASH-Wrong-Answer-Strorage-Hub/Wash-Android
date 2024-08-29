@@ -59,7 +59,7 @@ class ViewPieChartFragment : Fragment() {
         pieChartViewModel.pieChartResponse.observe(viewLifecycleOwner) { pieChartData ->
             val chartItems = pieChartData.map {
                 val percentage = String.format("%.1f", it.incorrect_percentage.toFloat())
-                ChartItem(it.sub_category ?: "Unknown", "${percentage}%")
+                ChartItem(it.sub_category ?: "Unknown", "${percentage}%") //파이차트 전달받기
             }
             updatePieChart(chartItems)
             updateRecyclerView(chartItems.take(initialDataCount))

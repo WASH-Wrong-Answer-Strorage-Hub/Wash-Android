@@ -72,3 +72,24 @@ data class ProblemSearch(
     @SerializedName("problemText") val problemText: String,
     @SerializedName("problemImage") val problemImage: String
 )
+
+
+//폴더 순서 배치 재조정
+
+// 폴더 순서 조정 요청 데이터
+
+data class ReorderRequest(
+    @SerializedName("order") val order: List<Int> // 폴더 ID 순서 리스트
+)
+
+// 폴더 순서 조정 응답 데이터
+data class ReorderResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: ReorderResult
+)
+
+data class ReorderResult(
+    @SerializedName("message") val message: String // "폴더 순서 조정 성공"
+)
