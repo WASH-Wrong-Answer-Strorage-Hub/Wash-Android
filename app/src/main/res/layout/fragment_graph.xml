@@ -13,7 +13,7 @@
         android:text="학습 통계"
         android:textSize="20sp"
         android:fontFamily="@font/mangoddobak_b"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginStart="24dp"
         android:textColor="@color/black"/>
 

@@ -56,7 +56,7 @@ interface ApiService {
     @GET("problems/search")
     fun searchProblems(
         @Header("Authorization") authHeader: String,
-        @Query("folderId") folderId: Int? = null,
+        @Query("folderId") folderId: Int? = null, // folderId가 null일 수 있도록 수정
         @Query("query") query: String
     ): Call<ProblemSearchResponse>
 

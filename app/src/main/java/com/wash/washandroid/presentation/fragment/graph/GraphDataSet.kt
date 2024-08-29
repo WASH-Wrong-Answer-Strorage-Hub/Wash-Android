@@ -25,7 +25,8 @@ data class Result(
     @SerializedName("gpt_session_key")    val gptSessionKey: String?,
     @SerializedName("progress")    val progress: String,
     @SerializedName("main_category")    val mainCategory: String?,
-    @SerializedName("sub_category")    val subCategory: String?
+    @SerializedName("sub_category")    val subCategory: String?,
+    @SerializedName("problemImage")    val problemImage: String?
 )
 
 

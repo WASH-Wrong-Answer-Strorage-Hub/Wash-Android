@@ -59,6 +59,7 @@ data class DeleteProblemResponse(
 //검색창
 
 // 문제 검색 응답
+// 문제 검색 응답
 data class ProblemSearchResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: Int,
@@ -72,6 +73,7 @@ data class ProblemSearch(
     @SerializedName("problemText") val problemText: String,
     @SerializedName("problemImage") val problemImage: String
 )
+
 
 
 //폴더 순서 배치 재조정

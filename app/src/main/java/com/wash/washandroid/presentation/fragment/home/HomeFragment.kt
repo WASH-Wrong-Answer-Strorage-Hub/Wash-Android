@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeBinding
 import com.wash.washandroid.presentation.base.MainActivity
-
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -83,10 +82,26 @@ class HomeFragment : Fragment() {
     private fun performSearch() {
         val query = binding.searchEditText.text.toString()
         Log.d("HomeFragment", "검색 수행: $query")
+
+        // 검색 요청 보내기
+        val refreshToken = mypageViewModel.getRefreshToken().toString()
+        homeViewModel.searchProblems(query, null, "Bearer $refreshToken")
     }
 
     private fun observeViewModel() {
         homeViewModel.notes.observe(viewLifecycleOwner, { notes ->
+            adapter.updateNotes(notes)
+            updateEmptyViewVisibility(notes.isEmpty())
+        })
+
+        homeViewModel.searchResults.observe(viewLifecycleOwner, { results ->
+            val notes = results.map { problemSearch ->
+                Note(
+                    folderId = problemSearch.problemId.toInt(), // problemId를 Int로 변환
+                    title = problemSearch.problemText,
+                    imageResId = R.drawable.item_search_result // 적절한 이미지 리소스 ID 사용
+                )
+            }
             adapter.updateNotes(notes)
             updateEmptyViewVisibility(notes.isEmpty())
         })

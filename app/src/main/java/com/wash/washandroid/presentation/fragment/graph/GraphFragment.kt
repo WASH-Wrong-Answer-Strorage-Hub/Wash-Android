@@ -50,9 +50,11 @@ class GraphFragment : Fragment() {
             setupProblemRecyclerView(mistakes)
         }
 
-        // typeResponse LiveData 관찰
+// typeResponse LiveData 관찰
         viewModel.typeResponse.observe(viewLifecycleOwner) { problemStatisticsList ->
             Log.d("GraphFragment", "Type Response Data: $problemStatisticsList")
+
+            // 과목 리스트 생성
             val subjects = problemStatisticsList?.flatMap { stats ->
                 stats.categories.map { category ->
                     Subject(
@@ -63,8 +65,13 @@ class GraphFragment : Fragment() {
                 }
             } ?: emptyList()
 
-            setupTypeRecyclerView(subjects)
+            // `totalIncorrect`의 합이 큰 순서대로 정렬
+            val sortedSubjects = subjects.sortedByDescending { it.type }
+
+            // 정렬된 리스트로 RecyclerView 설정
+            setupTypeRecyclerView(sortedSubjects)
         }
+
 
         return binding.root
     }
@@ -76,14 +83,15 @@ class GraphFragment : Fragment() {
     }
 
     // 문제 리스트 RecyclerView 설정
+// 문제 리스트 RecyclerView 설정
     private fun setupProblemRecyclerView(mistakes: List<Result>) {
         val problemList = mistakes.map { mistake ->
             val problemId = mistake.problemId.toInt()
-            val imageUrl = homeViewModel.getProblemImageUrl(problemId) ?: "" // 이미지 URL이 없으면 빈 문자열 사용
+            val imageUrl = mistake.problemImage // API에서 받은 이미지 URL 사용
             Log.d("problemImg", "Image URL for problemId $problemId: $imageUrl")
             Problem(
                 id = problemId,
-                imageUrl = imageUrl
+                imageUrl = imageUrl.toString() // URL을 Problem 객체에 전달
             )
         }
 
@@ -93,6 +101,7 @@ class GraphFragment : Fragment() {
         }
         binding.problemsRecyclerView.adapter = problemAdapter
     }
+
 
     // 유형 리스트 RecyclerView 설정
     private fun setupTypeRecyclerView(subjects: List<Subject>) {

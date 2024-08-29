@@ -151,10 +151,15 @@ class HomeViewModel : ViewModel() {
     fun searchProblems(query: String, folderId: Int?, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = apiService.searchProblems(token, folderId, query).execute()
+                val response = apiService.searchProblems("Bearer $token", folderId, query).execute()
 
                 if (response.isSuccessful) {
-                    _searchResults.postValue(response.body()?.result)
+                    val searchResponse = response.body()
+                    if (searchResponse?.isSuccess == true) {
+                        _searchResults.postValue(searchResponse.result)
+                    } else {
+                        Log.e("HomeViewModel", "Search Error: ${searchResponse?.message}")
+                    }
                 } else {
                     Log.e("HomeViewModel", "Search Error: ${response.message()}")
                 }
