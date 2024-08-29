@@ -17,7 +17,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="50dp">
 
             <com.tosspayments.paymentsdk.view.PaymentMethod
                 android:id="@+id/payment_method_widget"
