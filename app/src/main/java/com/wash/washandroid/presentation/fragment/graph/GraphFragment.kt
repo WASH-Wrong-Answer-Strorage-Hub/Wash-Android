@@ -44,12 +44,6 @@ class GraphFragment : Fragment() {
         viewModel.fetchMistakeData(bearerToken)
         viewModel.fetchTypeData(bearerToken)
 
-
-        val problemId = requireArguments().getInt("problemId")
-        val problemImageUrl = homeViewModel.getProblemImageUrl(problemId)
-
-
-
         // mistakeResponse LiveData 관찰
         viewModel.mistakeResponse.observe(viewLifecycleOwner) { mistakes ->
             Log.d("GraphFragment", "Mistakes Data: $mistakes")
@@ -78,7 +72,6 @@ class GraphFragment : Fragment() {
         return binding.root
     }
 
-
     // RecyclerView 초기화
     private fun setupRecyclerViews() {
         binding.problemsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -87,17 +80,17 @@ class GraphFragment : Fragment() {
 
     // 문제 리스트 RecyclerView 설정
     private fun setupProblemRecyclerView(mistakes: List<Result>) {
-        val problems = mistakes.map { mistake ->
+        val problemList = mistakes.map { mistake ->
             val problemId = mistake.problemId.toInt()
-            val imageUrl = homeViewModel.getProblemImageUrl(problemId)
-            Log.d("GraphFragment", "Image URL for problemId $problemId: $imageUrl")
+            val imageUrl = homeViewModel.getProblemImageUrl(problemId) ?: "" // 이미지 URL이 없으면 빈 문자열 사용
+            Log.d("problemImg", "Image URL for problemId $problemId: $imageUrl")
             Problem(
                 id = problemId,
-                imageUrl = imageUrl.toString()
+                imageUrl = imageUrl
             )
         }
 
-        val problemAdapter = ProblemImageAdapter(problems) { problemId ->
+        val problemAdapter = ProblemImageAdapter(problemList) { problemId ->
             Log.d("GraphFragment", "Clicked Problem ID: $problemId")
             // 클릭 시 추가 동작 수행 가능
         }

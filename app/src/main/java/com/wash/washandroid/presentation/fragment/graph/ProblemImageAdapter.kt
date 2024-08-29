@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ItemProblemBinding
 
 data class Problem(val id: Int, val imageUrl: String)
@@ -17,9 +18,16 @@ class ProblemImageAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(problem: Problem, onItemClick: (Int) -> Unit) {
-            Glide.with(binding.problemImageView.context)
-                .load(problem.imageUrl)
-                .into(binding.problemImageView)
+            if (problem.imageUrl.isNotEmpty()) {
+                // URL이 유효한 경우 Glide로 이미지 로드
+                Glide.with(binding.problemImageView.context)
+                    .load(problem.imageUrl)
+                    .into(binding.problemImageView)
+            } else {
+                // URL이 비어 있거나 유효하지 않은 경우 임시 이미지 로드
+                binding.problemImageView.setImageResource(R.drawable.temporary_img_test) //임시 이미지
+            }
+
             binding.root.setOnClickListener {
                 onItemClick(problem.id)
             }

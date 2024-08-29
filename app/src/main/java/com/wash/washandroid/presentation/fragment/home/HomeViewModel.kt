@@ -199,10 +199,9 @@ class HomeViewModel : ViewModel() {
 
     //id에 따른 이미지 전달
     fun getProblemImageUrl(problemId: Int): String? {
-        Log.d("HomeViewModel", "Current _images value: ${_images.value}")
+        Log.d("problemImg", "Current _images value: ${_images.value}")
         val problem = _images.value?.find { it.problemId == problemId }
-        Log.d("HomeViewModel", "Found problem: $problem for problemId: $problemId")
+        Log.d("problemImg", "Found problem: $problem for problemId: $problemId")
         return problem?.problemImage
     }
-
 }
