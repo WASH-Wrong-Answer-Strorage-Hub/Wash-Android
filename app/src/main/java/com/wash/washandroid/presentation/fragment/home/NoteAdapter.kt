@@ -100,7 +100,6 @@ class NoteAdapter(
     }
 
     // 아이템 이동 처리
-    // 아이템 이동 처리
     fun moveItem(fromPosition: Int, toPosition: Int) {
         Collections.swap(notes, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)

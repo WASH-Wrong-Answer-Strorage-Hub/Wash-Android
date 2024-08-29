@@ -1,5 +1,3 @@
-package com.wash.washandroid.presentation.fragment.home
-
 import HomeViewModel
 import MypageViewModel
 import Note
@@ -59,8 +57,6 @@ class HomeFragment : Fragment() {
             // _images가 업데이트되었을 때 처리
             Log.d("HomeFragment", "Images updated: $images")
         })
-
-
 
         binding.editButton.setOnClickListener {
             isEditing = !isEditing
@@ -212,7 +208,7 @@ class HomeFragment : Fragment() {
         super.onResume()
         val refreshToken = mypageViewModel.getRefreshToken()
         if (refreshToken != null) {
-            homeViewModel.fetchFolders(refreshToken)
+            //homeViewModel.fetchFolders(refreshToken)
         }
     }
 
