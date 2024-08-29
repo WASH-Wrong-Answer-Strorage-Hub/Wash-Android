@@ -51,22 +51,19 @@ class GraphFragment : Fragment() {
         }
 
         // typeResponse LiveData 관찰
-        viewModel.typeResponse.observe(viewLifecycleOwner) { stats ->
-            Log.d("GraphFragment", "Type Response Data: $stats")
-            stats?.let {
-                val subjects = it.subCategories.groupBy { subCategory ->
-                    // `category`를 기준으로 그룹화
-                    it.category
-                }.map { (category, subCategories) ->
+        viewModel.typeResponse.observe(viewLifecycleOwner) { problemStatisticsList ->
+            Log.d("GraphFragment", "Type Response Data: $problemStatisticsList")
+            val subjects = problemStatisticsList?.flatMap { stats ->
+                stats.categories.map { category ->
                     Subject(
-                        id = category.hashCode(), // 고유 ID로 `category`의 해시코드 사용
-                        name = category, // `category` 이름
-                        type = subCategories.sumOf { subCategory -> subCategory.totalIncorrect } // 모든 `totalIncorrect`의 합
+                        id = category.category.hashCode(), // 고유 ID로 `category`의 해시코드 사용
+                        name = category.category, // `category` 이름
+                        type = category.subCategories.sumOf { subCategory -> subCategory.totalIncorrect.toInt() } // `totalIncorrect`의 합
                     )
                 }
+            } ?: emptyList()
 
-                setupTypeRecyclerView(subjects)
-            }
+            setupTypeRecyclerView(subjects)
         }
 
         return binding.root

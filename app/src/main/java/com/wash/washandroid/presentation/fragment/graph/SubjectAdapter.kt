@@ -21,7 +21,7 @@ class SubjectsAdapter(
             binding.categoryTextView.text = subject.name
 
             // `TypeTextView`에 `type` 설정
-            binding.TypeTextView.text = "${subject.type}개의 실수" // subCategories의 개수
+            binding.TypeTextView.text = "${subject.type}개의 실수" // 서브 카테고리의 개수
 
             // Arrow 이미지 클릭 리스너 설정
             binding.subjectArrowImageView.setOnClickListener {

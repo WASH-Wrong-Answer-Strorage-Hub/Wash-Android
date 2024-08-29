@@ -36,12 +36,17 @@ data class TypeResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: ProblemStatistics // result를 객체로 변경
+    @SerializedName("result") val result: List<ProblemStatistics> // 결과를 List로 변경
 )
 
 // 문제 통계 데이터 클래스
 data class ProblemStatistics(
     @SerializedName("mainCategory") val mainCategory: String,
+    @SerializedName("categories") val categories: List<Category> // "category"가 "categories"로 변경됨
+)
+
+// 카테고리 데이터 클래스
+data class Category(
     @SerializedName("category") val category: String,
     @SerializedName("subCategories") val subCategories: List<SubCategory>
 )
@@ -49,8 +54,9 @@ data class ProblemStatistics(
 // 서브 카테고리 데이터 클래스
 data class SubCategory(
     @SerializedName("subCategory") val subCategory: String,
-    @SerializedName("totalIncorrect") val totalIncorrect: Int // 총 틀린 문제 수를 정수로 받음
+    @SerializedName("totalIncorrect") val totalIncorrect: String // "totalIncorrect"를 String으로 받음
 )
+
 
 
 
@@ -60,10 +66,10 @@ data class PieChartResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: List<Portion>
+    @SerializedName("result") val result: List<Portion> // 파이차트 데이터 목록
 )
 
 data class Portion(
     @SerializedName("sub_category") val sub_category: String,
-    @SerializedName("incorrect_percentage") val incorrect_percentage: String
+    @SerializedName("incorrect_percentage") val incorrect_percentage: String // 오답 비율
 )
