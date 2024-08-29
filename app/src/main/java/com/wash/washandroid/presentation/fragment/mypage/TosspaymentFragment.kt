@@ -1,5 +1,7 @@
 package com.wash.washandroid.presentation.fragment.mypage
 
+import MypageViewModel
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.tosspayments.paymentsdk.PaymentWidget
 import com.tosspayments.paymentsdk.model.PaymentCallback
@@ -15,11 +19,31 @@ import com.tosspayments.paymentsdk.model.TossPaymentResult
 import com.tosspayments.paymentsdk.view.PaymentMethod
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentTosspaymentBinding
+import com.wash.washandroid.presentation.base.AppClass
 
 class TosspaymentFragment: Fragment() {
 
     private var _binding: FragmentTosspaymentBinding? = null
     private val binding get() = _binding!!
+    private lateinit var paymentWidget: PaymentWidget
+//    private val mypageViewModel: MypageViewModel by activityViewModels()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        val app = activity?.application as? AppClass
+        val clientKey = app?.clientKey ?: ""
+        val customerKey = app?.customerKey ?: ""
+
+        paymentWidget = PaymentWidget(
+            activity = AppCompatActivity(), // 여기서 초기화
+            clientKey = clientKey,
+            customerKey = customerKey,
+        )
+//        mypageViewModel.setPaymentWidget(paymentWidget)
+
+//        mypageViewModel = ViewModelProvider(this).get(mypageViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,11 +56,15 @@ class TosspaymentFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val paymentWidget = PaymentWidget(
-            activity = AppCompatActivity(), // Fragment에서 Activity를 가져오기 위해 AppCompatActivity() 사용
-            clientKey = "test_ck_Ba5PzR0Arnwe4Pbpnqdv8vmYnNeD",
-            customerKey = "GVzdF9za19RYmdNR1p6b3J6bUVwWG5OQXgwRFZsNUUxZW00Cg==",
-        )
+//        val app = activity?.application as? AppClass
+//        val clientKey = app!!.clientKey
+//        val customerKey = app!!.customerKey
+//
+//        val paymentWidget = PaymentWidget(
+//            activity = requireActivity() as AppCompatActivity, // Fragment에서 Activity를 가져오기 위해 AppCompatActivity() 사용
+//            clientKey = clientKey,
+//            customerKey = customerKey,
+//        )
 
         val paymentMethodWidgetStatusListener = object : PaymentWidgetStatusListener {
             override fun onLoad() {
