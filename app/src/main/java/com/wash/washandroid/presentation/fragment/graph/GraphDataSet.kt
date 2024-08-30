@@ -67,10 +67,14 @@ data class PieChartResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: List<Portion> // 파이차트 데이터 목록
+    @SerializedName("result") val result: PieChartResult
 )
 
-data class Portion(
-    @SerializedName("sub_category") val sub_category: String,
-    @SerializedName("incorrect_percentage") val incorrect_percentage: String // 오답 비율
+data class PieChartResult(
+    @SerializedName("subCategories") val subCategories: List<PieChartPortion>
+)
+
+data class PieChartPortion(
+    @SerializedName("subCategory") val subCategory: String,
+    @SerializedName("incorrectPercentage") val incorrectPercentage: Double // String 대신 Double
 )

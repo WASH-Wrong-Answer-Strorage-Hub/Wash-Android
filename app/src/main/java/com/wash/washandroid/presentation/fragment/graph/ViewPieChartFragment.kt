@@ -1,3 +1,4 @@
+// ViewPieChartFragment
 package com.wash.washandroid.presentation.fragment.graph
 
 import MypageViewModel
@@ -9,12 +10,13 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.wash.washandroid.R
@@ -22,7 +24,7 @@ import com.wash.washandroid.databinding.FragmentViewPieChartBinding
 
 data class ChartItem(
     val category: String,
-    val percentage: String
+    val percentage: Double // 변경된 부분
 )
 
 class ViewPieChartFragment : Fragment() {
@@ -33,7 +35,7 @@ class ViewPieChartFragment : Fragment() {
     private val initialDataCount = 3
 
     private val mypageViewModel: MypageViewModel by activityViewModels()
-    private val pieChartViewModel: GraphViewModel by activityViewModels()
+    private val pieChartViewModel: GraphViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,42 +48,42 @@ class ViewPieChartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val categoryId = arguments?.getString("CATEGORY_ID") ?: "defaultCategoryId" // 카테고리 ID 가져오기
-        // 토큰
+
+        val categoryId = arguments?.getInt("CATEGORY_ID") ?: 1
+        val categoryName = arguments?.getString("CATEGORY_NAME") ?: "Subject"
+
+        binding.categoryTag.text = categoryName
+
         val refreshToken = mypageViewModel.getRefreshToken()
         val bearerToken = "Bearer $refreshToken"
 
-        // 전달받은 카테고리 이름을 업데이트
-        val categoryName = arguments?.getString("CATEGORY_NAME") ?: "Subject"
-        binding.categoryTag.text = categoryName
+        Log.d("ViewPieChartFragment", "Fetching pie chart data with token: $bearerToken and categoryId: $categoryId")
+        pieChartViewModel.fetchPieChartData(bearerToken, categoryId)
 
-        // 파이차트 데이터 관찰
-        pieChartViewModel.pieChartResponse.observe(viewLifecycleOwner) { pieChartData ->
-            val chartItems = pieChartData.map {
-                val percentage = String.format("%.1f", it.incorrect_percentage.toFloat())
-                ChartItem(it.sub_category ?: "Unknown", "${percentage}%")
-            }
-            updatePieChart(chartItems)
-            updateRecyclerView(chartItems.take(initialDataCount))
-            binding.viewMoreBtn.setOnClickListener {
-                updateRecyclerView(chartItems)
-                binding.viewMoreBtn.visibility = View.GONE
+        pieChartViewModel.pieChartData.observe(viewLifecycleOwner) { pieChartData ->
+            Log.d("ViewPieChartFragment", "Observed PieChartData: $pieChartData")
+            if (pieChartData != null && pieChartData.result != null) {
+                val chartItems = pieChartData.result.subCategories.map { portion ->
+                    val percentage = String.format("%.1f", portion.incorrectPercentage.toDoubleOrZero())
+                    ChartItem(portion.subCategory ?: "Unknown", percentage.toDouble())
+                }
+                updatePieChart(chartItems)
+                updateRecyclerView(chartItems.take(initialDataCount))
+                binding.viewMoreBtn.setOnClickListener {
+                    updateRecyclerView(chartItems)
+                    binding.viewMoreBtn.visibility = View.GONE
+                }
+            } else {
+                Log.e("ViewPieChartFragment", "데이터가 없거나 null입니다. PieChartData: $pieChartData")
             }
         }
 
-        // 데이터 요청
-        pieChartViewModel.fetchPieChartData(categoryId, bearerToken)
-
-        // 차트 조각 클릭 시 이벤트 처리
         binding.pieChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry?, h: Highlight?) {
-                h?.let {
-                    binding.pieChart.highlightValue(it)
+                if (e is PieEntry) {
+                    binding.pieChart.centerText = "${String.format("%.1f", e.value)}%"
                 }
-                e?.let {
-                    val pieEntry = e as PieEntry
-                    binding.pieChart.centerText = "${String.format("%.1f", pieEntry.value)}%" // 소수점 한 자리 표시
-                }
+                h?.let { binding.pieChart.highlightValue(it) }
             }
 
             override fun onNothingSelected() {
@@ -90,7 +92,6 @@ class ViewPieChartFragment : Fragment() {
             }
         })
 
-        // 뒤로가기 버튼 클릭 리스너 설정
         binding.backBtn.setOnClickListener {
             findNavController().navigate(R.id.action_viewPieChartFragment_to_navigation_graph)
         }
@@ -105,22 +106,23 @@ class ViewPieChartFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.sub5)
         )
 
-        val entries = items.map { PieEntry(it.percentage.replace("%", "").toFloat(), it.category) }
+        val entries = items.map {
+            PieEntry(it.percentage.toFloat(), it.category)
+        }
         val dataSet = PieDataSet(entries, "").apply {
-            this.colors = colors.take(items.size) // 데이터 항목 수에 맞는 색상 리스트 적용
+            this.colors = colors.take(entries.size)
             this.sliceSpace = 3f
-            this.setDrawValues(false) // 퍼센트 표시 제거
+            this.setDrawValues(false)
         }
 
         binding.pieChart.apply {
             this.isRotationEnabled = false
-            this.rotationAngle = 0f // 초기 회전 각도 설정
-
-            this.setDrawEntryLabels(false) // 레이블 숨기기
-            this.legend.isEnabled = false // 범례 숨기기
-            this.description.isEnabled = false // 설명 숨기기
+            this.rotationAngle = 0f
+            this.setDrawEntryLabels(false)
+            this.legend.isEnabled = false
+            this.description.isEnabled = false
             this.data = PieData(dataSet)
-            this.invalidate() // 차트 갱신
+            this.invalidate()
         }
     }
 
@@ -134,5 +136,14 @@ class ViewPieChartFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        }
     }
+
+private fun Double.toDoubleOrZero(): Double {
+    return try {
+        this.toDouble()
+    } catch (e: NumberFormatException) {
+        0.0
+    }
+
 }

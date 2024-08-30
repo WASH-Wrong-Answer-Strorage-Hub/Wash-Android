@@ -50,17 +50,18 @@ class GraphFragment : Fragment() {
             setupProblemRecyclerView(mistakes)
         }
 
-// typeResponse LiveData 관찰
+        // typeResponse LiveData 관찰
         viewModel.typeResponse.observe(viewLifecycleOwner) { problemStatisticsList ->
             Log.d("GraphFragment", "Type Response Data: $problemStatisticsList")
 
             // 과목 리스트 생성
             val subjects = problemStatisticsList?.flatMap { stats ->
                 stats.categories.map { category ->
+                    val totalIncorrect = category.subCategories.sumOf { subCategory -> subCategory.totalIncorrect.toInt() }
+                    Log.d("GraphFragment", "Creating Subject: ${category.category}, Total Incorrect: $totalIncorrect")
                     Subject(
-                        id = category.category.hashCode(), // 고유 ID로 `category`의 해시코드 사용
                         name = category.category, // `category` 이름
-                        type = category.subCategories.sumOf { subCategory -> subCategory.totalIncorrect.toInt() } // `totalIncorrect`의 합
+                        type = totalIncorrect // `totalIncorrect`의 합
                     )
                 }
             } ?: emptyList()
@@ -72,7 +73,6 @@ class GraphFragment : Fragment() {
             setupTypeRecyclerView(sortedSubjects)
         }
 
-
         return binding.root
     }
 
@@ -83,7 +83,6 @@ class GraphFragment : Fragment() {
     }
 
     // 문제 리스트 RecyclerView 설정
-// 문제 리스트 RecyclerView 설정
     private fun setupProblemRecyclerView(mistakes: List<Result>) {
         val problemList = mistakes.map { mistake ->
             val problemId = mistake.problemId.toInt()
@@ -102,10 +101,12 @@ class GraphFragment : Fragment() {
         binding.problemsRecyclerView.adapter = problemAdapter
     }
 
-
     // 유형 리스트 RecyclerView 설정
     private fun setupTypeRecyclerView(subjects: List<Subject>) {
         val subjectAdapter = SubjectsAdapter(subjects) { subject ->
+            // 카테고리 클릭 시 로그 추가
+            Log.d("GraphFragment", "Clicked Subject: Name=${subject.name}")
+
             val bundle = Bundle().apply {
                 putString("CATEGORY_NAME", subject.name) // 카테고리 이름을 전달
             }
