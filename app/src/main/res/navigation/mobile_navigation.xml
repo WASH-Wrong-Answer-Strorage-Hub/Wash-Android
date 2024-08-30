@@ -98,7 +98,30 @@
         android:id="@+id/navigation_mypage"
         android:name="com.wash.washandroid.presentation.fragment.mypage.MypageFragment"
         android:label="@string/navigation_mypage"
-        tools:layout="@layout/fragment_mypage" />
+        tools:layout="@layout/fragment_mypage" >
+        <action
+            android:id="@+id/action_navigation_mypage_to_edit_accountment"
+            app:destination="@id/navigation_edit_account"
+            app:popUpTo="@id/navigation_edit_account"
+            app:enterAnim="@anim/slide_in_right" />
+        <action
+            android:id="@+id/action_navigation_mypage_to_subscribe_menu"
+            app:destination="@+id/navigation_subscribe_menu"
+            app:popUpTo="@id/navigation_subscribe_menu"
+            app:enterAnim="@anim/slide_in_right" />
+        <action
+            android:id="@+id/action_navigation_mypage_to_subscribe"
+            app:destination="@+id/navigation_subscribe"
+            app:popUpTo="@id/navigation_subscribe"
+            app:enterAnim="@anim/slide_in_right"
+            />
+        <action
+            android:id="@+id/action_navigation_mypage_to_withdrawal"
+            app:destination="@+id/navigation_withdrawal"
+            app:popUpTo="@id/navigation_withdrawal"
+            app:enterAnim="@anim/fade_in" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_problem_info"
@@ -229,7 +252,16 @@
     <fragment
         android:id="@+id/navigation_edit_account"
         android:name="com.wash.washandroid.presentation.fragment.mypage.EditAccountFragment"
-        tools:layout="@layout/fragment_edit_account" />
+        tools:layout="@layout/fragment_edit_account" >
+
+        <action
+            android:id="@+id/action_edit_account_to_edit_nickname"
+            app:destination="@+id/navigation_edit_nickname"
+            app:popUpTo="@+id/navigation_edit_nickname"
+            app:enterAnim="@anim/slide_in_left"
+            />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_edit_nickname"
@@ -239,7 +271,14 @@
     <fragment
         android:id="@+id/navigation_subscribe_menu"
         android:name="com.wash.washandroid.presentation.fragment.mypage.SubscribeMenuFragment"
-        tools:layout="@layout/fragment_subscribe_menu" />
+        tools:layout="@layout/fragment_subscribe_menu" >
+
+        <action
+            android:id="@+id/action_navigation_subsctibe_menu_to_tosspayment"
+            app:destination="@id/navigation_tosspayment"
+            app:enterAnim="@anim/slide_in_right"
+            />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_subscribe"
@@ -397,6 +436,16 @@
         android:name="com.wash.washandroid.presentation.fragment.study.StudyFullScreenImageFragment"
         tools:layout="@layout/fragment_study_full_screen_image">
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_tosspayment"
+        android:name="com.wash.washandroid.presentation.fragment.mypage.TosspaymentFragment"
+        tools:layout="@layout/fragment_tosspayment">
+
+        <action
+            android:id="@+id/action_navigation_tosspayment_to_subscribe"
+            app:destination="@id/navigation_subscribe" />
     </fragment>
 
 </navigation>

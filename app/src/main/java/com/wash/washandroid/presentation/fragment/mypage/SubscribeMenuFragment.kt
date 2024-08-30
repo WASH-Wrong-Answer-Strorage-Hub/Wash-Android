@@ -40,8 +40,8 @@ class SubscribeMenuFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.subscribeBtn.setOnClickListener {
+            findNavController().navigate(R.id.navigation_tosspayment)
             mypageViewModel.approveSubscription()
-            findNavController().navigate(R.id.navigation_subscribe)
         }
 
         binding.subscribeMenuBackBtn.setOnClickListener {

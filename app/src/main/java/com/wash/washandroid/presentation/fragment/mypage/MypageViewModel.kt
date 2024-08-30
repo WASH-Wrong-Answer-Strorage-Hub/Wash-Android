@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.tosspayments.paymentsdk.PaymentWidget
+import com.tosspayments.paymentsdk.view.PaymentMethod
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.NicknameRequest
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.PostGeneralLoginRequest
 import com.wash.washandroid.presentation.fragment.mypage.data.entity.request.RefreshTokenRequest
@@ -42,6 +44,8 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
 
     // 토큰 관리 변수 추가
     private val _refreshToken = MutableLiveData<String?>()
+//    private var paymentWidget: PaymentWidget? = null
+
 
     init {
         // ViewModel 초기화 시 닉네임, 이름, 이메일 로드
@@ -257,6 +261,10 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                         _nickname.value = userInfo.nickname
                         _name.value = userInfo.name
                         _email.value = userInfo.email
+
+                        val isSubscribed = userInfo.subscribe == 1
+                        _isSubscribed.value = isSubscribed
+
                         Log.i(TAG, "유저조회 성공: ${getUserInfoResponse.message}")
                     } else {
                         Log.e(TAG, "유저조회 실패: ${getUserInfoResponse?.message}")
@@ -472,6 +480,22 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         val token = _refreshToken.value
         return token ?: sharedPreferences.getString("refreshToken", null)
     }
+
+//    fun setPaymentWidget(widget: PaymentWidget) {
+//        this.paymentWidget = widget
+//    }
+
+//    fun usePaymentWidget() {
+//        paymentWidget.run {
+//            renderPaymentMethods(
+//                method = binding.paymentMethodWidget, // Fragment의 binding 객체를 사용
+//                amount = PaymentMethod.Rendering.Amount(10000),
+//                paymentWidgetStatusListener = paymentMethodWidgetStatusListener
+//            )
+//
+//            renderAgreement(binding.agreementWidget)
+//        }
+//    }
 
     companion object {
         private const val TAG = "MyPageViewModel"
