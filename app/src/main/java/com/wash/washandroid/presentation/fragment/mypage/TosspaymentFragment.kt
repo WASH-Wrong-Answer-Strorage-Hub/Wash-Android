@@ -26,7 +26,7 @@ class TosspaymentFragment: Fragment() {
     private var _binding: FragmentTosspaymentBinding? = null
     private val binding get() = _binding!!
     private lateinit var paymentWidget: PaymentWidget
-//    private val mypageViewModel: MypageViewModel by activityViewModels()
+    private val mypageViewModel: MypageViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,9 +40,6 @@ class TosspaymentFragment: Fragment() {
             clientKey = clientKey,
             customerKey = customerKey,
         )
-//        mypageViewModel.setPaymentWidget(paymentWidget)
-
-//        mypageViewModel = ViewModelProvider(this).get(mypageViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -55,16 +52,6 @@ class TosspaymentFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        val app = activity?.application as? AppClass
-//        val clientKey = app!!.clientKey
-//        val customerKey = app!!.customerKey
-//
-//        val paymentWidget = PaymentWidget(
-//            activity = requireActivity() as AppCompatActivity, // Fragment에서 Activity를 가져오기 위해 AppCompatActivity() 사용
-//            clientKey = clientKey,
-//            customerKey = customerKey,
-//        )
 
         val paymentMethodWidgetStatusListener = object : PaymentWidgetStatusListener {
             override fun onLoad() {
@@ -102,7 +89,9 @@ class TosspaymentFragment: Fragment() {
                     }
                 }
             )
+            mypageViewModel.approveSubscription()
             findNavController().navigate(R.id.navigation_subscribe)
+
         }
     }
 
