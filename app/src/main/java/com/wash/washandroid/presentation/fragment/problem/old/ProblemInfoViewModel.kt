@@ -11,7 +11,7 @@ import com.wash.washandroid.presentation.fragment.category.network.ProblemReposi
 import com.wash.washandroid.presentation.fragment.problem.network.EditProblemRequest
 import com.wash.washandroid.presentation.fragment.problem.network.EditProblemResponse
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemApiService
-import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
+import com.wash.washandroid.presentation.fragment.problem.network.ProblemInfoData
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemResult
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemType
 import kotlinx.coroutines.launch
@@ -149,11 +149,11 @@ class ProblemInfoViewModel(private val problemRepository: ProblemRepository) : V
     }
 
 
-    private val _problemData = MutableLiveData<ProblemData>()
-    val problemData: LiveData<ProblemData> get() = _problemData
+    private val _problemInfoData = MutableLiveData<ProblemInfoData>()
+    val problemInfoData: LiveData<ProblemInfoData> get() = _problemInfoData
 
-    fun setProblemData(problemData: ProblemData) {
-        _problemData.value = problemData
+    fun setProblemData(problemInfoData: ProblemInfoData) {
+        _problemInfoData.value = problemInfoData
     }
 
     private val _apiResponse = MutableLiveData<Response<EditProblemResponse>>()
@@ -162,12 +162,12 @@ class ProblemInfoViewModel(private val problemRepository: ProblemRepository) : V
     fun editProblem() {
         viewModelScope.launch {
             try {
-                val problemData = _problemData.value ?: run {
-                    Log.e("ValidationError", "Problem data is null")
+                val problemInfoData = _problemInfoData.value ?: run {
+                    Log.e("ValidationError", "ProblemInfoData is null")
                     return@launch
                 }
-                if (!validateProblemData(problemData)) {
-                    Log.e("ValidationError", "Invalid problem data")
+                if (!validateProblemData(problemInfoData)) {
+                    Log.e("ValidationError", "Invalid problemInfoData")
                     return@launch
                 }
 
@@ -175,13 +175,13 @@ class ProblemInfoViewModel(private val problemRepository: ProblemRepository) : V
 
                 val editRequest = EditProblemRequest(
                     problemId = problemIdValue,
-                    problemText = problemData.problemText,
-                    answer = problemData.answer,
-                    memo = problemData.memo,
-                    problemImage = listOf(problemData.problemImageUri),
-                    solutionImages = problemData.solutionImageUris,
-                    passageImages = problemData.passageImageUris,
-                    additionalImages = problemData.additionalImageUris
+                    problemText = problemInfoData.problemText,
+                    answer = problemInfoData.answer,
+                    memo = problemInfoData.memo,
+                    problemImage = listOf(problemInfoData.problemImageUri),
+                    solutionImages = problemInfoData.solutionImageUris,
+                    passageImages = problemInfoData.passageImageUris,
+                    additionalImages = problemInfoData.additionalImageUris
                 )
 
                 val response = problemRepository.editProblem(editRequest)
@@ -200,9 +200,9 @@ class ProblemInfoViewModel(private val problemRepository: ProblemRepository) : V
             }
         }
     }
-    private fun validateProblemData(problemData: ProblemData?): Boolean {
-        if (problemData == null) {
-            Log.e("ValidationError", "Problem data is null")
+    private fun validateProblemData(problemInfoData: ProblemInfoData?): Boolean {
+        if (problemInfoData == null) {
+            Log.e("ValidationError", "ProblemInfoData is null")
             return false
         }
 

@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,7 +36,7 @@ import com.wash.washandroid.presentation.fragment.category.network.ProblemReposi
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.problem.PhotoAdapter
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemApiService
-import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
+import com.wash.washandroid.presentation.fragment.problem.network.ProblemInfoData
 import com.wash.washandroid.utils.ProblemInfoDecoration
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -127,8 +128,19 @@ class ProblemInfoFragment : Fragment() {
         binding.categoryRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.categoryRv.adapter = categoryAdapter
 
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // 사용자가 뒤로 가기 버튼을 눌렀을 때 실행할 코드
+                clearListsAndNotify()
+                problemInfoViewModel.clearProblemDetails()
+                navController.navigateUp()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
         binding.problemInfoBackBtn.setOnClickListener {
             clearListsAndNotify()
+            problemInfoViewModel.clearProblemDetails()
 
             navController.navigateUp()
         }
@@ -157,12 +169,12 @@ class ProblemInfoFragment : Fragment() {
 
         binding.problemEditCompleteBtn.setOnClickListener {
             if (isInputValid()) {
-                val problemData = collectProblemData()
-                Log.d("problemData", problemData.toString())
-                problemInfoViewModel.setProblemData(problemData)
+                val problemInfoData = collectProblemData()
+                Log.d("problemInfoData", problemInfoData.toString())
+                problemInfoViewModel.setProblemData(problemInfoData)
 
-                val problemDataValue = problemInfoViewModel.problemData.value
-                Log.d("ProblemData", "ProblemData: $problemDataValue")
+                val problemInfoDataValue = problemInfoViewModel.problemInfoData.value
+                Log.d("ProblemData", "ProblemData: $problemInfoDataValue")
 
                 Toast.makeText(requireContext(), "문제 정보를 갱신중입니다...", Toast.LENGTH_SHORT).show()
 
@@ -313,7 +325,7 @@ class ProblemInfoFragment : Fragment() {
         }
     }
 
-    private fun collectProblemData(): ProblemData {
+    private fun collectProblemData(): ProblemInfoData {
         val problemImageUri = problemInfoViewModel.problemPhotoUri.value?.let { Uri.parse(it.toString()) }
         val problemImageUrl = problemImageUri?.let { if (!isUrl(it.toString())) uploadImage(convertUriToFile(it)) else it.toString() }
 
@@ -333,7 +345,7 @@ class ProblemInfoFragment : Fragment() {
         val answer = binding.problemInfoAnswer.text.toString()
         val memo = binding.problemInfoMemo.text.toString()
 
-        val problemData = ProblemData(
+        val problemInfoData = ProblemInfoData(
             problemImageUri = problemImageUrl,
             solutionImageUris = solutionImageUrls,
             passageImageUris = passageImageUrls,
@@ -343,9 +355,9 @@ class ProblemInfoFragment : Fragment() {
             memo = memo
         )
 
-        Log.d("ProblemData", "Problem Data collected: $problemData")
+        Log.d("ProblemInfoData", "Problem Data collected: $problemInfoData")
 
-        return problemData
+        return problemInfoData
     }
 
     private fun uploadImage(file: File): String? {
