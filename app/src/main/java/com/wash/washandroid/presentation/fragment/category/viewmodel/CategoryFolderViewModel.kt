@@ -11,6 +11,7 @@ import com.wash.washandroid.model.Folder
 import com.wash.washandroid.presentation.fragment.category.network.CategoryApiService
 import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
 import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.problem.network.PostProblemRequest
 import com.wash.washandroid.presentation.fragment.problem.network.PostProblemResponse
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
 import kotlinx.coroutines.launch
@@ -112,35 +113,38 @@ class CategoryFolderViewModel(private val problemRepository: ProblemRepository) 
                     return@launch
                 }
 
-                // LiveData에서 실제 값을 가져옵니다.
-                val folderIdValue = _folderId.value
-                val mainTypeIdValue = _mainTypeId.value
-                val midTypeIdValue = _midTypeId.value
-                val subTypeIdsValue = _subTypeIds.value
-
-
-                val jsonData = """
-                {
-                    "folderId": $folderIdValue,
-                    "problemText": "${problemData.memo}",
-                    "answer": "${problemData.answer}",
-                    "status": "작성",
-                    "memo": "${problemData.memo}",
-                    "mainTypeId": $mainTypeIdValue,
-                    "midTypeId": $midTypeIdValue,
-                    "subTypeIds": $subTypeIdsValue
+                val folderId = _folderId.value ?: run {
+                    Log.e("ValidationError", "Folder ID is null")
+                    return@launch
                 }
-                """.trimIndent()
+                val mainTypeId = _mainTypeId.value ?: run {
+                    Log.e("ValidationError", "Main Type ID is null")
+                    return@launch
+                }
+                val midTypeId = _midTypeId.value ?: run {
+                    Log.e("ValidationError", "Mid Type ID is null")
+                    return@launch
+                }
+                val subTypeIds = _subTypeIds.value ?: run {
+                    Log.e("ValidationError", "Sub Type IDs are null")
+                    return@launch
+                }
 
-                Log.d("postProblem", "JSON Data: $jsonData")
-
-                val response = problemRepository.postProblem(
-                    problemImageFile = problemData.problemImageUri,
-                    solutionImageFiles = problemData.solutionImageUris,
-                    passageImageFiles = problemData.passageImageUris,
-                    additionalImageFiles = problemData.additionalImageUris,
-                    jsonData = jsonData
+                val postRequest = PostProblemRequest(
+                    folderId = folderId,
+                    problemText = problemData.problemText,
+                    answer = problemData.answer,
+                    memo = problemData.memo,
+                    mainTypeId = mainTypeId,
+                    midTypeId = midTypeId,
+                    subTypeIds = subTypeIds,
+                    problemImage = listOf(problemData.problemImageUri),
+                    solutionImages = problemData.solutionImageUris,
+                    passageImages = problemData.passageImageUris,
+                    additionalImages = problemData.additionalImageUris
                 )
+
+                val response = problemRepository.postProblem(postRequest)
 
                 if (response.isSuccessful) {
                     val responseBody = response.body()

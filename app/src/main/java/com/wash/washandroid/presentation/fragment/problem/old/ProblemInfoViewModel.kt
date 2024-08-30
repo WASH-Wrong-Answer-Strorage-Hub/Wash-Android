@@ -6,19 +6,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wash.washandroid.model.ChatOCRMessage
-import com.wash.washandroid.model.ChatOCRRequest
-import com.wash.washandroid.model.Content
-import com.wash.washandroid.model.ImageUrl
 import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
-import com.wash.washandroid.presentation.fragment.chat.ChatApi
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.problem.network.EditProblemRequest
+import com.wash.washandroid.presentation.fragment.problem.network.EditProblemResponse
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemApiService
+import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemResult
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemType
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import retrofit2.Retrofit
 
-class ProblemInfoViewModel : ViewModel() {
+class ProblemInfoViewModel(private val problemRepository: ProblemRepository) : ViewModel() {
     private val _problemPhotoUri = MutableLiveData<Uri?>()
     val problemPhotoUri: LiveData<Uri?> get() = _problemPhotoUri
 
@@ -78,6 +78,13 @@ class ProblemInfoViewModel : ViewModel() {
     private val _addPhotoList = MutableLiveData<List<String>>()
     val addPhotoList: LiveData<List<String>> get() = _addPhotoList
 
+    // 빈 리스트 할당
+    fun clearProblemDetails() {
+        _solutionPhotoList.value = mutableListOf()
+        _printPhotoList.value = mutableListOf()
+        _addPhotoList.value = mutableListOf()
+    }
+
 
     private var retrofit: Retrofit? = null
     private var apiService: ProblemApiService? = null
@@ -97,12 +104,12 @@ class ProblemInfoViewModel : ViewModel() {
         _problemID.value = problemId
     }
 
-    // 문제 정보를 API를 통해 가져오기
-    fun fetchProblemInfo(problemId: LiveData<Int>) {
+    // 문제 상세 정보 API 호출
+    fun fetchProblemInfo(problemId: String) {
         viewModelScope.launch {
             try {
-                val response = apiService?.getProblemInfo(problemId.toString())
-                Log.d("DetailFragment_problem","연결 ${problemId}")
+                val response = apiService?.getProblemInfo(problemId)
+                Log.d("ProblemInfoViewModel","연결 $problemId")
                 if (response?.isSuccess == true) { // 성공 여부를 직접 확인
                     _problemInfo.value = response.result
                     Log.d("result", "$response.result")
@@ -113,9 +120,6 @@ class ProblemInfoViewModel : ViewModel() {
                     _memo.value = response.result.memo  // 메모
                     processProblemData(response.result)  // 문제 사진
                     processProblemListData(response.result)  // 풀이, 지문, 추가 사진 리스트
-
-                    val problemImageUrl = response.result.problemImage
-                    recognizeTextFromImage(problemImageUrl)  // AI로 이미지 인식 후 텍스트 추출
                 } else {
                     Log.e("ProblemInfoViewModel", "API Error: ${response?.message}")
                 }
@@ -126,45 +130,83 @@ class ProblemInfoViewModel : ViewModel() {
     }
 
     private fun processProblemData(result: ProblemResult) {
-        // 이미지 URI 설정
-        _problemPhotoUri.value = Uri.parse(result.problemImage)
-
-        // 첫 번째 사진과 나머지 사진 설정
-        if (result.solutionImages.isNotEmpty()) {
-            setFirstPhoto(result.solutionImages.first())
-            setRemainingPhotos(result.solutionImages.drop(1))
+        // 문제 이미지 URI 설정
+        val problemImageUrl = result.problemImage
+        if (problemImageUrl.isNotEmpty()) {
+            _problemPhotoUri.value = Uri.parse(problemImageUrl)
+            Log.d("problemPhotoUri", "Set problem photo URI: $problemImageUrl")
+        } else {
+            _problemPhotoUri.value = null
+            Log.d("problemPhotoUri", "No problem photo URL provided, URI set to null")
         }
     }
 
     private fun processProblemListData(result: ProblemResult) {
+        // 하단 이미지 리스트 URI 설정
         _solutionPhotoList.value = result.solutionImages
         _printPhotoList.value = result.passageImages
         _addPhotoList.value = result.additionalProblemImages
     }
 
-    private val _recognizedText = MutableLiveData<String>()
-    val recognizedText: LiveData<String> get() = _recognizedText
 
-    // 이미지 URL로부터 텍스트를 추출하기 위한 API 요청 함수
-    private fun recognizeTextFromImage(imageUrl: String) {
-        val textContent = Content(type = "text", text = "문제 사진을 인식해서 문제에 관한 텍스트를 추출해라.")
-        val imageContent = Content(type = "image_url", imageUrl = ImageUrl(url = imageUrl))
+    private val _problemData = MutableLiveData<ProblemData>()
+    val problemData: LiveData<ProblemData> get() = _problemData
 
-        val ocrMessage = ChatOCRMessage(role = "user", content = listOf(textContent, imageContent))
-        val request = ChatOCRRequest(model = "gpt-4o-mini", messages = listOf(ocrMessage))
+    fun setProblemData(problemData: ProblemData) {
+        _problemData.value = problemData
+    }
 
+    private val _apiResponse = MutableLiveData<Response<EditProblemResponse>>()
+    val apiResponse: LiveData<Response<EditProblemResponse>> get() = _apiResponse
+
+    fun editProblem() {
         viewModelScope.launch {
             try {
-                val response = ChatApi.retrofitService.sendMessageImageUrl(request)
-                val recognizedText = response.choices.firstOrNull()?.message?.content?.trim() ?: "No text recognized"
-                Log.d("StudyViewModel", "인식된 텍스트: $recognizedText")
-                _recognizedText.postValue(recognizedText)
+                val problemData = _problemData.value ?: run {
+                    Log.e("ValidationError", "Problem data is null")
+                    return@launch
+                }
+                if (!validateProblemData(problemData)) {
+                    Log.e("ValidationError", "Invalid problem data")
+                    return@launch
+                }
+
+                val problemIdValue = _problemID.value ?: return@launch
+
+                val editRequest = EditProblemRequest(
+                    problemId = problemIdValue,
+                    problemText = problemData.problemText,
+                    answer = problemData.answer,
+                    memo = problemData.memo,
+                    problemImage = listOf(problemData.problemImageUri),
+                    solutionImages = problemData.solutionImageUris,
+                    passageImages = problemData.passageImageUris,
+                    additionalImages = problemData.additionalImageUris
+                )
+
+                val response = problemRepository.editProblem(editRequest)
+
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    Log.d("editProblem", "Response Successful: $responseBody")
+                    _apiResponse.postValue(response)
+                } else {
+                    Log.e("editProblem", "Response Failed: ${response.errorBody()?.string()}")
+                    _apiResponse.postValue(response)
+                }
             } catch (e: Exception) {
-                Log.e("StudyViewModel", "에러 발생: ${e.message}")
-                _recognizedText.postValue("Error occurred: ${e.message}")
+                Log.e("editProblem", "Unexpected Error: ${e.localizedMessage}")
+                e.printStackTrace()
             }
         }
     }
+    private fun validateProblemData(problemData: ProblemData?): Boolean {
+        if (problemData == null) {
+            Log.e("ValidationError", "Problem data is null")
+            return false
+        }
 
+        return true
+    }
 
 }

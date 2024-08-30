@@ -85,39 +85,38 @@ class ProblemCategoryFolderFragment : Fragment() {
 
         binding.categoryFolderCheckBtn.setOnClickListener {
 
-            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
-                Log.d("typeId", "$typeId")
-                categoryFolderViewModel.setFolderId(typeId)
-            }
+//            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
+//                Log.d("typeId", "$typeId")
+//                categoryFolderViewModel.setFolderId(typeId)
+//            }
+//
+//            val problemData = categoryFolderViewModel.problemData.value
+//            Log.d("ProblemData", "ProblemData: $problemData")
+//
+//            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
+//                Log.d("typeId", "$typeId")
+//            }
+//
+//            // 문제 추가 API 호출
+//            viewLifecycleOwner.lifecycleScope.launch {
+//                categoryFolderViewModel.postProblem() // 비동기 호출
+//
+//                // API 응답 관찰
+//                categoryFolderViewModel.apiResponse.observe(viewLifecycleOwner) { response ->
+//                    if (response != null) {
+//                        if (response.isSuccessful) {
+//                            Toast.makeText(requireContext(), "문제가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+//                            navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
+//                        } else {
+//                            Toast.makeText(requireContext(), "문제 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+//                            Log.e("API Error", "Response Failed: ${response.errorBody()?.string()}")
+//                            navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
+//                        }
+//                    }
+//                }
+//            }
+            navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
 
-            val problemData = categoryFolderViewModel.problemData.value
-            Log.d("ProblemData", "ProblemData: $problemData")
-
-            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
-                Log.d("typeId", "$typeId")
-            }
-
-            // 문제 추가 API 호출
-            viewLifecycleOwner.lifecycleScope.launch {
-                categoryFolderViewModel.postProblem() // 비동기 호출
-
-                // API 응답 관찰
-                categoryFolderViewModel.apiResponse.observe(viewLifecycleOwner) { response ->
-                    if (response != null) {
-                        if (response.isSuccessful) {
-                            Toast.makeText(requireContext(), "문제가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                            // 네비게이션
-                            val navOptions = NavOptions.Builder()
-                                .setPopUpTo(R.id.navigation_problem_category_folder, true)
-                                .build()
-                            navController.navigate(R.id.action_navigation_problem_category_folder_to_problem_add_fragment, null, navOptions)
-                        } else {
-                            Toast.makeText(requireContext(), "문제 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
-                            Log.e("API Error", "Response Failed: ${response.errorBody()?.string()}")
-                        }
-                    }
-                }
-            }
         }
 
         binding.categoryBackBtn.setOnClickListener {

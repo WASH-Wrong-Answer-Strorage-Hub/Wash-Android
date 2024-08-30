@@ -8,9 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.wash.washandroid.model.ChatItemModels
 import com.wash.washandroid.model.ChatMessage
 import com.wash.washandroid.model.ChatRequest
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
 import kotlinx.coroutines.launch
 
-class ChatViewModel : ViewModel() {
+class ChatViewModel(private val problemRepository: ProblemRepository) : ViewModel() {
     private val _messages = MutableLiveData<MutableList<ChatItemModels>>()
     val messages: LiveData<MutableList<ChatItemModels>> get() = _messages
 
@@ -46,4 +47,26 @@ class ChatViewModel : ViewModel() {
 
         message.value = ""
     }
+
+    private val _chatRoom = MutableLiveData<ChatRoomResult>()
+    val chatRoom: LiveData<ChatRoomResult> = _chatRoom
+
+//    fun findOrCreateChatRoom() {
+//        viewModelScope.launch {
+//            try {
+//
+//                val editRequest = PostChatRoomRequest(
+//                    problem_id =
+//                )
+//                val response = problemRepository.getChatrooms()
+//                if (response.isSuccessful && response.body()?.isSuccess == true) {
+//                    _chatRoom.value = response.body()?.result
+//                } else {
+//                    Log.e("ChatViewModel", "Failed to find or create chat room: ${response.message()}")
+//                }
+//            } catch (e: Exception) {
+//                Log.e("ChatViewModel", "Error: ${e.localizedMessage}")
+//            }
+//        }
+//    }
 }

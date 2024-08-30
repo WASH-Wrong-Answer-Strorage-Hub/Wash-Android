@@ -25,6 +25,7 @@ import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFol
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubjectViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemAddViewModel
 import com.wash.washandroid.utils.CategoryItemDecoration
 
 class ProblemCategorySubjectFragment : Fragment() {
@@ -35,6 +36,7 @@ class ProblemCategorySubjectFragment : Fragment() {
         get() = requireNotNull(_binding){"FragmentProblemCategorySubjectBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
     private val categorySubjectViewModel: CategorySubjectViewModel by viewModels()
+    private val problemAddViewModel: ProblemAddViewModel by activityViewModels()
 
     private val mypageViewModel: MypageViewModel by activityViewModels()
     private lateinit var token : String
@@ -113,7 +115,22 @@ class ProblemCategorySubjectFragment : Fragment() {
         }
 
         binding.skipBtn.setOnClickListener {
-            navController.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
+
+            val currentIndex = problemAddViewModel.currentIndex.value ?: 0
+            val photoList = problemAddViewModel.photoList.value ?: mutableListOf()
+
+            // 로그로 현재 인덱스와 사진 경로 확인
+            Log.d("problemAddViewModel", "Current Index: $currentIndex, Photo: ${photoList[currentIndex]}")
+
+            // 인덱스가 마지막이 아니라면 다음 프로세스를 반복
+            if (!problemAddViewModel.isLastIndex()) {
+                problemAddViewModel.incrementIndex()
+                navController.navigate(R.id.action_navigation_problem_category_subject_to_problem_answer_fragment)
+            } else {
+                // 모든 사진을 처리했다면 프로세스 종료
+                navController.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
+                problemAddViewModel.resetIndex() // 인덱스 초기화
+            }
         }
 
         binding.categoryBackBtn.setOnClickListener {
