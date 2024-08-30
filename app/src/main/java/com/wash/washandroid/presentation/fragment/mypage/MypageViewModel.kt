@@ -262,7 +262,7 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
                         _name.value = userInfo.name
                         _email.value = userInfo.email
 
-                        val isSubscribed = userInfo.subscribe == 1
+                        val isSubscribed = userInfo.subscribe == 0
                         _isSubscribed.value = isSubscribed
 
                         Log.i(TAG, "유저조회 성공: ${getUserInfoResponse.message}")
@@ -481,21 +481,6 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         return token ?: sharedPreferences.getString("refreshToken", null)
     }
 
-//    fun setPaymentWidget(widget: PaymentWidget) {
-//        this.paymentWidget = widget
-//    }
-
-//    fun usePaymentWidget() {
-//        paymentWidget.run {
-//            renderPaymentMethods(
-//                method = binding.paymentMethodWidget, // Fragment의 binding 객체를 사용
-//                amount = PaymentMethod.Rendering.Amount(10000),
-//                paymentWidgetStatusListener = paymentMethodWidgetStatusListener
-//            )
-//
-//            renderAgreement(binding.agreementWidget)
-//        }
-//    }
 
     companion object {
         private const val TAG = "MyPageViewModel"
