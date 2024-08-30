@@ -281,7 +281,8 @@
         android:label="ViewPieChartFragment">
         <action
             android:id="@+id/action_viewPieChartFragment_to_navigation_graph"
-            app:destination="@id/navigation_graph" />
+            app:destination="@id/navigation_graph"
+            app:exitAnim="@anim/slide_in_right"/>
     </fragment>
 
     <!-- Note Camera Fragment -->

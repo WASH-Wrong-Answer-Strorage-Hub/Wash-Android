@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.graph
 
+import HomeViewModel
 import MypageViewModel
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +24,7 @@ class GraphFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: GraphViewModel by activityViewModels()
     private val mypageViewModel: MypageViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,70 +36,82 @@ class GraphFragment : Fragment() {
         // RecyclerView 초기화
         setupRecyclerViews()
 
-        // 토큰
+        // 토큰 가져오기
         val refreshToken = mypageViewModel.getRefreshToken() ?: return binding.root // Token이 없으면 반환
         val bearerToken = "Bearer $refreshToken"
 
-        // API데이터
+        // API 데이터 가져오기
         viewModel.fetchMistakeData(bearerToken)
         viewModel.fetchTypeData(bearerToken)
 
-        // mistakeResponse LiveData
+        // mistakeResponse LiveData 관찰
         viewModel.mistakeResponse.observe(viewLifecycleOwner) { mistakes ->
             Log.d("GraphFragment", "Mistakes Data: $mistakes")
             setupProblemRecyclerView(mistakes)
         }
 
-        // typeResponse LiveData
-        viewModel.typeResponse.observe(viewLifecycleOwner) { types ->
-            Log.d("GraphFragment", "Types Data: $types")
-            setupTypeRecyclerView(types)
+// typeResponse LiveData 관찰
+        viewModel.typeResponse.observe(viewLifecycleOwner) { problemStatisticsList ->
+            Log.d("GraphFragment", "Type Response Data: $problemStatisticsList")
+
+            // 과목 리스트 생성
+            val subjects = problemStatisticsList?.flatMap { stats ->
+                stats.categories.map { category ->
+                    Subject(
+                        id = category.category.hashCode(), // 고유 ID로 `category`의 해시코드 사용
+                        name = category.category, // `category` 이름
+                        type = category.subCategories.sumOf { subCategory -> subCategory.totalIncorrect.toInt() } // `totalIncorrect`의 합
+                    )
+                }
+            } ?: emptyList()
+
+            // `totalIncorrect`의 합이 큰 순서대로 정렬
+            val sortedSubjects = subjects.sortedByDescending { it.type }
+
+            // 정렬된 리스트로 RecyclerView 설정
+            setupTypeRecyclerView(sortedSubjects)
         }
+
 
         return binding.root
     }
 
+    // RecyclerView 초기화
     private fun setupRecyclerViews() {
-        // 레이아웃 매니저 설정
         binding.problemsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.subjectsRecyclerView.layoutManager = LinearLayoutManager(context)
-
-        // 어댑터를 기본으로 설정 (빈 리스트로)
-        binding.problemsRecyclerView.adapter = ProblemImageAdapter(emptyList())
-        //binding.subjectsRecyclerView.adapter = SubjectsAdapter(emptyList())
     }
 
+    // 문제 리스트 RecyclerView 설정
+// 문제 리스트 RecyclerView 설정
     private fun setupProblemRecyclerView(mistakes: List<Result>) {
-        val problems = mistakes.map { mistake ->
-            // Result를 Problem으로 변환
+        val problemList = mistakes.map { mistake ->
+            val problemId = mistake.problemId.toInt()
+            val imageUrl = mistake.problemImage // API에서 받은 이미지 URL 사용
+            Log.d("problemImg", "Image URL for problemId $problemId: $imageUrl")
             Problem(
-                id = mistake.problemId.toInt(),
-                imageResId = R.drawable.temporary_img_test // 자리 표시자 이미지
+                id = problemId,
+                imageUrl = imageUrl.toString() // URL을 Problem 객체에 전달
             )
         }
 
-        val PBadapter = ProblemImageAdapter(problems)
-        binding.problemsRecyclerView.adapter = PBadapter
+        val problemAdapter = ProblemImageAdapter(problemList) { problemId ->
+            Log.d("GraphFragment", "Clicked Problem ID: $problemId")
+            // 클릭 시 추가 동작 수행 가능
+        }
+        binding.problemsRecyclerView.adapter = problemAdapter
     }
 
-    private fun setupTypeRecyclerView(types: List<TypeResult>) {
-        val subjects = types.map { type ->
-            // TypeResult를 Subject로 변환
-            Subject(
-                id = type.sub_category.hashCode(), // 카테고리에 기반한 고유 ID
-                name = type.sub_category ?: "제목 없음", // 카테고리 null 처리
-                type = "${type.total_incorrect}개의 실수" // 오류 수
-            )
-        }
 
-        val SJadapter = SubjectsAdapter(subjects) { subject ->
-            // 과목 클릭 시 PieChartFragment로 이동 및 카테고리 이름 전달
+    // 유형 리스트 RecyclerView 설정
+    private fun setupTypeRecyclerView(subjects: List<Subject>) {
+        val subjectAdapter = SubjectsAdapter(subjects) { subject ->
             val bundle = Bundle().apply {
                 putString("CATEGORY_NAME", subject.name) // 카테고리 이름을 전달
             }
             findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment, bundle)
         }
-        binding.subjectsRecyclerView.adapter = SJadapter
+        binding.subjectsRecyclerView.adapter = subjectAdapter
     }
 
     override fun onDestroyView() {

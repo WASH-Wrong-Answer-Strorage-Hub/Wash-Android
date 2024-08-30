@@ -46,7 +46,7 @@ class ViewPieChartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val categoryId = arguments?.getString("CATEGORY_ID") ?: "defaultCategoryId" // 카테고리 ID 가져오기
         // 토큰
         val refreshToken = mypageViewModel.getRefreshToken()
         val bearerToken = "Bearer $refreshToken"
@@ -70,7 +70,7 @@ class ViewPieChartFragment : Fragment() {
         }
 
         // 데이터 요청
-        pieChartViewModel.fetchPieChartData(bearerToken)
+        pieChartViewModel.fetchPieChartData(categoryId, bearerToken)
 
         // 차트 조각 클릭 시 이벤트 처리
         binding.pieChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {

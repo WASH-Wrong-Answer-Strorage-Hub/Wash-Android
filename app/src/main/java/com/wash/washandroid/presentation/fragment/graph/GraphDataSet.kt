@@ -25,29 +25,52 @@ data class Result(
     @SerializedName("gpt_session_key")    val gptSessionKey: String?,
     @SerializedName("progress")    val progress: String,
     @SerializedName("main_category")    val mainCategory: String?,
-    @SerializedName("sub_category")    val subCategory: String?
-)
-data class TypeResponse(
-    val isSuccess: Boolean,
-    val code: String,
-    val message: String,
-    val result: List<TypeResult> // result를 리스트로 변경
+    @SerializedName("sub_category")    val subCategory: String?,
+    @SerializedName("problemImage")    val problemImage: String?
 )
 
-data class TypeResult(
-    val sub_category: String,
-    val total_incorrect: String // 총 틀린 문제 수를 문자열로 받음
+
+
+
+// 문제 통계 응답 데이터 클래스
+data class TypeResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: List<ProblemStatistics> // 결과를 List로 변경
 )
+
+// 문제 통계 데이터 클래스
+data class ProblemStatistics(
+    @SerializedName("mainCategory") val mainCategory: String,
+    @SerializedName("categories") val categories: List<Category> // "category"가 "categories"로 변경됨
+)
+
+// 카테고리 데이터 클래스
+data class Category(
+    @SerializedName("category") val category: String,
+    @SerializedName("subCategories") val subCategories: List<SubCategory>
+)
+
+// 서브 카테고리 데이터 클래스
+data class SubCategory(
+    @SerializedName("subCategory") val subCategory: String,
+    @SerializedName("totalIncorrect") val totalIncorrect: String // "totalIncorrect"를 String으로 받음
+)
+
+
+
+
 
 // 파이차트
 data class PieChartResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: List<Portion>
+    @SerializedName("result") val result: List<Portion> // 파이차트 데이터 목록
 )
 
 data class Portion(
     @SerializedName("sub_category") val sub_category: String,
-    @SerializedName("incorrect_percentage") val incorrect_percentage: String
+    @SerializedName("incorrect_percentage") val incorrect_percentage: String // 오답 비율
 )

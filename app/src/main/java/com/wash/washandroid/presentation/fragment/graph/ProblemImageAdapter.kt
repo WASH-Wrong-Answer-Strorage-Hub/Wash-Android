@@ -3,21 +3,34 @@ package com.wash.washandroid.presentation.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ItemProblemBinding
 
-// 데이터를 나타내는 클래스
-data class Problem(val id: Int, val imageResId: Int)
+data class Problem(val id: Int, val imageUrl: String)
 
-class ProblemImageAdapter(private val problemList: List<Problem>) :
-    RecyclerView.Adapter<ProblemImageAdapter.ProblemViewHolder>() {
+class ProblemImageAdapter(
+    private val problemList: List<Problem>,
+    private val onItemClick: (Int) -> Unit
+) : RecyclerView.Adapter<ProblemImageAdapter.ProblemViewHolder>() {
 
-    // ViewHolder 클래스
     class ProblemViewHolder(private val binding: ItemProblemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(problem: Problem) {
-            // 이미지 바인딩
-            binding.problemImageView.setImageResource(problem.imageResId)
+        fun bind(problem: Problem, onItemClick: (Int) -> Unit) {
+            if (problem.imageUrl.isNotEmpty()) {
+                // URL이 유효한 경우 Glide로 이미지 로드
+                Glide.with(binding.problemImageView.context)
+                    .load(problem.imageUrl)
+                    .into(binding.problemImageView)
+            } else {
+                // URL이 비어 있거나 유효하지 않은 경우 임시 이미지 로드
+                binding.problemImageView.setImageResource(R.drawable.temporary_img_test) //임시 이미지
+            }
+
+            binding.root.setOnClickListener {
+                onItemClick(problem.id)
+            }
         }
     }
 
@@ -29,7 +42,7 @@ class ProblemImageAdapter(private val problemList: List<Problem>) :
     }
 
     override fun onBindViewHolder(holder: ProblemViewHolder, position: Int) {
-        holder.bind(problemList[position])
+        holder.bind(problemList[position], onItemClick)
     }
 
     override fun getItemCount(): Int = problemList.size
