@@ -16,6 +16,7 @@ import com.wash.washandroid.databinding.DialogCategorySubfieldBinding
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubfieldViewModel
 import com.wash.washandroid.presentation.fragment.problem.add.ProblemAddViewModel
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemManager
 
 class CategorySubfieldDialog : DialogFragment() {
 
@@ -95,6 +96,18 @@ class CategorySubfieldDialog : DialogFragment() {
             val currentIndex = problemAddViewModel.currentIndex.value ?: 0
             val photoList = problemAddViewModel.photoList.value ?: mutableListOf()
 
+            val midTypeId = categoryFolderViewModel.midTypeId.value
+            val subTypeIds = categoryFolderViewModel.subTypeIds.value
+            Log.d("midTypeId", midTypeId.toString())
+            Log.d("subTypeIds", subTypeIds.toString())
+
+            midTypeId?.let {
+                ProblemManager.updateMidTypeProblemData(currentIndex, it)
+            }
+            subTypeIds?.let {
+                ProblemManager.updateSubTypeProblemData(currentIndex, it)
+            }
+
             // 폴더화면으로 넘어가기
             val navController = parentFragment?.let { fragment ->
                 Navigation.findNavController(fragment.requireView())
@@ -107,10 +120,12 @@ class CategorySubfieldDialog : DialogFragment() {
             if (!problemAddViewModel.isLastIndex()) {
                 problemAddViewModel.incrementIndex()
                 navController?.navigate(R.id.action_navigation_problem_category_subject_to_problem_answer_fragment)
+                dismiss()
             } else {
                 // 모든 사진을 처리했다면 프로세스 종료
                 navController?.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
                 problemAddViewModel.resetIndex() // 인덱스 초기화
+                dismiss()
             }
         }
     }
