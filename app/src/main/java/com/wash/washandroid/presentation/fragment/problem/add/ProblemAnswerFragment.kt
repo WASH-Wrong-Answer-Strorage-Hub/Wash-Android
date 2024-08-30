@@ -181,7 +181,7 @@ class ProblemAnswerFragment : Fragment() {
                 Log.d("problemData", problemData.toString())
                 categoryFolderViewModel.setProblemData(problemData)
                 ProblemManager.addProblemData(problemData)
-                problemAnswerViewModel.setRecognizedText("")
+                problemAnswerViewModel.setRecognizedText("인공지능이 작성중입니다...")
 
                 navController.navigate(R.id.action_navigation_problem_answer_to_category_subject_fragment)
             } else {
