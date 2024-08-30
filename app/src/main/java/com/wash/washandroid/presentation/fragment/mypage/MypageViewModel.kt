@@ -481,21 +481,6 @@ class MypageViewModel(application: Application) : AndroidViewModel(application) 
         return token ?: sharedPreferences.getString("refreshToken", null)
     }
 
-//    fun setPaymentWidget(widget: PaymentWidget) {
-//        this.paymentWidget = widget
-//    }
-
-//    fun usePaymentWidget() {
-//        paymentWidget.run {
-//            renderPaymentMethods(
-//                method = binding.paymentMethodWidget, // Fragment의 binding 객체를 사용
-//                amount = PaymentMethod.Rendering.Amount(10000),
-//                paymentWidgetStatusListener = paymentMethodWidgetStatusListener
-//            )
-//
-//            renderAgreement(binding.agreementWidget)
-//        }
-//    }
 
     companion object {
         private const val TAG = "MyPageViewModel"
