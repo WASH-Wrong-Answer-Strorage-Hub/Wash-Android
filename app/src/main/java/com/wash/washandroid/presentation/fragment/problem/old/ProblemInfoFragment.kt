@@ -34,6 +34,7 @@ import com.wash.washandroid.presentation.base.MainActivity
 import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
 import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
+import com.wash.washandroid.presentation.fragment.chat.ChatViewModel
 import com.wash.washandroid.presentation.fragment.problem.PhotoAdapter
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemApiService
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemInfoData
@@ -59,7 +60,10 @@ class ProblemInfoFragment : Fragment() {
         CategoryFolderViewModelFactory(problemRepository)
     }
     private val mypageViewModel: MypageViewModel by activityViewModels()
-
+    private val chatViewModel: ChatViewModel by activityViewModels {
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
+    }
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var printAdapter: PhotoAdapter
     private lateinit var addAdapter: PhotoAdapter
@@ -119,6 +123,10 @@ class ProblemInfoFragment : Fragment() {
         }
 
         binding.floatingActionButton.setOnClickListener {
+            problemInfoViewModel.problemId.value?.let { problemId ->
+                chatViewModel.setProblemID(problemId)
+                Log.d("chatViewModel", "문제 고유 번호: $problemId")
+            }
             navController.navigate(R.id.action_navigation_problem_info_to_chat_fragment)
         }
         startVibrationAnimation(binding.floatingActionButton)

@@ -147,13 +147,13 @@ class ProblemAnswerFragment : Fragment() {
             navController.navigateUp()
         }
 
-        binding.problemInfoPhotoAdd.setOnClickListener {
-            if (isEditing) {
-                openProblemGallery()
-            } else {
-                binding.problemInfoPhotoAdd.isClickable = false
-            }
-        }
+//        binding.problemInfoPhotoAdd.setOnClickListener {
+//            if (isEditing) {
+//                openProblemGallery()
+//            } else {
+//                binding.problemInfoPhotoAdd.isClickable = false
+//            }
+//        }
 
         // 현재 인덱스의 사진을 가져와서 url로 변환 후 OCR 기능 실행
         problemAddViewModel.currentIndex.observe(viewLifecycleOwner) {
@@ -177,6 +177,7 @@ class ProblemAnswerFragment : Fragment() {
 
         binding.problemInfoNextBtn.setOnClickListener {
             if (isInputValid()) {
+                Toast.makeText(requireContext(), "문제 정보를 임시 저장중입니다...", Toast.LENGTH_SHORT).show()
                 val problemData = collectProblemData()
                 Log.d("problemData", problemData.toString())
                 categoryFolderViewModel.setProblemData(problemData)

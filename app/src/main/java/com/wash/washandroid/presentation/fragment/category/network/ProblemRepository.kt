@@ -1,6 +1,8 @@
 package com.wash.washandroid.presentation.fragment.category.network
 
 import com.wash.washandroid.presentation.fragment.chat.ChatApiService
+import com.wash.washandroid.presentation.fragment.chat.PostChatRequest
+import com.wash.washandroid.presentation.fragment.chat.PostChatResponse
 import com.wash.washandroid.presentation.fragment.chat.PostChatRoomRequest
 import com.wash.washandroid.presentation.fragment.chat.PostChatRoomResponse
 import com.wash.washandroid.presentation.fragment.problem.network.EditProblemRequest
@@ -27,5 +29,9 @@ class ProblemRepository {
 
     suspend fun getChatrooms(request: PostChatRoomRequest): Response<PostChatRoomResponse> {
         return chatService.getChatrooms(request)
+    }
+
+    suspend fun addChat(request: PostChatRequest): Response<PostChatResponse> {
+        return chatService.addChat(request)
     }
 }
