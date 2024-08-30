@@ -179,6 +179,10 @@
             android:id="@+id/action_navigation_problem_category_subject_to_folder_fragment"
             app:destination="@id/navigation_problem_category_folder"
             app:popUpTo="@id/navigation_problem_category_folder" />
+        <action
+            android:id="@+id/action_navigation_problem_category_subject_to_problem_answer_fragment"
+            app:destination="@id/navigation_problem_answer"
+            app:popUpTo="@id/navigation_problem_answer" />
     </fragment>
 
     <fragment
@@ -211,6 +215,10 @@
             android:id="@+id/action_navigation_problem_category_chapter_to_subfield_fragment"
             app:destination="@id/navigation_problem_category_subfield"
             app:popUpTo="@id/navigation_problem_category_subfield" />
+        <action
+            android:id="@+id/action_navigation_problem_category_chapter_to_problem_answer_fragment"
+            app:destination="@id/navigation_problem_answer"
+            app:popUpTo="@id/navigation_problem_answer" />
     </fragment>
 
     <fragment
@@ -225,6 +233,9 @@
             android:id="@+id/action_navigation_problem_category_folder_to_home_fragment"
             app:destination="@id/navigation_home"
             app:popUpTo="@id/navigation_home" />
+        <action
+            android:id="@+id/action_navigation_problem_category_folder_to_problem_add_fragment"
+            app:destination="@id/navigation_problem_add" />
     </fragment>
 
     <fragment
@@ -317,7 +328,8 @@
         android:label="ViewPieChartFragment">
         <action
             android:id="@+id/action_viewPieChartFragment_to_navigation_graph"
-            app:destination="@id/navigation_graph" />
+            app:destination="@id/navigation_graph"
+            app:exitAnim="@anim/slide_in_right"/>
     </fragment>
 
     <!-- Note Camera Fragment -->

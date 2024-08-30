@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="128dp"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="128dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -14,21 +16,25 @@
 
         <TextView
             android:id="@+id/tv_problem_number"
-            style="@style/mg_12"
+            style="@style/mg_13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="1"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_problem_status"
-            android:layout_width="56dp"
-            android:layout_height="14.22dp"
-            android:layout_marginLeft="50dp"
-            android:gravity="center"
-            android:src="@drawable/study_sm_incomplete" />
-    </LinearLayout>
+            android:layout_width="57dp"
+            android:layout_height="18.49dp"
+            android:src="@drawable/study_sm_incomplete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="128dp"

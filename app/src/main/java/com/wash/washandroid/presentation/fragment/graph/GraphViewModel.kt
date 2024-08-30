@@ -8,74 +8,78 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.util.Log
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 class GraphViewModel : ViewModel() {
 
-    // 많이 틀린 문제 데이터를 저장하는 LiveData
     private val _mistakeResponse = MutableLiveData<List<Result>>()
     val mistakeResponse: LiveData<List<Result>> get() = _mistakeResponse
 
-    // 자주 틀린 과목 및 유형 데이터를 저장하는 LiveData
-    private val _typeResponse = MutableLiveData<List<TypeResult>>()
-    val typeResponse: LiveData<List<TypeResult>> get() = _typeResponse
+    private val _typeResponse = MutableLiveData<List<ProblemStatistics>?>()
+    val typeResponse: LiveData<List<ProblemStatistics>?> get() = _typeResponse
 
-    // 많이 틀린 문제 데이터를 가져오는 함수
+    private val _pieChartData = MutableLiveData<PieChartResponse?>()
+    val pieChartData: LiveData<PieChartResponse?> get() = _pieChartData
+
+
     fun fetchMistakeData(refreshToken: String) {
-        val graphApiService = RetrofitClient.graphApiService
-
-        graphApiService.getMistakes(refreshToken).enqueue(object : Callback<ProblemsResponse> {
+        RetrofitClient.graphApiService.getMistakes(refreshToken).enqueue(object : Callback<ProblemsResponse> {
             override fun onResponse(call: Call<ProblemsResponse>, response: Response<ProblemsResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    // 응답 데이터에서 result 리스트를 가져와서 정렬
+                if (response.isSuccessful) {
                     val mistakes = response.body()?.result?.sortedByDescending { it.incorrectCount } ?: emptyList()
                     _mistakeResponse.postValue(mistakes)
-
-                    // 결과 로그 찍기
                     Log.d("GraphViewModel", "Mistakes Response: ${response.body()}")
                 } else {
                     _mistakeResponse.postValue(emptyList())
-
-                    // 오류 로그 찍기
                     Log.e("GraphViewModel", "Error: ${response.code()} ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<ProblemsResponse>, t: Throwable) {
                 _mistakeResponse.postValue(emptyList())
-
-                // 실패 로그 찍기
                 Log.e("GraphViewModel", "Failure: ${t.message}", t)
             }
         })
     }
 
-    // 자주 틀린 유형 데이터를 가져오는 함수
     fun fetchTypeData(refreshToken: String) {
-        val graphApiService = RetrofitClient.graphApiService
-
-        graphApiService.getTypes(refreshToken).enqueue(object : Callback<TypeResponse> {
+        RetrofitClient.graphApiService.getTypes(refreshToken).enqueue(object : Callback<TypeResponse> {
             override fun onResponse(call: Call<TypeResponse>, response: Response<TypeResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    // 응답 데이터에서 result 리스트를 가져옴
-                    val types = response.body()?.result ?: emptyList()
-                    _typeResponse.postValue(types)
-
-                    // 결과 로그 찍기
+                if (response.isSuccessful) {
+                    _typeResponse.postValue(response.body()?.result)
                     Log.d("GraphViewModel", "Types Response: ${response.body()}")
                 } else {
-                    _typeResponse.postValue(emptyList())
-
-                    // 오류 로그 찍기
+                    _typeResponse.postValue(null)
                     Log.e("GraphViewModel", "Error: ${response.code()} ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<TypeResponse>, t: Throwable) {
-                _typeResponse.postValue(emptyList())
-
-                // 실패 로그 찍기
+                _typeResponse.postValue(null)
                 Log.e("GraphViewModel", "Failure: ${t.message}", t)
             }
         })
     }
+
+    fun fetchPieChartData(accessToken: String, categoryId: Int) {
+        RetrofitClient.graphApiService.getRatios(accessToken, categoryId).enqueue(object : Callback<PieChartResponse> {
+            override fun onResponse(call: Call<PieChartResponse>, response: Response<PieChartResponse>) {
+                if (response.isSuccessful) {
+                    _pieChartData.value = response.body()
+                    Log.d("GraphViewModel", "PieChart categoryID: $categoryId")
+                    Log.d("GraphViewModel", "PieChart Response Body: ${response.body()}")
+                } else {
+                    _pieChartData.value = null
+                    Log.e("GraphViewModel", "Error: ${response.code()} ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PieChartResponse>, t: Throwable) {
+                _pieChartData.value = null
+                Log.e("GraphViewModel", "Failure: ${t.message}", t)
+            }
+        })
+    }
+
 }

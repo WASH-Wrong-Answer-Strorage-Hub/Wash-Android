@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object StudyRetrofitInstance {
-    private const val BASE_URL = "http://192.168.45.39:3000"
+    private const val BASE_URL = "https://dev.team-wash.store"
 
     // Access token 설정
     private var accessToken: String? = null

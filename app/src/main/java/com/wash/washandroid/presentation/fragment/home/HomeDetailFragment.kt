@@ -15,6 +15,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentHomeDetailBinding
+import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
+import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.problem.old.ProblemInfoViewModel
 
 class HomeDetailFragment : Fragment() {
@@ -33,7 +36,10 @@ class HomeDetailFragment : Fragment() {
     // 토큰 받아오기
     private val mypageViewModel: MypageViewModel by activityViewModels()
 
-    private val problemInfoViewModel : ProblemInfoViewModel by activityViewModels()
+    private val problemInfoViewModel: ProblemInfoViewModel by activityViewModels {
+        val problemRepository = ProblemRepository()
+        CategoryFolderViewModelFactory(problemRepository)
+    }
 
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var adapter: ImageAdapter
@@ -89,11 +95,21 @@ class HomeDetailFragment : Fragment() {
             true
         }
 
-        // "편집" 버튼 클릭 이벤트 설정
+// "편집" 버튼 클릭 이벤트 설정
         binding.editButton.setOnClickListener {
             isEditing = !isEditing
             updateNotesState()
+
+            // 편집 모드가 완료 상태일 때 이미지 데이터를 다시 불러오기
+            if (!isEditing) {
+                val folderId = requireArguments().getInt("folderId")
+                val refreshToken = mypageViewModel.getRefreshToken()
+                if (refreshToken != null) {
+                    homeViewModel.fetchImagesForFolder(folderId, refreshToken)
+                }
+            }
         }
+
 
         // 검색창 동작 설정
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -152,6 +168,7 @@ class HomeDetailFragment : Fragment() {
         })
     }
 
+
     // 이미지 클릭 시 동작
     private fun onImageClick(position: Int) {
         val problemId = adapter.items[position].problemId // 선택한 이미지의 Id
@@ -167,9 +184,17 @@ class HomeDetailFragment : Fragment() {
             .setPositiveButton("확인") { dialog, _ ->
                 val problemId = adapter.items[position].problemId
                 val folderId = requireArguments().getInt("folderId")
-                val token = requireArguments().getString("accessToken")
-                if (token != null) {
-                    homeViewModel.deleteProblem(problemId, folderId, token)
+                //val token = requireArguments().getString("accessToken")
+
+                val refreshToken = mypageViewModel.getRefreshToken()
+
+                Log.d("HomeViewModel-delete","$problemId")
+                Log.d("HomeViewModel-delete","$folderId")
+                Log.d("HomeViewModel-delete","$refreshToken")
+                if (refreshToken != null) {
+                    homeViewModel.deleteProblem(problemId, folderId, refreshToken)
+                    Log.d("HomeViewModel-delete","삭제 성공")
+
                 }
             }
             .setNegativeButton("취소") { dialog, _ ->

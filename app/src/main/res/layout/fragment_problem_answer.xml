@@ -96,7 +96,7 @@
                         android:text="필수"
                         android:textColor="#0CCF67"
                         style="@style/mg_b13"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="18dp"
                         android:layout_marginStart="5dp"
                         app:layout_constraintStart_toEndOf="@+id/problem_info_title"
                         app:layout_constraintBottom_toBottomOf="@+id/problem_info_title" />
@@ -123,6 +123,7 @@
                         android:overScrollMode="always"
                         android:padding="16dp"
                         style="@style/mg_b13"
+                        android:text="인공지능이 작성중입니다..."
                         android:textColor="@color/black"
                         android:background="@drawable/photo_add_btn_background"
                         app:layout_constraintStart_toStartOf="parent"
@@ -133,6 +134,7 @@
                         android:id="@+id/photo_delete_layout"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:visibility="invisible"
                         android:background="@drawable/photo_delete_background"
                         app:layout_constraintEnd_toEndOf="@+id/problem_info_photo"
                         app:layout_constraintTop_toTopOf="@+id/problem_info_photo">
@@ -174,7 +176,7 @@
                             android:text="필수"
                             android:textColor="#0CCF67"
                             style="@style/mg_b13"
-                            android:layout_marginBottom="10dp"
+                            android:layout_marginBottom="8dp"
                             android:layout_marginStart="5dp"
                             app:layout_constraintStart_toEndOf="@+id/problem_info_answer_title"
                             app:layout_constraintBottom_toBottomOf="@+id/problem_info_answer_title" />

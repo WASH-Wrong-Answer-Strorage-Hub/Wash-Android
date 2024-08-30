@@ -71,12 +71,13 @@ class PhotoAdapter(
     }
 
     inner class PhotoViewHolder(private val binding: ItemPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(photoUri: String) {
-            Glide.with(context)
-                .load(photoUri)
-                .into(binding.photoIv)
-
-            binding.photoIv.clipToOutline = true
+        fun bind(photoUri: String?) {
+            if (!photoUri.isNullOrEmpty()) {
+                Glide.with(context)
+                    .load(photoUri)
+                    .into(binding.photoIv)
+                binding.photoIv.clipToOutline = true
+            }
 
             if (!isAddButtonVisible) {
                 binding.photoIv.setOnClickListener {

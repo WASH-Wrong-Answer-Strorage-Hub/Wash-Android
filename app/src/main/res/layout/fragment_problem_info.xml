@@ -101,7 +101,7 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/category_rv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="325dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="20dp"
@@ -148,7 +148,7 @@
                         android:text="필수"
                         android:textColor="#0CCF67"
                         style="@style/mg_b13"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="18dp"
                         android:layout_marginStart="5dp"
                         app:layout_constraintStart_toEndOf="@+id/problem_info_title"
                         app:layout_constraintBottom_toBottomOf="@+id/problem_info_title" />
@@ -174,6 +174,7 @@
                         android:scrollbars="vertical"
                         android:overScrollMode="always"
                         android:padding="16dp"
+                        android:enabled="false"
                         style="@style/mg_b13"
                         android:textColor="@color/black"
                         android:background="@drawable/photo_add_btn_background"
@@ -227,7 +228,7 @@
                             android:text="필수"
                             android:textColor="#0CCF67"
                             style="@style/mg_b13"
-                            android:layout_marginBottom="10dp"
+                            android:layout_marginBottom="8dp"
                             android:layout_marginStart="5dp"
                             app:layout_constraintStart_toEndOf="@+id/problem_info_answer_title"
                             app:layout_constraintBottom_toBottomOf="@+id/problem_info_answer_title" />

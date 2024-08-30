@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.databinding.ItemNoteBinding
+import java.util.Collections
 
 data class Note(
     var folderId: Int,
@@ -17,6 +18,7 @@ class NoteAdapter(
     private val onItemClick: (Note) -> Unit,
     private val onDeleteClick: (Note) -> Unit,
     private val onFolderNameChanged: (Note) -> Unit,
+    private val onOrderChanged: (List<Note>) -> Unit, // 새로운 콜백
     private var isEditing: Boolean
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
@@ -96,4 +98,12 @@ class NoteAdapter(
         notes.addAll(newNotes)
         notifyDataSetChanged() // UI를 새로 고침
     }
+
+    // 아이템 이동 처리
+    fun moveItem(fromPosition: Int, toPosition: Int) {
+        Collections.swap(notes, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+        onOrderChanged(notes) // 순서가 변경된 후 콜백 호출
+    }
+
 }

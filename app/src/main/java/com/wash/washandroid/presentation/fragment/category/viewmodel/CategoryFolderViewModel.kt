@@ -1,6 +1,5 @@
 package com.wash.washandroid.presentation.fragment.category.viewmodel
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,11 +10,14 @@ import com.wash.washandroid.model.Folder
 import com.wash.washandroid.presentation.fragment.category.network.CategoryApiService
 import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
 import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemManager
+import com.wash.washandroid.presentation.fragment.problem.network.PostProblemRequest
 import com.wash.washandroid.presentation.fragment.problem.network.PostProblemResponse
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.io.File
 
 class CategoryFolderViewModel(private val problemRepository: ProblemRepository) : ViewModel() {
 
@@ -48,8 +50,6 @@ class CategoryFolderViewModel(private val problemRepository: ProblemRepository) 
     val categoryTypes: LiveData<List<Folder>> get() = _categoryTypes
 
     private val retrofit = NetworkModule.getClient()
-
-    // API 인터페이스를 생성
     private val apiService: CategoryApiService = retrofit.create(CategoryApiService::class.java)
 
     init {
@@ -103,53 +103,82 @@ class CategoryFolderViewModel(private val problemRepository: ProblemRepository) 
         _folderId.value = folderId
     }
 
+    private val problemManager = ProblemManager // 직접 접근
+
     fun postProblem() {
         viewModelScope.launch {
-            val problemData = _problemData.value ?: return@launch
-            val mainTypeId = _mainTypeId.value ?: return@launch
-            val midTypeId = _midTypeId.value ?: return@launch
-            val subTypeIds = _subTypeIds.value ?: return@launch
-            val folderId = _folderId.value ?: return@launch
+            val problemDataList = problemManager.getProblems()
+            Log.d("problemDataList", problemDataList.toString())
 
-            val token = "Bearer YOUR_TOKEN_HERE"
+            val responses = problemDataList.map { problemData ->
+                async {
+                    if (!validateProblemData(problemData)) {
+                        Log.e("ValidationError", "Invalid problem data: $problemData")
+                        return@async null  // 유효하지 않은 데이터는 건너뜁니다.
+                    }
 
-            val jsonData = """
-                {
-                    "folderId": $folderId,
-                    "problemText": "${problemData.problemText}",
-                    "answer": "6",
-                    "status": "작성",
-                    "memo": "${problemData.memo}",
-                    "mainTypeId": $mainTypeId,
-                    "midTypeId": $midTypeId,
-                    "subTypeIds": $subTypeIds
+                    val folderId = _folderId.value ?: return@async null
+                    Log.d("folderId", folderId.toString())
+
+                    val postRequest = problemData.mainTypeId?.let {
+                        problemData.midTypeId?.let { it1 ->
+                            PostProblemRequest(
+                                folderId = folderId,
+                                problemText = problemData.problemText,
+                                answer = problemData.answer,
+                                memo = problemData.memo,
+                                mainTypeId = it,
+                                midTypeId = it1,
+                                subTypeIds = problemData.subTypeIds,
+                                problemImage = listOf(problemData.problemImageUri),
+                                solutionImages = problemData.solutionImageUris,
+                                passageImages = problemData.passageImageUris,
+                                additionalImages = problemData.additionalImageUris
+                            )
+                        }
+                    }
+
+                    Log.d("PostProblemRequest", postRequest.toString())
+
+                    try {
+                        val response = postRequest?.let { problemRepository.postProblem(it) }
+                        if (response?.isSuccessful == true) {
+                            val responseBody = response.body()
+                            Log.d("postProblem", "Response Successful for ${problemData.problemText}: $responseBody")
+                            responseBody
+                        } else {
+                            if (response != null) {
+                                Log.e("postProblem", "Response Failed for ${problemData.problemText}: ${response.errorBody()?.string()}")
+                            }
+                            null
+                        }
+                    } catch (e: Exception) {
+                        Log.e("postProblem", "Unexpected Error: ${e.localizedMessage}")
+                        null
+                    }
                 }
-            """.trimIndent()
+            }.awaitAll()
 
-            // 문제 데이터의 이미지 URI를 변환하기 위한 파일 객체를 `Activity` 또는 `Fragment`에서 처리하고 전달
-            // 예시에서는 파일 객체를 직접 변환하지 않고 파일 객체를 전달한다고 가정
-            val problemImageFile = problemData.problemImageUri?.let { uri -> convertUriToFile(uri) }
-            val solutionImageFiles = problemData.solutionImageUris.map { uri -> convertUriToFile(uri) }
-            val passageImageFiles = problemData.passageImageUris.map { uri -> convertUriToFile(uri) }
-            val additionalImageFiles = problemData.additionalImageUris.map { uri -> convertUriToFile(uri) }
-
-            val response = problemRepository.postProblem(
-                problemImageFile = problemImageFile,
-                solutionImageFiles = solutionImageFiles,
-                passageImageFiles = passageImageFiles,
-                additionalImageFiles = additionalImageFiles,
-                jsonData = jsonData
-            )
-
-            Log.d("response", response.toString())
-
-            _apiResponse.value = response
+            // 모든 호출이 완료된 후 결과 처리
+            responses.forEach { result ->
+                if (result != null) {
+                    Log.d("postProblem", "Successfully processed problem: $result")
+                }
+            }
+            _postSuccess.value = responses.all { true }
         }
     }
 
-    private fun convertUriToFile(uri: Uri): File {
-        // 여기에 실제로 URI를 File로 변환하는 로직을 구현해야 합니다.
-        // `Fragment`나 `Activity`에서 이 작업을 수행하고, 변환된 파일을 `ViewModel`로 전달하는 것이 좋습니다.
-        throw NotImplementedError("URI to File conversion needs to be implemented")
+    private val _postSuccess = MutableLiveData<Boolean>()
+    val postSuccess: LiveData<Boolean> = _postSuccess
+
+
+    private fun validateProblemData(problemData: ProblemData?): Boolean {
+        if (problemData == null) {
+            Log.e("ValidationError", "Problem data is null")
+            return false
+        }
+
+        return true
     }
 }

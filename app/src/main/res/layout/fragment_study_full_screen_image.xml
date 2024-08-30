@@ -5,7 +5,7 @@
     android:background="@color/black">
 
     <!-- 풀스크린 이미지뷰 -->
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/iv_fullscreen_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

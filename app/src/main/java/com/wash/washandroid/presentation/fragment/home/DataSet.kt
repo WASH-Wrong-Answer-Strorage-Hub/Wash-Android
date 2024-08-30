@@ -59,6 +59,7 @@ data class DeleteProblemResponse(
 //검색창
 
 // 문제 검색 응답
+// 문제 검색 응답
 data class ProblemSearchResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: Int,
@@ -71,4 +72,26 @@ data class ProblemSearch(
     @SerializedName("problemId") val problemId: String,
     @SerializedName("problemText") val problemText: String,
     @SerializedName("problemImage") val problemImage: String
+)
+
+
+
+//폴더 순서 배치 재조정
+
+// 폴더 순서 조정 요청 데이터
+
+data class ReorderRequest(
+    @SerializedName("order") val order: List<Int> // 폴더 ID 순서 리스트
+)
+
+// 폴더 순서 조정 응답 데이터
+data class ReorderResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: ReorderResult
+)
+
+data class ReorderResult(
+    @SerializedName("message") val message: String // "폴더 순서 조정 성공"
 )

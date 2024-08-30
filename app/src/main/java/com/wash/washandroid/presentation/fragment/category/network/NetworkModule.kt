@@ -8,8 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NetworkModule {
 
     private const val BASE_URL = "https://dev.team-wash.store"
-    // TODO BASE_URL
-//    private const val BASE_URL = "http://192.168.200.101:3000"
 
     private var retrofit: Retrofit? = null
 

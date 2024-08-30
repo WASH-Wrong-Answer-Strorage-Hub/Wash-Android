@@ -116,6 +116,9 @@ dependencies {
 
     // tosspayment
     implementation ("com.github.tosspayments:payment-sdk-android:0.1.16")
+
+    // photoView
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 }
 
 fun getApiKey(propertyKey: String): String {

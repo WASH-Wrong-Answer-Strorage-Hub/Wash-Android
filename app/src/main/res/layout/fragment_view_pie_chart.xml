@@ -11,23 +11,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="4dp">
         <ImageView
             android:id="@+id/back_btn"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_arrow_left"
-            android:layout_marginRight="2dp"/>
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="4dp"/>
         <TextView
             android:id="@+id/category_tag"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="미적분"
-            android:fontFamily="@font/mangoddobak_b"
+            android:text="Subject"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="6dp"
             android:textSize="20sp"
-            android:textColor="#000000"
-            android:gravity="center_vertical" />
+            android:textColor="#000000" />
     </LinearLayout>
 
     <!-- Pie chart -->
@@ -44,6 +47,17 @@
                 android:layout_height="400dp"
                 android:layout_margin="16dp"/>
 
+            <!-- Central percent text view -->
+            <TextView
+                android:id="@+id/percent_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="24sp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
             <!-- RecyclerView for chart items -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/chart_items_recycler_view"
@@ -59,8 +73,5 @@
                 android:layout_margin="8dp"
                 android:layout_gravity="center"/>
         </LinearLayout>
-
     </ScrollView>
-
-
 </LinearLayout>

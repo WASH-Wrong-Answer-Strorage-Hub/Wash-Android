@@ -47,8 +47,10 @@ class StudyFragment : Fragment() {
         val studyApiService = StudyRetrofitInstance.api
         repository = StudyRepository(studyApiService)
 
-        val sharedPreferences = requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
-        myPageSharedPreferences = requireContext().getSharedPreferences("mypage_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireContext().getSharedPreferences("study_prefs", Context.MODE_PRIVATE)
+        myPageSharedPreferences =
+            requireContext().getSharedPreferences("mypage_prefs", Context.MODE_PRIVATE)
 
         val factory = StudyViewModelFactory(repository, sharedPreferences)
         viewModel = ViewModelProvider(this, factory).get(StudyViewModel::class.java)
@@ -74,42 +76,35 @@ class StudyFragment : Fragment() {
         (activity as MainActivity).hideBottomNavigation(false)
 
         // recyclerview adapter 클릭 이벤트
-        folderAdapter = FolderAdapter(emptyList()) { position, folderName ->
-            Log.d("fraglog", "Folder clicked: $position") // 로그 추가
+        folderAdapter = FolderAdapter(emptyList()) { folderId, folderName ->
+            Log.d("fraglog", "Folder clicked: folderId = $folderId, folderName = $folderName")
 
-            val folderIdByOrder = viewModel.folderMapByOrder.value
-            folderIdByOrder?.let { folderMap ->
-                val folderId = folderMap[position]
-                folderId?.let {
-                    Log.d("fraglog", "Folder ID: $it") // 로그 추가
-                    viewModel.loadStudyFolderById(it.toString())
+            viewModel.loadStudyFolderById(folderId.toString())
 
-                    // problemIds 가 로드된 후에만 이동하도록 보장
-                    viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
-                        if (!problemIds.isNullOrEmpty()) {
-                            Log.d("fraglog", "Problem IDs loaded: $problemIds")
-                            val bundle = Bundle().apply {
-                                putInt("folderId", it)
-                                putString("folderName", "$folderName")
-                            }
-                            navController.navigate(R.id.action_navigation_study_to_navigation_study_solve, bundle)
-                        } else {
-                            Log.e("fraglog", "Problem IDs are not yet loaded for folderId: $folderId")
-                        }
-                    })
-                } ?: run {
-                    Log.e("fraglog", "Folder ID not found for name: $folderName")
+            // problemIds 가 로드된 후에만 이동하도록 보장
+            viewModel.problemIds.observe(viewLifecycleOwner, Observer { problemIds ->
+                if (!problemIds.isNullOrEmpty()) {
+                    Log.d("fraglog", "Problem IDs loaded: $problemIds")
+                    val bundle = Bundle().apply {
+                        putInt("folderId", folderId)
+                        putString("folderName", folderName)
+                    }
+                    navController.navigate(
+                        R.id.action_navigation_study_to_navigation_study_solve, bundle
+                    )
+                } else {
+                    Log.e("fraglog", "Problem IDs are not yet loaded for folderId: $folderId")
                 }
-            }
+            })
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = folderAdapter
 
         // study folders 로드될 때마다 RecyclerView 업데이트
-        viewModel.studyFolders.observe(viewLifecycleOwner, Observer { folderNames ->
-            Log.d("StudyFragment", "Study folders loaded: $folderNames")
-            folderAdapter.updateFolders(folderNames)
+        viewModel.folders.observe(viewLifecycleOwner, Observer { folders ->
+            Log.d("StudyFragment", "Study folders loaded: $folders")
+            folderAdapter.updateFolders(folders)
         })
 
         // study folders 로드

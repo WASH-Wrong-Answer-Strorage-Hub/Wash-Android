@@ -1,23 +1,23 @@
 package com.wash.washandroid.presentation.fragment.study
 
-import MypageViewModel
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentStudySolveBinding
@@ -35,8 +35,8 @@ class StudySolveFragment : Fragment() {
     private lateinit var folderId: String
     private lateinit var folderName: String
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var problemIds: List<String>
-    private lateinit var progressAdapter: StudyProgressAdapter
+    private lateinit var gestureDetector: GestureDetector
+    private var isGestureDetected = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -64,8 +64,8 @@ class StudySolveFragment : Fragment() {
 
         binding.tvStudySolveTitle.text = folderName
         navController = Navigation.findNavController(view)
-
         (activity as MainActivity).hideBottomNavigation(true)
+        gestureDetector = GestureDetector(requireContext(), SwipeGestureListener(context = requireContext(), onSwipeRight = { onSwipeRight() }, onSwipeLeft = { onSwipeLeft() }))
 
         // recycler view 설정
         binding.rvDrawerProgress.layoutManager = LinearLayoutManager(requireContext())
@@ -73,16 +73,20 @@ class StudySolveFragment : Fragment() {
         val progressAdapter = StudyProgressAdapter(problemIds.map { it to "미완료" }, problemIds)
         binding.rvDrawerProgress.adapter = progressAdapter
 
-        // 정답 확인 전송 여부 검사
+        // 정답 확인 여부 검사
         if (viewModel.getProblemSolvedState()) {
-            Log.d("fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next")
+            Log.d(
+                "fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> move to next"
+            )
             viewModel.setProblemSolvedState(false)
             viewModel.loadStudyProgress(folderId)
             viewModel.moveToNextProblem(folderId)
         } else {
             // 정답 확인 전송 하지 않은 경우
             viewModel.loadStudyProblem(folderId)
-            Log.d("fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> 유지")
+            Log.d(
+                "fraglog", "**is problem already solved**  :  ${viewModel.getProblemSolvedState()} -> 유지"
+            )
         }
 
         viewModel.studyProblem.observe(viewLifecycleOwner, Observer { studyProblemResponse ->
@@ -111,7 +115,55 @@ class StudySolveFragment : Fragment() {
         viewModel.studyProgress.observe(viewLifecycleOwner, Observer { progressList ->
             // 서버로부터 가져온 progressList를 어댑터에 업데이트
             progressAdapter.updateProgressList(progressList)
+
+            val isAllCompleted = progressList.all { it.second == "틀린 문제" || it.second == "맞은 문제" }
+
+            if (isAllCompleted) {
+//                Log.d("fraglog", "모든 문제 상태가 완료임")
+                val bundle = bundleOf("folderId" to folderId)
+
+                if (navController.currentDestination?.id != R.id.navigation_study_complete) {
+                    navController.navigate(
+                        R.id.action_navigation_study_solve_to_navigation_study_complete, bundle
+                    )
+                }
+            }
         })
+
+        var isSwipeDetected = false
+
+        binding.ivSolveCard.setOnTouchListener { v, event ->
+            // DrawerLayout이 열려 있지 않을 때만 동작
+            if (!binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+                if (gestureDetector.onTouchEvent(event)) {
+                    // 스와이프가 감지된 경우
+                    isSwipeDetected = true
+                }
+
+                // 클릭 이벤트 처리
+                if (event.action == MotionEvent.ACTION_UP) {
+                    if (!isSwipeDetected) {
+                        // 스와이프가 감지되지 않은 경우에만 클릭 이벤트를 처리
+                        v.performClick()
+                    }
+                    isSwipeDetected = false
+                }
+            }
+            true // 터치 이벤트 처리 완료
+        }
+
+        binding.root.setOnTouchListener { v, event ->
+            if (binding.studyDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+                return@setOnTouchListener false
+            } else {
+                // Drawer가 닫혀 있는 경우 제스처 감지
+                if (gestureDetector.onTouchEvent(event)) {
+                    v.performClick()
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
 
         // 지문 보기
         binding.studySolveBtnDes.setOnClickListener {
@@ -132,11 +184,16 @@ class StudySolveFragment : Fragment() {
 
         // 문제 이미지 클릭 리스너
         binding.ivSolveCard.setOnClickListener {
-            val currentProblem = viewModel.getCurrentProblem()
-            val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
+            if (!isGestureDetected) {
+                val currentProblem = viewModel.getCurrentProblem()
+                val imageUrl = currentProblem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
 
-            val bundle = bundleOf("image_url" to imageUrl)
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle)
+                val bundle = bundleOf("image_url" to imageUrl)
+                navController.navigate(
+                    R.id.action_navigation_study_solve_to_navigation_study_full_screen_image, bundle
+                )
+            }
+            isGestureDetected = false
         }
 
         binding.studySolveBackBtn.setOnClickListener {
@@ -151,7 +208,9 @@ class StudySolveFragment : Fragment() {
             )
 //                Toast.makeText(requireContext(), "solve -- id : ${currentProblem.id}, answer : ${currentProblem.answer}, last : ${isLastProblem}", Toast.LENGTH_SHORT).show()
 
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_answer, bundle)
+            navController.navigate(
+                R.id.action_navigation_study_solve_to_navigation_study_answer, bundle
+            )
         }
 
         binding.ivDrawer.setOnClickListener {
@@ -162,7 +221,9 @@ class StudySolveFragment : Fragment() {
         binding.btnRvDrawerFinish.setOnClickListener {
 
             val bundle = bundleOf("folderId" to folderId)
-            navController.navigate(R.id.action_navigation_study_solve_to_navigation_study_complete, bundle)
+            navController.navigate(
+                R.id.action_navigation_study_solve_to_navigation_study_complete, bundle
+            )
         }
     }
 
@@ -176,6 +237,20 @@ class StudySolveFragment : Fragment() {
         binding.tvStudySolveProblemId.text = "문제 " + (viewModel.currentProblemIndex + 1)
         val imageUrl = problem.result.problemImage.takeIf { it.isNotBlank() } ?: "https://samtoring.com/qstn/NwXVS1yaHZ1xav2YsqAf.png"
         Glide.with(this).load(imageUrl).into(binding.ivSolveCard)
+
+        // 첫 번째 문제인 경우
+        if (viewModel.currentProblemIndex == 0) {
+            binding.ivLeftArrow.visibility = View.INVISIBLE
+        } else {
+            binding.ivLeftArrow.visibility = View.VISIBLE
+        }
+
+        // 마지막 문제인 경우
+        if (viewModel.currentProblemIndex == (viewModel.getProblemIds().size - 1)) {
+            binding.ivRightArrow.visibility = View.INVISIBLE
+        } else {
+            binding.ivRightArrow.visibility = View.VISIBLE
+        }
     }
 
     private fun openPhotoPager() {
@@ -186,7 +261,6 @@ class StudySolveFragment : Fragment() {
 
         viewModel.setPhotoUris(passageUrls)
 
-        val sharedPreferences = requireContext().getSharedPreferences("your_shared_prefs", Context.MODE_PRIVATE)
         val savedUrisString = sharedPreferences.getString("photo_uris", "")
 
         Log.d("fraglog", "Loaded photo URIs from SharedPreferences before split: $savedUrisString")
@@ -203,5 +277,17 @@ class StudySolveFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun onSwipeRight() {
+        // 오른쪽 스와이프 처리
+        viewModel.moveToNextProblem(folderId)
+        setupObservers()
+    }
+
+    private fun onSwipeLeft() {
+        // 왼쪽 스와이프 처리
+        viewModel.moveToPreviousProblem(folderId)
+        setupObservers()
     }
 }
