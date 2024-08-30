@@ -1,24 +1,14 @@
-
 package com.wash.washandroid.presentation.base
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.kakao.sdk.common.KakaoSdk
 import com.wash.washandroid.BuildConfig
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ActivityMainBinding
-import com.wash.washandroid.presentation.fragment.login.SocialLoginFragment
-import com.wash.washandroid.presentation.fragment.splash.SplashFragment
-import com.wash.washandroid.presentation.fragment.note.NoteCameraFragment
-import com.wash.washandroid.presentation.fragment.note.NoteOptionsBottomSheet
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,8 +44,6 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_note -> {
-//                    val bottomSheet = NoteOptionsBottomSheet()
-//                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                     navController.navigate(R.id.navigation_note)
                     true
                 }
