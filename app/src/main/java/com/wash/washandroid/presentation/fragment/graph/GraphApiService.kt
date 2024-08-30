@@ -20,6 +20,7 @@ interface GraphApiService {
     @GET("/problems/statistics/ratios/{categoryId}")
     fun getRatios(
         @Header("Authorization") accessToken: String,
-        @Path("categoryId") categoryId: String
+        @Path("categoryId") categoryId: Int
     ): Call<PieChartResponse>
+
 }

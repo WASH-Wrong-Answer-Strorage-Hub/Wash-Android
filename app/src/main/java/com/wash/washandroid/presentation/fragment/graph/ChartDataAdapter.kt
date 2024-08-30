@@ -36,7 +36,7 @@ class ChartDataAdapter(
         fun bind(item: ChartItem, color: Int) {
             binding.chartItemColor.setBackgroundColor(color)
             binding.chartItemLabel.text = item.category
-            binding.chartItemPercentage.text = item.percentage
+            binding.chartItemPercentage.text = String.format("%.1f%%", item.percentage) // 포맷팅
         }
     }
 }
