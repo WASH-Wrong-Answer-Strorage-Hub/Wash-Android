@@ -5,15 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonSyntaxException
 import com.wash.washandroid.R
 import com.wash.washandroid.model.Folder
 import com.wash.washandroid.presentation.fragment.category.network.CategoryApiService
 import com.wash.washandroid.presentation.fragment.category.network.NetworkModule
 import com.wash.washandroid.presentation.fragment.category.network.ProblemRepository
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemManager
 import com.wash.washandroid.presentation.fragment.problem.network.PostProblemRequest
 import com.wash.washandroid.presentation.fragment.problem.network.PostProblemResponse
 import com.wash.washandroid.presentation.fragment.problem.network.ProblemData
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -101,66 +103,76 @@ class CategoryFolderViewModel(private val problemRepository: ProblemRepository) 
         _folderId.value = folderId
     }
 
+    private val problemManager = ProblemManager // 직접 접근
+
     fun postProblem() {
         viewModelScope.launch {
-            try {
-                val problemData = _problemData.value ?: run {
-                    Log.e("ValidationError", "Problem data is null")
-                    return@launch
-                }
-                if (!validateProblemData(problemData)) {
-                    Log.e("ValidationError", "Invalid problem data")
-                    return@launch
-                }
+            val problemDataList = problemManager.getProblems()
+            Log.d("problemDataList", problemDataList.toString())
 
-                val folderId = _folderId.value ?: run {
-                    Log.e("ValidationError", "Folder ID is null")
-                    return@launch
-                }
-                val mainTypeId = _mainTypeId.value ?: run {
-                    Log.e("ValidationError", "Main Type ID is null")
-                    return@launch
-                }
-                val midTypeId = _midTypeId.value ?: run {
-                    Log.e("ValidationError", "Mid Type ID is null")
-                    return@launch
-                }
-                val subTypeIds = _subTypeIds.value ?: run {
-                    Log.e("ValidationError", "Sub Type IDs are null")
-                    return@launch
-                }
+            val responses = problemDataList.map { problemData ->
+                async {
+                    if (!validateProblemData(problemData)) {
+                        Log.e("ValidationError", "Invalid problem data: $problemData")
+                        return@async null  // 유효하지 않은 데이터는 건너뜁니다.
+                    }
 
-                val postRequest = PostProblemRequest(
-                    folderId = folderId,
-                    problemText = problemData.problemText,
-                    answer = problemData.answer,
-                    memo = problemData.memo,
-                    mainTypeId = mainTypeId,
-                    midTypeId = midTypeId,
-                    subTypeIds = subTypeIds,
-                    problemImage = listOf(problemData.problemImageUri),
-                    solutionImages = problemData.solutionImageUris,
-                    passageImages = problemData.passageImageUris,
-                    additionalImages = problemData.additionalImageUris
-                )
+                    val folderId = _folderId.value ?: return@async null
+                    Log.d("folderId", folderId.toString())
 
-                val response = problemRepository.postProblem(postRequest)
+                    val postRequest = problemData.mainTypeId?.let {
+                        problemData.midTypeId?.let { it1 ->
+                            PostProblemRequest(
+                                folderId = folderId,
+                                problemText = problemData.problemText,
+                                answer = problemData.answer,
+                                memo = problemData.memo,
+                                mainTypeId = it,
+                                midTypeId = it1,
+                                subTypeIds = problemData.subTypeIds,
+                                problemImage = listOf(problemData.problemImageUri),
+                                solutionImages = problemData.solutionImageUris,
+                                passageImages = problemData.passageImageUris,
+                                additionalImages = problemData.additionalImageUris
+                            )
+                        }
+                    }
 
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    Log.d("postProblem", "Response Successful: $responseBody")
-                } else {
-                    Log.e("postProblem", "Response Failed: ${response.errorBody()?.string()}")
+                    Log.d("PostProblemRequest", postRequest.toString())
+
+                    try {
+                        val response = postRequest?.let { problemRepository.postProblem(it) }
+                        if (response?.isSuccessful == true) {
+                            val responseBody = response.body()
+                            Log.d("postProblem", "Response Successful for ${problemData.problemText}: $responseBody")
+                            responseBody
+                        } else {
+                            if (response != null) {
+                                Log.e("postProblem", "Response Failed for ${problemData.problemText}: ${response.errorBody()?.string()}")
+                            }
+                            null
+                        }
+                    } catch (e: Exception) {
+                        Log.e("postProblem", "Unexpected Error: ${e.localizedMessage}")
+                        null
+                    }
                 }
+            }.awaitAll()
 
-                _apiResponse.value = response
-            } catch (e: JsonSyntaxException) {
-                Log.e("postProblem", "JSON Parsing Error: ${e.localizedMessage}")
-            } catch (e: Exception) {
-                Log.e("postProblem", "Unexpected Error: ${e.localizedMessage}")
+            // 모든 호출이 완료된 후 결과 처리
+            responses.forEach { result ->
+                if (result != null) {
+                    Log.d("postProblem", "Successfully processed problem: $result")
+                }
             }
+            _postSuccess.value = responses.all { true }
         }
     }
+
+    private val _postSuccess = MutableLiveData<Boolean>()
+    val postSuccess: LiveData<Boolean> = _postSuccess
+
+
     private fun validateProblemData(problemData: ProblemData?): Boolean {
         if (problemData == null) {
             Log.e("ValidationError", "Problem data is null")

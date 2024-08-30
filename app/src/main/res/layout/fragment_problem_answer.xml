@@ -123,6 +123,7 @@
                         android:overScrollMode="always"
                         android:padding="16dp"
                         style="@style/mg_b13"
+                        android:text="인공지능이 작성중입니다..."
                         android:textColor="@color/black"
                         android:background="@drawable/photo_add_btn_background"
                         app:layout_constraintStart_toStartOf="parent"

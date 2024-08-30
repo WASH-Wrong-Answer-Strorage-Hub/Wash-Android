@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +23,7 @@ import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFol
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
 import com.wash.washandroid.presentation.fragment.problem.add.ProblemAddViewModel
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemManager
 import com.wash.washandroid.utils.CategoryItemDecoration
 
 class ProblemCategoryChapterFragment : Fragment() {
@@ -33,7 +33,7 @@ class ProblemCategoryChapterFragment : Fragment() {
     private val binding: FragmentProblemCategoryChapterBinding
         get() = requireNotNull(_binding){"FragmentProblemCategoryChapterBinding -> null"}
     private val categoryViewModel: CategoryViewModel by activityViewModels()
-    private val categoryChapterViewModel: CategoryChapterViewModel by viewModels()
+    private val categoryChapterViewModel: CategoryChapterViewModel by activityViewModels()
     private val categoryFolderViewModel: CategoryFolderViewModel by activityViewModels {
         val problemRepository = ProblemRepository()
         CategoryFolderViewModelFactory(problemRepository)
@@ -101,16 +101,13 @@ class ProblemCategoryChapterFragment : Fragment() {
                 val selectedTypeIds = categoryChapterViewModel.selectedButtonIds.value
                 selectedTypeIds?.let { ids ->
                     Log.d("selectedTypeIds", "$ids")
-                    val bundle = Bundle().apply {
-                        putIntegerArrayList("selectedTypeIds", ArrayList(ids))
-                    }
                     val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
                     with(sharedPref.edit()) {
                         putStringSet("selectedChapterTypeIds", ids.map { it.toString() }.toSet())
                         apply()
                     }
+                    ProblemManager.updateSubTypeProblemData(currentIndex, ids)
                     categoryFolderViewModel.setSubTypeIds(ids)
-//                    navController.navigate(R.id.action_navigation_problem_category_chapter_to_folder_fragment, bundle)
                 }
                 navController.navigate(R.id.action_navigation_problem_category_chapter_to_problem_answer_fragment)
             } else {

@@ -35,9 +35,10 @@ class ProblemAddViewModel : ViewModel() {
 
     // 현재 인덱스가 목록의 마지막인지 확인
     fun isLastIndex(): Boolean {
-        val lastIndex = _photoList.value?.size ?: (0 - 1)
-        val isLast = _currentIndex.value == lastIndex
-        Log.d("ProblemAddViewModel", "isLastIndex: currentIndex ${_currentIndex.value}, lastIndex $lastIndex, isLast $isLast")
+        val lastIndex = _photoList.value?.size ?: 0
+        val realLastIndex = lastIndex - 1
+        val isLast = _currentIndex.value == realLastIndex
+        Log.d("ProblemAddViewModel", "isLastIndex: currentIndex ${_currentIndex.value}, lastIndex $realLastIndex, isLast $isLast")
         return isLast
     }
 

@@ -61,6 +61,10 @@ class ProblemAnswerViewModel(private val problemRepository: ProblemRepository) :
     private val _recognizedText = MutableLiveData<String>()
     val recognizedText: LiveData<String> get() = _recognizedText
 
+    fun setRecognizedText(text: String) {
+        _recognizedText.value = text
+    }
+
     private var retrofit: Retrofit? = null
     private var apiService: ProblemApiService? = null
 
@@ -74,7 +78,7 @@ class ProblemAnswerViewModel(private val problemRepository: ProblemRepository) :
 
     // 이미지 URL로부터 텍스트를 추출하기 위한 API 요청 함수
     fun recognizeTextFromImage(imageUrl: String) {
-        val textContent = Content(type = "text", text = "문제 사진을 인식해서 문제에 관한 텍스트를 추출해라.")
+        val textContent = Content(type = "text", text = "다른 설명은 하지 말고 사진 속 텍스트만 반환해.")
         val imageContent = Content(type = "image_url", imageUrl = ImageUrl(url = imageUrl))
 
         val ocrMessage = ChatOCRMessage(role = "user", content = listOf(textContent, imageContent))

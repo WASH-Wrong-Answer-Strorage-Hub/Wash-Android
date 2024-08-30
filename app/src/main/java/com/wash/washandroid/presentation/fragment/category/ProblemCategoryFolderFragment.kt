@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wash.washandroid.R
@@ -22,6 +21,7 @@ import com.wash.washandroid.presentation.fragment.category.network.ProblemReposi
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModelFactory
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryViewModel
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemManager
 import com.wash.washandroid.utils.CategoryItemDecoration
 import kotlinx.coroutines.launch
 
@@ -57,6 +57,9 @@ class ProblemCategoryFolderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
+        val problemDatas = ProblemManager.getProblems()
+        Log.d("problemDatas", problemDatas.toString())
+
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
         val selectedSubjectTypeId = sharedPref?.getInt("selectedSubjectTypeId", -1) ?: -1
         val selectedSubfieldTypeId = sharedPref?.getInt("selectedSubfieldTypeId", -1) ?: -1
@@ -84,40 +87,39 @@ class ProblemCategoryFolderFragment : Fragment() {
         }
 
         binding.categoryFolderCheckBtn.setOnClickListener {
+            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
+                Log.d("typeId", "$typeId")
+                categoryFolderViewModel.setFolderId(typeId)
+            }
 
-//            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
-//                Log.d("typeId", "$typeId")
-//                categoryFolderViewModel.setFolderId(typeId)
-//            }
-//
-//            val problemData = categoryFolderViewModel.problemData.value
-//            Log.d("ProblemData", "ProblemData: $problemData")
-//
-//            categoryFolderViewModel.selectedButtonId.value?.let { typeId ->
-//                Log.d("typeId", "$typeId")
-//            }
-//
-//            // 문제 추가 API 호출
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                categoryFolderViewModel.postProblem() // 비동기 호출
-//
-//                // API 응답 관찰
-//                categoryFolderViewModel.apiResponse.observe(viewLifecycleOwner) { response ->
-//                    if (response != null) {
-//                        if (response.isSuccessful) {
-//                            Toast.makeText(requireContext(), "문제가 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
-//                            navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
-//                        } else {
-//                            Toast.makeText(requireContext(), "문제 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
-//                            Log.e("API Error", "Response Failed: ${response.errorBody()?.string()}")
-//                            navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
-//                        }
-//                    }
-//                }
-//            }
-            navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
+            // 문제 추가 API 호출
+            viewLifecycleOwner.lifecycleScope.launch {
+                Toast.makeText(requireContext(), "문제들을 순차적으로 등록중입니다...", Toast.LENGTH_SHORT).show()
+                categoryFolderViewModel.postProblem() // 비동기 호출
 
+                // API 응답 관찰
+                categoryFolderViewModel.apiResponse.observe(viewLifecycleOwner) { response ->
+                    if (response != null) {
+                        if (response.isSuccessful) {
+                            ProblemManager.clearProblems() // 문제 데이터 클리어
+                            ProblemManager.getProblems()
+                        } else {
+                            Log.e("API Error", "Response Failed: ${response.errorBody()?.string()}")
+                        }
+                    }
+                }
+            }
         }
+
+        categoryFolderViewModel.postSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "문제들이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
+            } else {
+                Toast.makeText(requireContext(), "문제 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         binding.categoryBackBtn.setOnClickListener {
             navController.navigateUp()
