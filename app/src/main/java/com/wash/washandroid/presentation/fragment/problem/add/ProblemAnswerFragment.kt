@@ -88,6 +88,8 @@ class ProblemAnswerFragment : Fragment() {
 
     private var isEditing = true
 
+    private var mainProblemImageUrl = ""
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         token = mypageViewModel.getRefreshToken() ?: ""
@@ -164,6 +166,7 @@ class ProblemAnswerFragment : Fragment() {
 
                 if (problemImageUrl != null) {
                     problemAnswerViewModel.recognizeTextFromImage(problemImageUrl)
+                    mainProblemImageUrl = problemImageUrl
                 }
             }
         }
@@ -177,6 +180,9 @@ class ProblemAnswerFragment : Fragment() {
                 val problemData = collectProblemData()
                 Log.d("problemData", problemData.toString())
                 categoryFolderViewModel.setProblemData(problemData)
+                ProblemManager.addProblemData(problemData)
+                problemAnswerViewModel.setRecognizedText("")
+
                 navController.navigate(R.id.action_navigation_problem_answer_to_category_subject_fragment)
             } else {
                 Toast.makeText(requireContext(), "사진을 추가하고 정답을 입력해 주세요.", Toast.LENGTH_SHORT).show()
@@ -260,8 +266,7 @@ class ProblemAnswerFragment : Fragment() {
     }
 
     private fun collectProblemData(): ProblemData {
-        val problemImageUri = problemAnswerViewModel.problemPhotoUri.value?.let { Uri.parse(it.toString()) }
-        val problemImageUrl = problemImageUri?.let { uploadImage(convertUriToFile(it)) }
+        val problemImageUrl = mainProblemImageUrl
 
         val solutionImageUrls = solutionPhotoList.map { uri ->
             uploadImage(convertUriToFile(Uri.parse(uri)))
@@ -286,7 +291,10 @@ class ProblemAnswerFragment : Fragment() {
             additionalImageUris = additionalImageUrls,
             problemText = problemText,
             answer = answer,
-            memo = memo
+            memo = memo,
+            mainTypeId = 1, // 더미 데이터
+            midTypeId = 2, // 더미 데이터
+            subTypeIds = listOf(3, 4) // 더미 데이터
         )
 
         Log.d("ProblemData", "Problem Data collected: $problemData")
@@ -334,39 +342,6 @@ class ProblemAnswerFragment : Fragment() {
             throw e
         }
     }
-
-//    private fun collectProblemData(): ProblemData {
-//        val problemImageUri = problemInfoViewModel.firstPhotoUri.value?.let { Uri.parse(it) }
-//            ?: problemInfoViewModel.problemPhotoUri.value
-//        val additionalImageUris = addPhotoList.map { it.toUri() }
-//        val solutionImageUris = solutionPhotoList.map { it.toUri() }
-//        val passageImageUris = printPhotoList.map { it.toUri() }
-//
-//        val problemText = "인공지능이 작성중..."
-//        val answer = binding.problemInfoAnswer.text.toString()
-//        val memo = binding.problemInfoMemo.text.toString()
-//
-//        val problemData = ProblemData(
-//            problemImageUri = problemImageUri?.let { convertUriToFile(it) },
-//            solutionImageUris = solutionImageUris.map { convertUriToFile(it) },
-//            passageImageUris = passageImageUris.map { convertUriToFile(it) },
-//            additionalImageUris = additionalImageUris.map { convertUriToFile(it) },
-//            problemText = problemText,
-//            answer = answer,
-//            memo = memo
-//        )
-//
-//        // Log를 통해 ProblemData 객체의 내용을 확인
-//        Log.d("ProblemData", "Problem Image URI: $problemImageUri")
-//        Log.d("ProblemData", "Solution Image URIs: $solutionImageUris")
-//        Log.d("ProblemData", "Passage Image URIs: $passageImageUris")
-//        Log.d("ProblemData", "Additional Image URIs: $additionalImageUris")
-//        Log.d("ProblemData", "Problem Text: $problemText")
-//        Log.d("ProblemData", "Answer: $answer")
-//        Log.d("ProblemData", "Memo: $memo")
-//
-//        return problemData
-//    }
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
