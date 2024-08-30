@@ -49,7 +49,7 @@ data class PostProblemRequest(
     var memo: String,
     var mainTypeId: Int,
     var midTypeId: Int,
-    var subTypeIds: List<Int>,
+    var subTypeIds: List<Int?>?,
     var problemImage: List<String?>,
     var solutionImages: List<String?>,
     var passageImages: List<String?>,
@@ -102,7 +102,22 @@ data class PostImageUrlResponse(
     val result: String
 )
 
+// 문제 추가시 저장용
 data class ProblemData(
+    val problemImageUri: String?,
+    val solutionImageUris: List<String?>,
+    val passageImageUris: List<String?>,
+    val additionalImageUris: List<String?>,
+    val problemText: String,
+    val answer: String,
+    val memo: String,
+    val mainTypeId: Int?,
+    val midTypeId: Int?,
+    val subTypeIds: List<Int?>?
+)
+
+// 문제 편집시 저장용
+data class ProblemInfoData(
     val problemImageUri: String?,
     val solutionImageUris: List<String?>,
     val passageImageUris: List<String?>,
