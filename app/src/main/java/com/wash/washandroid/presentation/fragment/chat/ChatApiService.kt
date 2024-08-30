@@ -20,4 +20,7 @@ interface ChatApiService {
 
     @POST("chatrooms")
     suspend fun getChatrooms(@Body request: PostChatRoomRequest): Response<PostChatRoomResponse>
+
+    @POST("chatrooms/chats")
+    suspend fun addChat(@Body request: PostChatRequest): Response<PostChatResponse>
 }

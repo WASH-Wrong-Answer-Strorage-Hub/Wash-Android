@@ -17,6 +17,7 @@ import com.wash.washandroid.databinding.DialogCategorySubjectBinding
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategoryFolderViewModel
 import com.wash.washandroid.presentation.fragment.category.viewmodel.CategorySubjectViewModel
 import com.wash.washandroid.presentation.fragment.problem.add.ProblemAddViewModel
+import com.wash.washandroid.presentation.fragment.problem.add.ProblemManager
 
 class CategorySubjectDialog : DialogFragment() {
 
@@ -92,7 +93,23 @@ class CategorySubjectDialog : DialogFragment() {
             // 로그로 현재 인덱스와 사진 경로 확인
             Log.d("problemAddViewModel", "Current Index: $currentIndex, Photo: ${photoList[currentIndex]}")
 
-            // 폴더화면으로 넘어가기
+            val mainTypeId = categoryFolderViewModel.mainTypeId.value
+            val midTypeId = categoryFolderViewModel.midTypeId.value
+            val subTypeIds = categoryFolderViewModel.subTypeIds.value
+            Log.d("mainTypeId", mainTypeId.toString())
+            Log.d("midTypeId", midTypeId.toString())
+            Log.d("subTypeIds", subTypeIds.toString())
+
+            mainTypeId?.let {
+                ProblemManager.updateMainTypeProblemData(currentIndex, it)
+            }
+            midTypeId?.let {
+                ProblemManager.updateMidTypeProblemData(currentIndex, it)
+            }
+            subTypeIds?.let {
+                ProblemManager.updateSubTypeProblemData(currentIndex, it)
+            }
+
             val navController = parentFragment?.let { fragment ->
                 Navigation.findNavController(fragment.requireView())
             }
@@ -101,10 +118,12 @@ class CategorySubjectDialog : DialogFragment() {
             if (!problemAddViewModel.isLastIndex()) {
                 problemAddViewModel.incrementIndex()
                 navController?.navigate(R.id.action_navigation_problem_category_subject_to_problem_answer_fragment)
+                dismiss()
             } else {
                 // 모든 사진을 처리했다면 프로세스 종료
                 navController?.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
                 problemAddViewModel.resetIndex() // 인덱스 초기화
+                dismiss()
             }
         }
     }

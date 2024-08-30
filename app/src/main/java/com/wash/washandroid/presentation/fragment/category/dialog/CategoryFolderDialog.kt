@@ -70,6 +70,8 @@ class CategoryFolderDialog : DialogFragment() {
 
             categoryFolderViewModel.setFolderId(categoryFolderDialogViewModel.folderTypeId.value ?: 0)
 
+            dismiss()
+
             // 홈화면으로 넘어가기
             val navController = parentFragment?.let { fragment ->
                 Navigation.findNavController(fragment.requireView())

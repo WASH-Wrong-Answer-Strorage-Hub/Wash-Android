@@ -46,6 +46,15 @@
             app:layout_constraintStart_toEndOf="@id/category_back_btn"
             app:layout_constraintTop_toTopOf="@id/guideline_category_1st_h" />
 
+        <ImageView
+            android:id="@+id/ai_command"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/wash_logo"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline_category_1st_h" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_rv"
             android:layout_width="0dp"

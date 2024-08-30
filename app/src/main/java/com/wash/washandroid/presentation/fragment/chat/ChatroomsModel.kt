@@ -1,5 +1,6 @@
 package com.wash.washandroid.presentation.fragment.chat
 
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 
 data class PostChatRoomRequest(
@@ -15,7 +16,8 @@ data class PostChatRoomResponse(
 )
 
 data class ChatRoomResult(
-    val roomId: Int,
+    @SerializedName("roomId")
+    val roomId: JsonElement,  // Gson의 JsonElement를 사용하여 유연하게 처리
     val logs: List<ChatLog>
 )
 
@@ -28,3 +30,19 @@ data class ChatLog(
     val createdAt: String
 )
 
+data class PostChatRequest(
+    val room_id: Int,
+    val message: String,
+    val speaker: String
+)
+
+data class PostChatResponse(
+    val isSuccess: Boolean,
+    val code: Int,
+    val message: String,
+    val result: ChatId
+)
+
+data class ChatId(
+    val chatId: Int
+)
