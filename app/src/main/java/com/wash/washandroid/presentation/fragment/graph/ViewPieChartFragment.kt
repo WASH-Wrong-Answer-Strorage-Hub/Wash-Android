@@ -1,4 +1,3 @@
-// ViewPieChartFragment
 package com.wash.washandroid.presentation.fragment.graph
 
 import MypageViewModel
@@ -10,21 +9,20 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.highlight.Highlight
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.FragmentViewPieChartBinding
 
 data class ChartItem(
     val category: String,
-    val percentage: Double // 변경된 부분
+    val percentage: Double
 )
 
 class ViewPieChartFragment : Fragment() {
@@ -35,7 +33,20 @@ class ViewPieChartFragment : Fragment() {
     private val initialDataCount = 3
 
     private val mypageViewModel: MypageViewModel by activityViewModels()
-    private val pieChartViewModel: GraphViewModel by viewModels()
+    private val pieChartViewModel: GraphViewModel by activityViewModels()
+
+    private var categoryId: Int? = null
+    private var categoryName: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            categoryId = it.getInt("CATEGORY_ID")
+            categoryName = it.getString("CATEGORY_NAME")
+            Log.d("ViewPieChartFragment", "categoryId : $categoryId")
+            Log.d("ViewPieChartFragment", "categoryName : $categoryName")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,24 +59,19 @@ class ViewPieChartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.categoryTag.text = categoryName ?: "Subject"
 
-        val categoryId = arguments?.getInt("CATEGORY_ID") ?: 1
-        val categoryName = arguments?.getString("CATEGORY_NAME") ?: "Subject"
+        val accessToken = "Bearer ${mypageViewModel.getRefreshToken()}"
 
-        binding.categoryTag.text = categoryName
-
-        val refreshToken = mypageViewModel.getRefreshToken()
-        val bearerToken = "Bearer $refreshToken"
-
-        Log.d("ViewPieChartFragment", "Fetching pie chart data with token: $bearerToken and categoryId: $categoryId")
-        pieChartViewModel.fetchPieChartData(bearerToken, categoryId)
+        categoryId?.let { id ->
+            pieChartViewModel.fetchPieChartData(accessToken, id)
+        }
 
         pieChartViewModel.pieChartData.observe(viewLifecycleOwner) { pieChartData ->
             Log.d("ViewPieChartFragment", "Observed PieChartData: $pieChartData")
             if (pieChartData != null && pieChartData.result != null) {
                 val chartItems = pieChartData.result.subCategories.map { portion ->
-                    val percentage = String.format("%.1f", portion.incorrectPercentage.toDoubleOrZero())
-                    ChartItem(portion.subCategory ?: "Unknown", percentage.toDouble())
+                    ChartItem(portion.subCategory ?: "Unknown", portion.incorrectPercentage)
                 }
                 updatePieChart(chartItems)
                 updateRecyclerView(chartItems.take(initialDataCount))
@@ -98,19 +104,21 @@ class ViewPieChartFragment : Fragment() {
     }
 
     private fun updatePieChart(items: List<ChartItem>) {
-        val colors = listOf(
-            ContextCompat.getColor(requireContext(), R.color.main),
-            ContextCompat.getColor(requireContext(), R.color.sub2),
-            ContextCompat.getColor(requireContext(), R.color.sub3),
-            ContextCompat.getColor(requireContext(), R.color.sub4),
-            ContextCompat.getColor(requireContext(), R.color.sub5)
-        )
+        val colors = items.indices.map {
+            ContextCompat.getColor(requireContext(), when (it % 5) {
+                0 -> R.color.main
+                1 -> R.color.sub2
+                2 -> R.color.sub3
+                3 -> R.color.sub4
+                else -> R.color.sub5
+            })
+        }
 
         val entries = items.map {
             PieEntry(it.percentage.toFloat(), it.category)
         }
         val dataSet = PieDataSet(entries, "").apply {
-            this.colors = colors.take(entries.size)
+            this.colors = colors
             this.sliceSpace = 3f
             this.setDrawValues(false)
         }
@@ -136,14 +144,5 @@ class ViewPieChartFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        }
     }
-
-private fun Double.toDoubleOrZero(): Double {
-    return try {
-        this.toDouble()
-    } catch (e: NumberFormatException) {
-        0.0
-    }
-
 }

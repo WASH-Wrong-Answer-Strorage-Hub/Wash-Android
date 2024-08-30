@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wash.washandroid.R
 import com.wash.washandroid.databinding.ItemSubjectBinding
 
-data class Subject(val name: String, val type: Int) // id 필드 제거
+data class Subject(val name: String, val type: Int, val categoryId: Int) // categoryId 추가
 
 class SubjectsAdapter(
     private val subjectList: List<Subject>,

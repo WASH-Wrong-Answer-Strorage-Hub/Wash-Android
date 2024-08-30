@@ -43,12 +43,13 @@ data class TypeResponse(
 // 문제 통계 데이터 클래스
 data class ProblemStatistics(
     @SerializedName("mainCategory") val mainCategory: String,
-    @SerializedName("categories") val categories: List<Category> // "category"가 "categories"로 변경됨
+    @SerializedName("categories") val categories: List<Category>
 )
 
 // 카테고리 데이터 클래스
 data class Category(
     @SerializedName("category") val category: String,
+    @SerializedName("categoryId") val categoryId: Int,
     @SerializedName("subCategories") val subCategories: List<SubCategory>
 )
 
@@ -57,6 +58,7 @@ data class SubCategory(
     @SerializedName("subCategory") val subCategory: String,
     @SerializedName("totalIncorrect") val totalIncorrect: String // "totalIncorrect"를 String으로 받음
 )
+
 
 
 

@@ -61,7 +61,8 @@ class GraphFragment : Fragment() {
                     Log.d("GraphFragment", "Creating Subject: ${category.category}, Total Incorrect: $totalIncorrect")
                     Subject(
                         name = category.category, // `category` 이름
-                        type = totalIncorrect // `totalIncorrect`의 합
+                        type = totalIncorrect, // `totalIncorrect`의 합
+                        categoryId = category.categoryId // `categoryId` 추가
                     )
                 }
             } ?: emptyList()
@@ -105,15 +106,23 @@ class GraphFragment : Fragment() {
     private fun setupTypeRecyclerView(subjects: List<Subject>) {
         val subjectAdapter = SubjectsAdapter(subjects) { subject ->
             // 카테고리 클릭 시 로그 추가
-            Log.d("GraphFragment", "Clicked Subject: Name=${subject.name}")
+            Log.d("GraphFragment", "Clicked Subject: Name=${subject.name}, CategoryId=${subject.categoryId}")
 
+            // PieChart 데이터 요청
+            val refreshToken = mypageViewModel.getRefreshToken() ?: return@SubjectsAdapter
+            val bearerToken = "Bearer $refreshToken"
+            viewModel.fetchPieChartData(bearerToken, subject.categoryId)
+
+            // Fragment로 데이터 전달
             val bundle = Bundle().apply {
-                putString("CATEGORY_NAME", subject.name) // 카테고리 이름을 전달
+                putInt("CATEGORY_ID", subject.categoryId)
+                putString("CATEGORY_NAME", subject.name)
             }
             findNavController().navigate(R.id.action_navigation_graph_to_viewPieChartFragment, bundle)
         }
         binding.subjectsRecyclerView.adapter = subjectAdapter
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
