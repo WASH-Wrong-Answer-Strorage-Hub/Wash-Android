@@ -120,28 +120,28 @@ class ProblemCategorySubjectFragment : Fragment() {
             }
         }
 
-        binding.noTypeBtn.setOnClickListener {
-            val currentIndex = problemAddViewModel.currentIndex.value ?: 0
-            val photoList = problemAddViewModel.photoList.value ?: mutableListOf()
-
-            // 로그로 현재 인덱스와 사진 경로 확인
-            Log.d("problemAddViewModel", "Current Index: $currentIndex, Photo: ${photoList[currentIndex]}")
-
-            ProblemManager.updateMainTypeProblemData(currentIndex, null)
-            ProblemManager.updateMidTypeProblemData(currentIndex, null)
-            ProblemManager.updateSubTypeProblemData(currentIndex, null)
-
-
-            // 인덱스가 마지막이 아니라면 다음 프로세스를 반복
-            if (!problemAddViewModel.isLastIndex()) {
-                problemAddViewModel.incrementIndex()
-                navController.navigate(R.id.action_navigation_problem_category_subject_to_problem_answer_fragment)
-            } else {
-                // 모든 사진을 처리했다면 프로세스 종료
-                navController.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
-                problemAddViewModel.resetIndex() // 인덱스 초기화
-            }
-        }
+//        binding.noTypeBtn.setOnClickListener {
+//            val currentIndex = problemAddViewModel.currentIndex.value ?: 0
+//            val photoList = problemAddViewModel.photoList.value ?: mutableListOf()
+//
+//            // 로그로 현재 인덱스와 사진 경로 확인
+//            Log.d("problemAddViewModel", "Current Index: $currentIndex, Photo: ${photoList[currentIndex]}")
+//
+//            ProblemManager.updateMainTypeProblemData(currentIndex, null)
+//            ProblemManager.updateMidTypeProblemData(currentIndex, null)
+//            ProblemManager.updateSubTypeProblemData(currentIndex, null)
+//
+//
+//            // 인덱스가 마지막이 아니라면 다음 프로세스를 반복
+//            if (!problemAddViewModel.isLastIndex()) {
+//                problemAddViewModel.incrementIndex()
+//                navController.navigate(R.id.action_navigation_problem_category_subject_to_problem_answer_fragment)
+//            } else {
+//                // 모든 사진을 처리했다면 프로세스 종료
+//                navController.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
+//                problemAddViewModel.resetIndex() // 인덱스 초기화
+//            }
+//        }
 
         binding.skipBtn.setOnClickListener {
 

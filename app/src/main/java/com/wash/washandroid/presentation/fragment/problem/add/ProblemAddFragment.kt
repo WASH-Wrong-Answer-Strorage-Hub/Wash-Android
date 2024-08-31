@@ -57,6 +57,8 @@ class ProblemAddFragment : Fragment() {
         (requireActivity() as MainActivity).hideBottomNavigation(true)
         navController = Navigation.findNavController(view)
 
+        ProblemManager.clearProblems() // 문제 데이터 클리어
+
         photoAdapter = PhotoNewAdapter(requireContext(), photoList, { openGallery() }) { position ->
             openPhotoPager(photoList, position)
             Log.d("position", "$position")

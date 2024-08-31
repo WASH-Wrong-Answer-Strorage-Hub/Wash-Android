@@ -201,6 +201,10 @@
             android:id="@+id/action_navigation_problem_category_subfield_to_subject_fragment"
             app:destination="@id/navigation_problem_category_subject"
             app:popUpTo="@id/navigation_problem_category_subject" />
+        <action
+            android:id="@+id/action_navigation_problem_category_subfield_to_problem_answer_fragment"
+            app:destination="@id/navigation_problem_answer"
+            app:popUpTo="@id/navigation_problem_answer" />
     </fragment>
 
     <fragment

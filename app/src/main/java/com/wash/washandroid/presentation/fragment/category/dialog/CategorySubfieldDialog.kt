@@ -119,11 +119,11 @@ class CategorySubfieldDialog : DialogFragment() {
             // 인덱스가 마지막이 아니라면 다음 프로세스를 반복
             if (!problemAddViewModel.isLastIndex()) {
                 problemAddViewModel.incrementIndex()
-                navController?.navigate(R.id.action_navigation_problem_category_subject_to_problem_answer_fragment)
+                navController?.navigate(R.id.action_navigation_problem_category_subfield_to_problem_answer_fragment)
                 dismiss()
             } else {
                 // 모든 사진을 처리했다면 프로세스 종료
-                navController?.navigate(R.id.action_navigation_problem_category_subject_to_folder_fragment)
+                navController?.navigate(R.id.action_navigation_problem_category_subfield_to_folder_fragment)
                 problemAddViewModel.resetIndex() // 인덱스 초기화
                 dismiss()
             }

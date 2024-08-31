@@ -114,6 +114,7 @@ class ProblemCategoryFolderFragment : Fragment() {
         categoryFolderViewModel.postSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(requireContext(), "문제들이 성공적으로 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                categoryFolderViewModel.setSuccess()
                 navController.navigate(R.id.action_navigation_problem_category_folder_to_home_fragment)
             } else {
                 Toast.makeText(requireContext(), "문제 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()

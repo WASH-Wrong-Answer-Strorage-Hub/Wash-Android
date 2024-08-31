@@ -172,6 +172,9 @@ class CategoryFolderViewModel(private val problemRepository: ProblemRepository) 
     private val _postSuccess = MutableLiveData<Boolean>()
     val postSuccess: LiveData<Boolean> = _postSuccess
 
+    fun setSuccess() {
+        _postSuccess.value = false
+    }
 
     private fun validateProblemData(problemData: ProblemData?): Boolean {
         if (problemData == null) {
