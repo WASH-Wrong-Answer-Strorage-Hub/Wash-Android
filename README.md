@@ -1,7 +1,8 @@
 # WASH
 
 <img src="https://github.com/user-attachments/assets/76c4d114-b978-4f2a-9be0-700510db15e5" width =10% ><br>
-> UMC 7th NE(O)RDINARY DEMODAY, 1st Busan NE(O)RDINARY DEMODAY In Centum City
+> UMC 7th NE(O)RDINARY DEMODAY,
+<br> 1st Busan NE(O)RDINARY DEMODAY In Centum City
 <br> 프로덕트 이름 : Wrong Answer Strorage & Hub
 <br> 프로덕트 설명 : 모두를 위한 오답노트 서비스
 <br> 기간: 2024.7.27 ~ 2024.08.31
