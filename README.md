@@ -15,7 +15,7 @@
 ![landing page (1)-2](https://github.com/user-attachments/assets/c394fe8f-10f2-49b9-a0ff-4f8b66949f31)
 </br></br>
 
-## ✨ SCREENSHOTS
+## 📹 SCREENSHOTS
 <table>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/19aa75bb-c408-4293-829b-8a1085c20261" width="300" /></td>
