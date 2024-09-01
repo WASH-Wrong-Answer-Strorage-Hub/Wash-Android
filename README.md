@@ -60,7 +60,7 @@
 </table>
 <br>
 
-## 📹 CONTRIBUTORS
+## ✨ CONTRIBUTORS
 |                                   강지원<br/>([@dontworrywony](https://github.com/dontworrywony))                                    |                                      장윤영<br/>([@changyunyeong](https://github.com/changyunyeong))                                       |                                  정승원<br/>([@tristanjung1006](https://github.com/tristanjung1006))                                   |                                    한지수<br/>([@eldeoddt](https://github.com/eldeoddt))                                     |
 |:---------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------:|
 | <img width="200px" src="https://avatars.githubusercontent.com/u/101341914?v=4"/> | <img width="200px" src="https://avatars.githubusercontent.com/u/129532144?v=4"/> | <img width="200px" src="https://avatars.githubusercontent.com/u/62244340?v=4"/> | <img width="200px" src="https://avatars.githubusercontent.com/u/90364562?v=4"/> |
